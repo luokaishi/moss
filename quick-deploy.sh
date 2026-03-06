@@ -1,58 +1,45 @@
 #!/bin/bash
-# MOSS One-Line Deploy Script
-# Run this on your server (43.156.104.179)
+# MOSS Quick Local Deploy Script
+# Run this in your local moss directory
 
 echo "=========================================="
-echo "MOSS Quick Deploy"
+echo "MOSS Quick Local Deploy"
 echo "=========================================="
 
-# Create temp directory
-TEMP_DIR=$(mktemp -d)
-cd $TEMP_DIR
-
-# Download MOSS package
-echo "[1/5] Downloading MOSS..."
-if command -v wget &> /dev/null; then
-    wget -q https://raw.githubusercontent.com/moss-ai/moss/main/moss-deploy.tar.gz -O moss-deploy.tar.gz || \
-    echo "Note: Download URL placeholder - please upload moss-deploy.tar.gz manually"
-elif command -v curl &> /dev/null; then
-    curl -sL https://raw.githubusercontent.com/moss-ai/moss/main/moss-deploy.tar.gz -o moss-deploy.tar.gz || \
-    echo "Note: Download URL placeholder - please upload moss-deploy.tar.gz manually"
-fi
-
-# Check if file exists
-if [ ! -f "moss-deploy.tar.gz" ]; then
-    echo "Please upload moss-deploy.tar.gz to this directory first"
-    echo "Then run: tar -xzf moss-deploy.tar.gz && cd moss && bash deploy.sh"
+# Check directory
+if [ ! -f "moss/agents/moss_agent.py" ]; then
+    echo "Error: Please run from moss project root"
     exit 1
 fi
 
-# Extract
-echo "[2/5] Extracting..."
-tar -xzf moss-deploy.tar.gz
+# Install dependencies
+echo "[1/3] Installing dependencies..."
+pip install -q numpy flask requests psutil 2>/dev/null || pip install numpy flask requests psutil
 
-# Install
-echo "[3/5] Installing dependencies..."
-cd moss
-chmod +x deploy.sh
-bash deploy.sh
+# Create directories
+echo "[2/3] Setting up directories..."
+mkdir -p logs data results
 
-# Start
-echo "[4/5] Starting MOSS..."
-if [ -f "/opt/moss/monitor.py" ]; then
-    nohup python3 /opt/moss/monitor.py > /opt/moss/moss.log 2>&1 &
-    echo "MOSS started with PID: $!"
-fi
-
-# Cleanup
-echo "[5/5] Cleaning up..."
-cd /
-rm -rf $TEMP_DIR
+# Test
+echo "[3/3] Testing MOSS..."
+python3 -c "
+import sys
+sys.path.insert(0, '.')
+from moss.agents.moss_agent import MOSSAgent
+agent = MOSSAgent(agent_id='quick_test')
+result = agent.step()
+print(f'✓ MOSS ready: {result[\"state\"]} state')
+"
 
 echo ""
 echo "=========================================="
-echo "MOSS Deployment Complete!"
+echo "MOSS Ready!"
 echo "=========================================="
-echo "Logs: tail -f /opt/moss/moss.log"
-echo "Status: ps aux | grep moss"
-echo "Config: /opt/moss/"
+echo ""
+echo "Quick start:"
+echo "  python sandbox/experiment1.py"
+echo ""
+echo "Long-term:"
+echo "  bash start_longterm_experiment.sh"
+echo ""
+echo "=========================================="
