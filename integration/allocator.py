@@ -5,7 +5,16 @@ MOSS: 动态权重分配器
 
 import numpy as np
 from typing import Dict, List
-from moss.core.objectives import ObjectiveModule, SystemState
+import sys
+import os
+
+# 处理导入路径
+try:
+    from moss.core.objectives import ObjectiveModule, SystemState
+except ModuleNotFoundError:
+    # 从integration目录运行时
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from core.objectives import ObjectiveModule, SystemState
 
 
 class WeightAllocator:
