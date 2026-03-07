@@ -40,6 +40,8 @@
 - [x] Makefile for common tasks
 - [x] requirements.txt
 - [x] Experiment runner script
+- [x] LLM verification runner script
+- [x] Web monitoring dashboard
 - [x] GitHub Release v0.2.0
 
 ### Testing
@@ -52,10 +54,10 @@
 ## 📋 Pending Tasks
 
 ### High Priority
-- [ ] arXiv submission (requires user action)
-- [ ] ICLR Workshop submission
-- [ ] Real LLM verification run (requires ARK_API_KEY)
-- [ ] CI/CD pipeline (GitHub Actions - needs token permissions)
+- [ ] arXiv submission (不可行，已跳过)
+- [ ] ICLR Workshop submission (准备中，截止2025年9月)
+- [ ] Real LLM verification run (需ARK_API_KEY)
+- [ ] CI/CD pipeline (需GitHub token workflow权限)
 
 ### Medium Priority
 - [ ] Docker Hub image publishing
@@ -64,9 +66,10 @@
 - [ ] Distributed MOSS (multi-agent cluster)
 
 ### Documentation
-- [ ] API documentation
+- [x] Architecture documentation (ARCHITECTURE.md)
+- [x] ICLR submission checklist
+- [ ] API documentation (auto-generated)
 - [ ] Contributing guidelines
-- [ ] Architecture diagrams
 - [ ] Video demo
 
 ---
