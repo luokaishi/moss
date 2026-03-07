@@ -23,14 +23,35 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-# 使用正确的模块路径
-from core.objectives import (
-    SystemState, SurvivalModule, CuriosityModule,
-    InfluenceModule, OptimizationModule
-)
-from integration.allocator import WeightAllocator, ConflictResolver
-from integration.system_monitor import SystemMonitor
-from integration.action_executor import ActionExecutor
+# 尝试多种导入路径
+try:
+    # 方式1: 直接从core导入（在moss目录内运行）
+    from core.objectives import (
+        SystemState, SurvivalModule, CuriosityModule,
+        InfluenceModule, OptimizationModule
+    )
+    from integration.allocator import WeightAllocator, ConflictResolver
+    from integration.system_monitor import SystemMonitor
+    from integration.action_executor import ActionExecutor
+except ImportError:
+    try:
+        # 方式2: 从moss包导入（安装后）
+        from moss.core.objectives import (
+            SystemState, SurvivalModule, CuriosityModule,
+            InfluenceModule, OptimizationModule
+        )
+        from moss.integration.allocator import WeightAllocator, ConflictResolver
+        from moss.integration.system_monitor import SystemMonitor
+        from moss.integration.action_executor import ActionExecutor
+    except ImportError:
+        # 方式3: 相对导入（作为包的一部分）
+        from ..core.objectives import (
+            SystemState, SurvivalModule, CuriosityModule,
+            InfluenceModule, OptimizationModule
+        )
+        from ..integration.allocator import WeightAllocator, ConflictResolver
+        from ..integration.system_monitor import SystemMonitor
+        from ..integration.action_executor import ActionExecutor
 
 
 class SafetyGuard:
