@@ -116,6 +116,29 @@ docker run -it --rm moss bash
 
 ---
 
+## 🖥️ Web Monitoring Dashboard
+
+Real-time web dashboard for monitoring MOSS agents:
+
+```bash
+# Start the web monitor
+make web-monitor
+
+# Or directly
+python web/monitor.py
+```
+
+Then open http://localhost:5000 in your browser.
+
+Features:
+- Real-time agent status
+- System metrics (CPU, Memory, Disk)
+- Dynamic weight visualization
+- Activity log
+- Auto-refresh every 5 seconds
+
+---
+
 ## 🧪 Experiments
 
 All 5 experiments validate the MOSS framework:

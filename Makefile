@@ -1,4 +1,4 @@
-.PHONY: help install test test-v1 test-v2 docker run-docker clean
+.PHONY: help install test test-v1 test-v2 docker run-docker clean web-monitor
 
 help:
 	@echo "MOSS Development Commands"
@@ -9,9 +9,11 @@ help:
 	@echo "  make test-v2     - Run v2.0 tests"
 	@echo "  make docker      - Build Docker image"
 	@echo "  make run-docker  - Run MOSS in Docker"
-	@echo "  make clean       - Clean up generated files"
+	@echo "  make web-monitor - Start web monitoring dashboard"
+	@echo "  make experiments - Run all experiments (1-5)"
 	@echo "  make llm-verify  - Run LLM verification (mock mode)"
 	@echo "  make llm-real    - Run LLM verification (requires API key)"
+	@echo "  make clean       - Clean up generated files"
 
 install:
 	pip install -r requirements.txt
@@ -57,6 +59,15 @@ llm-real:
 run-v2:
 	@echo "Running MOSS v2.0..."
 	python -c "from agents.moss_agent_v2 import MOSSAgentV2; agent = MOSSAgentV2('manual_test', mode='demo'); agent.run(steps=10)"
+
+web-monitor:
+	@echo "Starting web monitoring dashboard..."
+	@echo "Open http://localhost:5000 in your browser"
+	python web/monitor.py
+
+experiments:
+	@echo "Running all experiments..."
+	./scripts/run_experiments.sh
 
 clean:
 	@echo "Cleaning up..."
