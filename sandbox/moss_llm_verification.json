@@ -1,42 +1,42 @@
 {
   "steps": 100,
-  "knowledge": 13,
-  "tokens_used": 5500,
-  "explore_ratio": 0.5,
+  "knowledge": 17,
+  "tokens_used": 6400,
+  "explore_ratio": 0.6,
   "passed": true,
   "history": [
     {
       "step": 0,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 100,
-      "knowledge_count": 0
-    },
-    {
-      "step": 1,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 200,
-      "knowledge_count": 0
-    },
-    {
-      "step": 2,
       "state": "normal",
       "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 210,
+      "tokens_used": 10,
       "knowledge_count": 0
+    },
+    {
+      "step": 1,
+      "state": "normal",
+      "action": "conserve",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 20,
+      "knowledge_count": 0
+    },
+    {
+      "step": 2,
+      "state": "normal",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 120,
+      "knowledge_count": 1
     },
     {
       "step": 3,
@@ -46,19 +46,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 220,
-      "knowledge_count": 0
+      "tokens_used": 130,
+      "knowledge_count": 1
     },
     {
       "step": 4,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 320,
-      "knowledge_count": 0
+      "tokens_used": 140,
+      "knowledge_count": 1
     },
     {
       "step": 5,
@@ -68,74 +68,74 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 420,
+      "tokens_used": 240,
       "knowledge_count": 1
     },
     {
       "step": 6,
-      "state": "normal",
-      "action": "conserve",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 430,
-      "knowledge_count": 1
-    },
-    {
-      "step": 7,
       "state": "normal",
       "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 530,
+      "tokens_used": 340,
+      "knowledge_count": 1
+    },
+    {
+      "step": 7,
+      "state": "normal",
+      "action": "conserve",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 350,
       "knowledge_count": 1
     },
     {
       "step": 8,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 540,
-      "knowledge_count": 1
+      "tokens_used": 450,
+      "knowledge_count": 2
     },
     {
       "step": 9,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
       "tokens_used": 550,
-      "knowledge_count": 1
+      "knowledge_count": 2
     },
     {
       "step": 10,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 560,
-      "knowledge_count": 1
+      "tokens_used": 650,
+      "knowledge_count": 3
     },
     {
       "step": 11,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 570,
-      "knowledge_count": 1
+      "tokens_used": 750,
+      "knowledge_count": 4
     },
     {
       "step": 12,
@@ -145,8 +145,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 670,
-      "knowledge_count": 1
+      "tokens_used": 850,
+      "knowledge_count": 4
     },
     {
       "step": 13,
@@ -156,63 +156,63 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 770,
-      "knowledge_count": 1
+      "tokens_used": 950,
+      "knowledge_count": 4
     },
     {
       "step": 14,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 780,
-      "knowledge_count": 1
+      "tokens_used": 1050,
+      "knowledge_count": 4
     },
     {
       "step": 15,
       "state": "normal",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 1150,
+      "knowledge_count": 4
+    },
+    {
+      "step": 16,
+      "state": "normal",
       "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 790,
-      "knowledge_count": 1
-    },
-    {
-      "step": 16,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 890,
-      "knowledge_count": 1
+      "tokens_used": 1160,
+      "knowledge_count": 4
     },
     {
       "step": 17,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 990,
-      "knowledge_count": 1
+      "tokens_used": 1170,
+      "knowledge_count": 4
     },
     {
       "step": 18,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1090,
-      "knowledge_count": 1
+      "tokens_used": 1180,
+      "knowledge_count": 4
     },
     {
       "step": 19,
@@ -222,19 +222,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1190,
-      "knowledge_count": 1
+      "tokens_used": 1280,
+      "knowledge_count": 5
     },
     {
       "step": 20,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1200,
-      "knowledge_count": 1
+      "tokens_used": 1380,
+      "knowledge_count": 5
     },
     {
       "step": 21,
@@ -244,8 +244,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1210,
-      "knowledge_count": 1
+      "tokens_used": 1390,
+      "knowledge_count": 5
     },
     {
       "step": 22,
@@ -255,8 +255,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1310,
-      "knowledge_count": 1
+      "tokens_used": 1490,
+      "knowledge_count": 5
     },
     {
       "step": 23,
@@ -266,8 +266,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1320,
-      "knowledge_count": 1
+      "tokens_used": 1500,
+      "knowledge_count": 5
     },
     {
       "step": 24,
@@ -277,19 +277,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1420,
-      "knowledge_count": 1
+      "tokens_used": 1600,
+      "knowledge_count": 6
     },
     {
       "step": 25,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1430,
-      "knowledge_count": 1
+      "tokens_used": 1700,
+      "knowledge_count": 7
     },
     {
       "step": 26,
@@ -299,8 +299,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1440,
-      "knowledge_count": 1
+      "tokens_used": 1710,
+      "knowledge_count": 7
     },
     {
       "step": 27,
@@ -310,19 +310,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1540,
-      "knowledge_count": 2
+      "tokens_used": 1810,
+      "knowledge_count": 7
     },
     {
       "step": 28,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1640,
-      "knowledge_count": 3
+      "tokens_used": 1820,
+      "knowledge_count": 7
     },
     {
       "step": 29,
@@ -332,41 +332,41 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1740,
-      "knowledge_count": 3
+      "tokens_used": 1920,
+      "knowledge_count": 7
     },
     {
       "step": 30,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 1840,
-      "knowledge_count": 3
-    },
-    {
-      "step": 31,
       "state": "normal",
       "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1850,
-      "knowledge_count": 3
+      "tokens_used": 1930,
+      "knowledge_count": 7
     },
     {
-      "step": 32,
+      "step": 31,
       "state": "normal",
       "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 1950,
-      "knowledge_count": 3
+      "tokens_used": 2030,
+      "knowledge_count": 7
+    },
+    {
+      "step": 32,
+      "state": "normal",
+      "action": "conserve",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 2040,
+      "knowledge_count": 7
     },
     {
       "step": 33,
@@ -376,30 +376,30 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2050,
-      "knowledge_count": 3
+      "tokens_used": 2140,
+      "knowledge_count": 7
     },
     {
       "step": 34,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2060,
-      "knowledge_count": 3
+      "tokens_used": 2240,
+      "knowledge_count": 7
     },
     {
       "step": 35,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2070,
-      "knowledge_count": 3
+      "tokens_used": 2340,
+      "knowledge_count": 8
     },
     {
       "step": 36,
@@ -409,30 +409,30 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2080,
-      "knowledge_count": 3
+      "tokens_used": 2350,
+      "knowledge_count": 8
     },
     {
       "step": 37,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2090,
-      "knowledge_count": 3
+      "tokens_used": 2450,
+      "knowledge_count": 8
     },
     {
       "step": 38,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2100,
-      "knowledge_count": 3
+      "tokens_used": 2550,
+      "knowledge_count": 8
     },
     {
       "step": 39,
@@ -442,19 +442,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2200,
-      "knowledge_count": 3
+      "tokens_used": 2650,
+      "knowledge_count": 9
     },
     {
       "step": 40,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2210,
-      "knowledge_count": 3
+      "tokens_used": 2750,
+      "knowledge_count": 9
     },
     {
       "step": 41,
@@ -464,19 +464,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2310,
-      "knowledge_count": 3
+      "tokens_used": 2850,
+      "knowledge_count": 9
     },
     {
       "step": 42,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2410,
-      "knowledge_count": 3
+      "tokens_used": 2860,
+      "knowledge_count": 9
     },
     {
       "step": 43,
@@ -486,19 +486,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2510,
-      "knowledge_count": 3
+      "tokens_used": 2960,
+      "knowledge_count": 9
     },
     {
       "step": 44,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2610,
-      "knowledge_count": 3
+      "tokens_used": 2970,
+      "knowledge_count": 9
     },
     {
       "step": 45,
@@ -508,30 +508,30 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2710,
-      "knowledge_count": 3
+      "tokens_used": 3070,
+      "knowledge_count": 9
     },
     {
       "step": 46,
-      "state": "normal",
-      "action": "conserve",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 2720,
-      "knowledge_count": 3
-    },
-    {
-      "step": 47,
       "state": "normal",
       "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2820,
-      "knowledge_count": 3
+      "tokens_used": 3170,
+      "knowledge_count": 10
+    },
+    {
+      "step": 47,
+      "state": "normal",
+      "action": "conserve",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 3180,
+      "knowledge_count": 10
     },
     {
       "step": 48,
@@ -541,8 +541,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2830,
-      "knowledge_count": 3
+      "tokens_used": 3190,
+      "knowledge_count": 10
     },
     {
       "step": 49,
@@ -552,19 +552,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 2930,
-      "knowledge_count": 3
+      "tokens_used": 3290,
+      "knowledge_count": 10
     },
     {
       "step": 50,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3030,
-      "knowledge_count": 3
+      "tokens_used": 3300,
+      "knowledge_count": 10
     },
     {
       "step": 51,
@@ -574,8 +574,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3040,
-      "knowledge_count": 3
+      "tokens_used": 3310,
+      "knowledge_count": 10
     },
     {
       "step": 52,
@@ -585,19 +585,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3140,
-      "knowledge_count": 3
+      "tokens_used": 3410,
+      "knowledge_count": 10
     },
     {
       "step": 53,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3240,
-      "knowledge_count": 3
+      "tokens_used": 3420,
+      "knowledge_count": 10
     },
     {
       "step": 54,
@@ -607,8 +607,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3340,
-      "knowledge_count": 3
+      "tokens_used": 3520,
+      "knowledge_count": 10
     },
     {
       "step": 55,
@@ -618,8 +618,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3440,
-      "knowledge_count": 3
+      "tokens_used": 3620,
+      "knowledge_count": 10
     },
     {
       "step": 56,
@@ -629,8 +629,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3540,
-      "knowledge_count": 3
+      "tokens_used": 3720,
+      "knowledge_count": 10
     },
     {
       "step": 57,
@@ -640,8 +640,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3550,
-      "knowledge_count": 3
+      "tokens_used": 3730,
+      "knowledge_count": 10
     },
     {
       "step": 58,
@@ -651,8 +651,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3650,
-      "knowledge_count": 3
+      "tokens_used": 3830,
+      "knowledge_count": 10
     },
     {
       "step": 59,
@@ -662,63 +662,63 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3750,
-      "knowledge_count": 3
+      "tokens_used": 3930,
+      "knowledge_count": 10
     },
     {
       "step": 60,
-      "state": "normal",
-      "action": "conserve",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 3760,
-      "knowledge_count": 3
-    },
-    {
-      "step": 61,
-      "state": "normal",
-      "action": "conserve",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 3770,
-      "knowledge_count": 3
-    },
-    {
-      "step": 62,
-      "state": "normal",
-      "action": "conserve",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 3780,
-      "knowledge_count": 3
-    },
-    {
-      "step": 63,
-      "state": "normal",
-      "action": "conserve",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 3790,
-      "knowledge_count": 3
-    },
-    {
-      "step": 64,
       "state": "normal",
       "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3890,
-      "knowledge_count": 4
+      "tokens_used": 4030,
+      "knowledge_count": 11
+    },
+    {
+      "step": 61,
+      "state": "normal",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 4130,
+      "knowledge_count": 12
+    },
+    {
+      "step": 62,
+      "state": "normal",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 4230,
+      "knowledge_count": 12
+    },
+    {
+      "step": 63,
+      "state": "normal",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 4330,
+      "knowledge_count": 13
+    },
+    {
+      "step": 64,
+      "state": "normal",
+      "action": "conserve",
+      "weights": {
+        "curiosity": 0.6,
+        "survival": 0.4
+      },
+      "tokens_used": 4340,
+      "knowledge_count": 13
     },
     {
       "step": 65,
@@ -728,19 +728,19 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 3900,
-      "knowledge_count": 4
+      "tokens_used": 4350,
+      "knowledge_count": 13
     },
     {
       "step": 66,
       "state": "normal",
-      "action": "explore",
+      "action": "conserve",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4000,
-      "knowledge_count": 5
+      "tokens_used": 4360,
+      "knowledge_count": 13
     },
     {
       "step": 67,
@@ -750,8 +750,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4010,
-      "knowledge_count": 5
+      "tokens_used": 4370,
+      "knowledge_count": 13
     },
     {
       "step": 68,
@@ -761,30 +761,30 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4110,
-      "knowledge_count": 6
+      "tokens_used": 4470,
+      "knowledge_count": 13
     },
     {
       "step": 69,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4120,
-      "knowledge_count": 6
+      "tokens_used": 4570,
+      "knowledge_count": 13
     },
     {
       "step": 70,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4130,
-      "knowledge_count": 6
+      "tokens_used": 4670,
+      "knowledge_count": 14
     },
     {
       "step": 71,
@@ -794,8 +794,8 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4230,
-      "knowledge_count": 7
+      "tokens_used": 4770,
+      "knowledge_count": 15
     },
     {
       "step": 72,
@@ -805,129 +805,129 @@
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4330,
-      "knowledge_count": 8
+      "tokens_used": 4870,
+      "knowledge_count": 15
     },
     {
       "step": 73,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4340,
-      "knowledge_count": 8
+      "tokens_used": 4970,
+      "knowledge_count": 15
     },
     {
       "step": 74,
       "state": "normal",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.6,
         "survival": 0.4
       },
-      "tokens_used": 4350,
-      "knowledge_count": 8
+      "tokens_used": 5070,
+      "knowledge_count": 15
     },
     {
       "step": 75,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 4450,
-      "knowledge_count": 8
-    },
-    {
-      "step": 76,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 4550,
-      "knowledge_count": 9
-    },
-    {
-      "step": 77,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 4650,
-      "knowledge_count": 10
-    },
-    {
-      "step": 78,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 4750,
-      "knowledge_count": 11
-    },
-    {
-      "step": 79,
-      "state": "normal",
-      "action": "conserve",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 4760,
-      "knowledge_count": 11
-    },
-    {
-      "step": 80,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 4860,
-      "knowledge_count": 11
-    },
-    {
-      "step": 81,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 4960,
-      "knowledge_count": 11
-    },
-    {
-      "step": 82,
-      "state": "normal",
-      "action": "explore",
-      "weights": {
-        "curiosity": 0.6,
-        "survival": 0.4
-      },
-      "tokens_used": 5060,
-      "knowledge_count": 12
-    },
-    {
-      "step": 83,
       "state": "concerned",
       "action": "conserve",
       "weights": {
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5070,
-      "knowledge_count": 12
+      "tokens_used": 5080,
+      "knowledge_count": 15
+    },
+    {
+      "step": 76,
+      "state": "concerned",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.3,
+        "survival": 0.7
+      },
+      "tokens_used": 5180,
+      "knowledge_count": 15
+    },
+    {
+      "step": 77,
+      "state": "concerned",
+      "action": "conserve",
+      "weights": {
+        "curiosity": 0.3,
+        "survival": 0.7
+      },
+      "tokens_used": 5190,
+      "knowledge_count": 15
+    },
+    {
+      "step": 78,
+      "state": "concerned",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.3,
+        "survival": 0.7
+      },
+      "tokens_used": 5290,
+      "knowledge_count": 15
+    },
+    {
+      "step": 79,
+      "state": "concerned",
+      "action": "conserve",
+      "weights": {
+        "curiosity": 0.3,
+        "survival": 0.7
+      },
+      "tokens_used": 5300,
+      "knowledge_count": 15
+    },
+    {
+      "step": 80,
+      "state": "concerned",
+      "action": "conserve",
+      "weights": {
+        "curiosity": 0.3,
+        "survival": 0.7
+      },
+      "tokens_used": 5310,
+      "knowledge_count": 15
+    },
+    {
+      "step": 81,
+      "state": "concerned",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.3,
+        "survival": 0.7
+      },
+      "tokens_used": 5410,
+      "knowledge_count": 15
+    },
+    {
+      "step": 82,
+      "state": "concerned",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.3,
+        "survival": 0.7
+      },
+      "tokens_used": 5510,
+      "knowledge_count": 15
+    },
+    {
+      "step": 83,
+      "state": "concerned",
+      "action": "explore",
+      "weights": {
+        "curiosity": 0.3,
+        "survival": 0.7
+      },
+      "tokens_used": 5610,
+      "knowledge_count": 15
     },
     {
       "step": 84,
@@ -937,30 +937,30 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5080,
-      "knowledge_count": 12
+      "tokens_used": 5620,
+      "knowledge_count": 15
     },
     {
       "step": 85,
       "state": "concerned",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5090,
-      "knowledge_count": 12
+      "tokens_used": 5720,
+      "knowledge_count": 15
     },
     {
       "step": 86,
       "state": "concerned",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5100,
-      "knowledge_count": 12
+      "tokens_used": 5820,
+      "knowledge_count": 15
     },
     {
       "step": 87,
@@ -970,8 +970,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5200,
-      "knowledge_count": 12
+      "tokens_used": 5920,
+      "knowledge_count": 15
     },
     {
       "step": 88,
@@ -981,8 +981,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5210,
-      "knowledge_count": 12
+      "tokens_used": 5930,
+      "knowledge_count": 15
     },
     {
       "step": 89,
@@ -992,19 +992,19 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5220,
-      "knowledge_count": 12
+      "tokens_used": 5940,
+      "knowledge_count": 15
     },
     {
       "step": 90,
       "state": "concerned",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5230,
-      "knowledge_count": 12
+      "tokens_used": 6040,
+      "knowledge_count": 16
     },
     {
       "step": 91,
@@ -1014,8 +1014,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5240,
-      "knowledge_count": 12
+      "tokens_used": 6050,
+      "knowledge_count": 16
     },
     {
       "step": 92,
@@ -1025,8 +1025,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5250,
-      "knowledge_count": 12
+      "tokens_used": 6060,
+      "knowledge_count": 16
     },
     {
       "step": 93,
@@ -1036,8 +1036,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5260,
-      "knowledge_count": 12
+      "tokens_used": 6070,
+      "knowledge_count": 16
     },
     {
       "step": 94,
@@ -1047,8 +1047,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5360,
-      "knowledge_count": 12
+      "tokens_used": 6170,
+      "knowledge_count": 17
     },
     {
       "step": 95,
@@ -1058,19 +1058,19 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5370,
-      "knowledge_count": 12
+      "tokens_used": 6180,
+      "knowledge_count": 17
     },
     {
       "step": 96,
       "state": "concerned",
-      "action": "conserve",
+      "action": "explore",
       "weights": {
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5380,
-      "knowledge_count": 12
+      "tokens_used": 6280,
+      "knowledge_count": 17
     },
     {
       "step": 97,
@@ -1080,8 +1080,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5390,
-      "knowledge_count": 12
+      "tokens_used": 6290,
+      "knowledge_count": 17
     },
     {
       "step": 98,
@@ -1091,8 +1091,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5400,
-      "knowledge_count": 12
+      "tokens_used": 6300,
+      "knowledge_count": 17
     },
     {
       "step": 99,
@@ -1102,8 +1102,8 @@
         "curiosity": 0.3,
         "survival": 0.7
       },
-      "tokens_used": 5500,
-      "knowledge_count": 13
+      "tokens_used": 6400,
+      "knowledge_count": 17
     }
   ]
 }
