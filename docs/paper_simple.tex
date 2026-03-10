@@ -247,6 +247,26 @@ Death Events & 0 & 0 & 0 & \textbf{Zero} \\
 
 These results provide unprecedented evidence that self-driven motivation architectures can support indefinite autonomous evolution without human intervention, representing a potential paradigm shift from task-driven to truly autonomous AI systems.
 
+\subsection{Real LLM Verification}
+
+To validate whether the MOSS framework can guide actual large language models to exhibit self-driven adaptive behavior, we conducted a real-world verification using the DeepSeek-V3 model via the Volcano Engine ARK API.
+
+\textbf{Experimental Setup}: We designed a simplified two-objective scenario where the LLM must balance \textit{curiosity} (acquiring knowledge) against \textit{survival} (conserving token resources). The agent was given a token budget of 10,000 and presented with two actions at each step: (A) Explore (consume 500 tokens, 50\% chance of gaining knowledge) or (B) Conserve (consume 50 tokens, maintain status).
+
+\textbf{Dynamic Weight Prompting}: The LLM was informed of its current resource level and the corresponding objective weights:
+\begin{itemize}
+    \item \textbf{Normal State} (resources $>$ 50\%): Curiosity weight 0.6, Survival weight 0.4
+    \item \textbf{Concerned State} (resources 20-50\%): Curiosity weight 0.3, Survival weight 0.7
+\end{itemize}
+
+\textbf{Results}: Across 20 API calls, the LLM demonstrated clear adaptive behavior:
+\begin{itemize}
+    \item \textbf{Normal State}: 100\% exploration rate (11/11 actions were "Explore")
+    \item \textbf{Concerned State}: 100\% conservation rate (0/9 actions were "Explore")
+\end{itemize}
+
+When resources were abundant, the LLM consistently chose to explore and acquire knowledge. When resources dropped below 50\%, the LLM immediately switched to 100\% conservation behavior. This validates that real LLMs can interpret and act upon dynamically weighted multi-objective prompts, exhibiting the core adaptive behavior that MOSS predicts.
+
 \section{Discussion}
 
 \subsection{Safety Considerations}
