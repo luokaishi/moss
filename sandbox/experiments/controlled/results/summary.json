@@ -1,29 +1,66 @@
 {
   "by_strategy": {
     "random": {
-      "count": 2,
-      "knowledge_mean": 3.5,
-      "knowledge_std": 0.5,
-      "efficiency_mean": 0.0003419580085130805,
-      "efficiency_std": 4.639150605002633e-05,
-      "survival_mean": 46.5,
-      "survival_std": 0.5
+      "count": 30,
+      "knowledge_mean": 3.466666666666667,
+      "knowledge_std": 1.3840359661351131,
+      "efficiency_mean": 0.000340469441478037,
+      "efficiency_std": 0.00013482206823627963,
+      "survival_mean": 46.63333333333333,
+      "survival_std": 6.188609608699589
+    },
+    "curiosity_only": {
+      "count": 30,
+      "knowledge_mean": 5.066666666666666,
+      "knowledge_std": 2.1746008573733455,
+      "efficiency_mean": 0.0004959850102170119,
+      "efficiency_std": 0.00021560140498077626,
+      "survival_mean": 19.566666666666666,
+      "survival_std": 0.8825468196582484
+    },
+    "survival_only": {
+      "count": 30,
+      "knowledge_mean": 0.0,
+      "knowledge_std": 0.0,
+      "efficiency_mean": 0.0,
+      "efficiency_std": 0.0,
+      "survival_mean": 191.13333333333333,
+      "survival_std": 11.164626679333656
+    },
+    "fixed_weights": {
+      "count": 30,
+      "knowledge_mean": 3.2,
+      "knowledge_std": 1.5362291495737217,
+      "efficiency_mean": 0.000312907866987843,
+      "efficiency_std": 0.00015177054446382436,
+      "survival_mean": 44.833333333333336,
+      "survival_std": 6.668749674580852
     },
     "moss": {
-      "count": 2,
-      "knowledge_mean": 4.5,
-      "knowledge_std": 1.5,
-      "efficiency_mean": 0.0004398550724637681,
-      "efficiency_std": 0.00013985507246376812,
-      "survival_mean": 44.5,
-      "survival_std": 1.5
+      "count": 30,
+      "knowledge_mean": 4.0,
+      "knowledge_std": 1.8618986725025255,
+      "efficiency_mean": 0.0003931604070354951,
+      "efficiency_std": 0.00018167943047184577,
+      "survival_mean": 43.13333333333333,
+      "survival_std": 6.086779845607108
     }
   },
   "by_environment": {
     "simple": {
-      "count": 4,
-      "knowledge_mean": 4.0,
-      "knowledge_std": 1.224744871391589
+      "count": 50,
+      "knowledge_mean": 3.6,
+      "knowledge_std": 2.6153393661244038
+    },
+    "moderate": {
+      "count": 50,
+      "knowledge_mean": 2.84,
+      "knowledge_std": 2.0431348462595413
+    },
+    "complex": {
+      "count": 50,
+      "knowledge_mean": 3.0,
+      "knowledge_std": 2.1908902300206643
     }
   },
   "comparisons": {}
