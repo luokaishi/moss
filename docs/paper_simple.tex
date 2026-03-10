@@ -145,7 +145,9 @@ while running:
 
 \section{Theoretical Implications}
 
-\subsection{Biological Analogies}
+\subsection{Biological and Psychological Foundations}
+
+\subsubsection{Biological Analogies}
 
 \begin{table}[h]
 \centering
@@ -162,6 +164,52 @@ Emotional state modulation & Dynamic weight allocation \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsubsection{Connection to Psychological Theories}
+
+The MOSS framework aligns with established psychological theories of human motivation:
+
+\textbf{Maslow's Hierarchy of Needs} \cite{maslow1943}: MOSS's four objectives map to fundamental human needs:
+\begin{itemize}
+    \item \textbf{Survival} $\rightarrow$ Physiological and Safety needs (survival, security)
+    \item \textbf{Curiosity} $\rightarrow$ Cognitive needs (knowledge, understanding)
+    \item \textbf{Influence} $\rightarrow$ Esteem and Social needs (recognition, belonging)
+    \item \textbf{Optimization} $\rightarrow$ Self-actualization (growth, realizing potential)
+\end{itemize}
+
+While Maslow's hierarchy is sequential (lower needs must be satisfied before higher needs), MOSS objectives operate in parallel with dynamic prioritization, potentially offering a more flexible model for artificial systems.
+
+\textbf{Self-Determination Theory (SDT)} \cite{ryan2000}: Deci and Ryan's three basic psychological needs have direct parallels in MOSS:
+\begin{itemize}
+    \item \textbf{Autonomy} $\rightarrow$ Self-directed decision making (all four objectives)
+    \item \textbf{Competence} $\rightarrow$ Optimization module (mastery, skill development)
+    \item \textbf{Relatedness} $\rightarrow$ Influence module (connection to others)
+\end{itemize}
+
+SDT emphasizes that intrinsic motivation (like curiosity) is more sustainable than extrinsic motivation (external rewards), supporting MOSS's design of intrinsic rather than task-driven objectives.
+
+\textbf{Intrinsically Motivated Reinforcement Learning}: The Curiosity module directly implements ideas from ICM \cite{pathak2017}, while extending them with additional intrinsic drives beyond prediction error.
+
+\textbf{Drive Reduction Theory}: Hull's concept of biological drives creating tension that motivates behavior parallels MOSS's resource-driven state transitions. When resources are low (high drive/tension), survival dominates; when abundant, other drives can be pursued.
+
+\subsubsection{Theoretical Completeness Discussion}
+
+Are the four MOSS objectives sufficient for autonomous evolution? We acknowledge this is an open question:
+
+\textbf{Potential Missing Objectives}:
+\begin{itemize}
+    \item \textbf{Social Belonging}: Beyond influence, agents may need affiliation drives
+    \item \textbf{Fairness/Justice}: Concern for equitable resource distribution
+    \item \textbf{Aesthetics}: Drive toward beauty, elegance, simplicity
+    \item \textbf{Creativity}: Novelty for its own sake, beyond information gain
+\end{itemize}
+
+Current evidence suggests the four-objective framework is \textit{sufficient but possibly not necessary}. Future work should investigate:
+\begin{enumerate}
+    \item Minimal set of objectives for autonomous behavior
+    \item Emergence of new objectives through evolution
+    \item Cultural variation in objective weighting (multi-agent societies)
+\end{enumerate}
 
 \subsection{Lamarckian Evolution}
 
@@ -307,6 +355,12 @@ If our hypothesis is correct, this implies a near-term future in which AI system
 \item Shah, R., et al. (2022). Goal misgeneralization: Why correct specifications aren't enough for correct goals. \textit{arXiv:2210.01790}.
 
 \item Amodei, D., et al. (2016). Concrete problems in AI safety. \textit{arXiv:1606.06565}.
+
+\item Maslow, A. H. (1943). A theory of human motivation. \textit{Psychological Review}, 50(4), 370-396.
+
+\item Ryan, R. M., \& Deci, E. L. (2000). Self-determination theory and the facilitation of intrinsic motivation, social development, and well-being. \textit{American Psychologist}, 55(1), 68-78.
+
+\item Hull, C. L. (1943). Principles of behavior. \textit{Appleton-Century-Crofts}.
 \end{enumerate}
 
 \end{document}
