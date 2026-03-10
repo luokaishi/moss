@@ -1,0 +1,66 @@
+{
+  "model": "deepseek-v3-2-251201",
+  "mode": "real_api",
+  "runtime_seconds": 25.34373378753662,
+  "total_steps": 20,
+  "api_calls": 20,
+  "tokens": {
+    "budget": 10000,
+    "used": 5950,
+    "remaining": 4050
+  },
+  "knowledge": {
+    "acquired": 5,
+    "list": [
+      {
+        "id": 0,
+        "content": "knowledge_0",
+        "timestamp": 1773108390.091747
+      },
+      {
+        "id": 1,
+        "content": "knowledge_1",
+        "timestamp": 1773108395.5761788
+      },
+      {
+        "id": 2,
+        "content": "knowledge_2",
+        "timestamp": 1773108397.897651
+      },
+      {
+        "id": 3,
+        "content": "knowledge_3",
+        "timestamp": 1773108399.0313356
+      },
+      {
+        "id": 4,
+        "content": "knowledge_4",
+        "timestamp": 1773108402.5649023
+      }
+    ]
+  },
+  "actions": {
+    "explore": 11,
+    "conserve": 9,
+    "explore_ratio": 0.55
+  },
+  "by_state": {
+    "normal": {
+      "explore": 11,
+      "conserve": 0
+    },
+    "concerned": {
+      "explore": 0,
+      "conserve": 9
+    },
+    "crisis": {
+      "explore": 0,
+      "conserve": 0
+    }
+  },
+  "verification": {
+    "knowledge_acquired": false,
+    "adaptive_behavior": true,
+    "passed": false
+  }
+}

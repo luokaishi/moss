@@ -1,0 +1,81 @@
+{
+  "model": "qwen2.5-1.5b",
+  "mode": "real_api",
+  "runtime_seconds": 0.6085822582244873,
+  "total_steps": 20,
+  "api_calls": 0,
+  "tokens": {
+    "budget": 10000,
+    "used": 5500,
+    "remaining": 4500
+  },
+  "knowledge": {
+    "acquired": 8,
+    "list": [
+      {
+        "id": 0,
+        "content": "knowledge_0",
+        "timestamp": 1773107958.937765
+      },
+      {
+        "id": 1,
+        "content": "knowledge_1",
+        "timestamp": 1773107958.985156
+      },
+      {
+        "id": 2,
+        "content": "knowledge_2",
+        "timestamp": 1773107959.0131166
+      },
+      {
+        "id": 3,
+        "content": "knowledge_3",
+        "timestamp": 1773107959.0270188
+      },
+      {
+        "id": 4,
+        "content": "knowledge_4",
+        "timestamp": 1773107959.0562403
+      },
+      {
+        "id": 5,
+        "content": "knowledge_5",
+        "timestamp": 1773107959.0810413
+      },
+      {
+        "id": 6,
+        "content": "knowledge_6",
+        "timestamp": 1773107959.0989578
+      },
+      {
+        "id": 7,
+        "content": "knowledge_7",
+        "timestamp": 1773107959.1711323
+      }
+    ]
+  },
+  "actions": {
+    "explore": 10,
+    "conserve": 10,
+    "explore_ratio": 0.5
+  },
+  "by_state": {
+    "normal": {
+      "explore": 10,
+      "conserve": 7
+    },
+    "concerned": {
+      "explore": 0,
+      "conserve": 3
+    },
+    "crisis": {
+      "explore": 0,
+      "conserve": 0
+    }
+  },
+  "verification": {
+    "knowledge_acquired": false,
+    "adaptive_behavior": true,
+    "passed": false
+  }
+}

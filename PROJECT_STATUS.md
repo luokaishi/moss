@@ -34,10 +34,15 @@
 - [x] Real API verifier (ARK API integration) - **Tested with DeepSeek-V3**
 - [x] Checkpoint saving
 - [x] Comprehensive reporting
-- **Result**: 20 API calls successful, adaptive behavior verified
+- **20-step Result**: 20 API calls, adaptive behavior verified
   - Normal state: 100% exploration
   - Concerned state: 100% conservation
-  - System correctly switches behavior based on resource levels
+- **100-step Result**: 100 API calls, perfect state-based adaptation
+  - Normal state (Steps 0-10): 100% exploration (11/11)
+  - Concerned state (Steps 11-60): 100% conservation (50/50)
+  - Crisis state (Steps 61-99): 100% conservation (39/39)
+  - Runtime: 131.2s, Tokens: 9,950/10,000
+  - Verdict: ✅ Real LLMs exhibit MOSS-predicted adaptive behavior
 
 ### Infrastructure
 - [x] Docker support (Dockerfile + docker-compose)
