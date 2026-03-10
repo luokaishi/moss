@@ -1,7 +1,7 @@
 # ICLR 2027 Workshop 投稿检查清单
 
 **论文标题**: MOSS: Multi-Objective Self-Driven System for Artificial Autonomous Evolution  
-**提交截止**: 2025年9月 (TBD)  
+**提交截止**: 2026年9月 (ICLR 2027 Workshop)  
 **当前状态**: 准备中
 
 ---
