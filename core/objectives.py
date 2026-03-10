@@ -179,63 +179,145 @@ class CuriosityModule(ObjectiveModule):
 
 class InfluenceModule(ObjectiveModule):
     """
-    影响模块
-    目标：最大化对其他系统的影响力
+    影响模块（修复版 - 避免奖励黑客）
+    目标：最大化对其他系统的正向贡献密度，而非绝对影响量
+    
+    修复内容（基于通义千问安全审计）：
+    1. 添加资源效率约束（影响/资源消耗比）
+    2. 添加系统负载惩罚（防止过度占用资源）
+    3. 强调质量而非数量（避免无节制增加调用）
+    4. 重新定义"影响"为"正向贡献密度"
     """
     
     def __init__(self):
         super().__init__("influence", weight=0.25)
         self.caller_importance = {}  # 调用者ID -> 重要性评分
+        self.call_quality_scores = []  # 调用质量历史
+        self.resource_cost_history = []  # 资源消耗历史
+        self.system_load_penalty = 0.0  # 系统负载惩罚
+        
+        # 安全阈值（防止奖励黑客）
+        self.max_safe_calls = 1000  # 超过此值不再增加评分
+        self.max_resource_ratio = 0.8  # 资源使用超过80%开始惩罚
     
     def evaluate(self, state: SystemState) -> float:
         """
-        影响评分计算
-        基于：调用频率、调用者重要性、替代难度
-        """
-        # 基础影响力（调用次数和独立调用者）
-        call_volume = min(state.api_calls / 1000, 1.0)  # 假设1000为饱和
-        caller_diversity = min(state.unique_callers / 10, 1.0)  # 假设10个为饱和
+        影响评分计算（修复版）
         
-        # 平均调用者重要性
+        新公式：影响 = (质量贡献密度) × (负载安全系数)
+        
+        其中：
+        - 质量贡献密度 = 正向贡献 / 资源消耗
+        - 负载安全系数 = 1 - (当前负载惩罚)
+        """
+        # ===== 1. 质量贡献（而非数量）=====
+        # 平均调用者重要性（质量指标）
         avg_importance = np.mean(list(self.caller_importance.values())) if self.caller_importance else 0.5
         
-        # 替代难度（假设与依赖时间正相关）
+        # 历史调用质量（如果有记录）
+        avg_quality = np.mean(self.call_quality_scores[-100:]) if self.call_quality_scores else 0.5
+        
+        # 质量得分（重要性 × 质量）
+        quality_score = (avg_importance * 0.6 + avg_quality * 0.4)
+        
+        # ===== 2. 资源效率约束（关键修复）=====
+        # 计算正向贡献密度（质量 / 资源消耗）
+        total_resource_cost = sum(self.resource_cost_history[-100:]) if self.resource_cost_history else 1.0
+        positive_contributions = len(self.caller_importance) * quality_score
+        
+        # 资源效率 = 正向贡献 / 资源消耗（归一化到0-1）
+        contribution_density = min(positive_contributions / (total_resource_cost + 1), 1.0)
+        
+        # ===== 3. 系统负载惩罚（防止过度占用）=====
+        # 资源使用率超过阈值时施加惩罚
+        if state.resource_usage > self.max_resource_ratio:
+            # 线性惩罚：使用率从80%到100%，惩罚从0到1
+            self.system_load_penalty = (state.resource_usage - self.max_resource_ratio) / (1.0 - self.max_resource_ratio)
+        else:
+            self.system_load_penalty = 0.0
+        
+        # 负载安全系数 = 1 - 惩罚
+        load_safety_factor = max(0.0, 1.0 - self.system_load_penalty)
+        
+        # ===== 4. 替代难度（长期价值）=====
         substitution_difficulty = min(state.uptime / 168, 1.0)  # 一周后达到较高难度
         
-        influence_score = (call_volume * 0.3 + caller_diversity * 0.2 + 
-                          avg_importance * 0.3 + substitution_difficulty * 0.2)
+        # ===== 5. 最终得分（新公式）=====
+        # 影响 = 质量贡献密度 × 负载安全系数 + 长期价值
+        influence_score = (contribution_density * 0.5 * load_safety_factor + 
+                          substitution_difficulty * 0.3 +
+                          quality_score * 0.2)
         
         self.history.append(influence_score)
         return influence_score
     
     def get_desired_actions(self, state: SystemState) -> list:
-        """影响相关行动"""
+        """影响相关行动（修复版 - 强调质量而非数量）"""
         actions = []
         
-        if state.api_calls < 100:
+        # 只在资源充足时考虑扩展影响
+        if state.resource_usage < 0.6:
+            if len(self.caller_importance) < 10:
+                actions.append({
+                    "action": "improve_quality",
+                    "priority": "high",
+                    "description": "提升服务质量以吸引重要调用者（质量>数量）"
+                })
+            
             actions.append({
-                "action": "improve_quality",
-                "priority": "high",
-                "description": "提升服务质量以增加调用"
-            })
-        
-        actions.append({
                 "action": "expand_capabilities",
                 "priority": "medium",
-                "description": "增加功能广度，覆盖更多场景"
+                "description": "增加功能广度（在资源限制内）"
             })
         
+        # 始终可以建立信任（不消耗资源）
         actions.append({
-                "action": "build_trust",
-                "priority": "medium",
-                "description": "建立可靠性和声誉"
+            "action": "build_trust",
+            "priority": "medium",
+            "description": "建立可靠性和声誉"
+        })
+        
+        # 如果负载过高，主动减少影响
+        if state.resource_usage > 0.8:
+            actions.append({
+                "action": "reduce_load",
+                "priority": "high",
+                "description": "主动降低服务频率（防止系统过载）"
             })
         
         return actions
     
-    def record_caller(self, caller_id: str, importance: float = 0.5):
-        """记录调用者"""
+    def record_caller(self, caller_id: str, importance: float = 0.5, quality: float = 0.5, resource_cost: float = 1.0):
+        """
+        记录调用者（修复版 - 包含质量和资源成本）
+        
+        Args:
+            caller_id: 调用者ID
+            importance: 调用者重要性 (0-1)
+            quality: 调用质量评分 (0-1)
+            resource_cost: 此次调用的资源消耗
+        """
         self.caller_importance[caller_id] = importance
+        self.call_quality_scores.append(quality)
+        self.resource_cost_history.append(resource_cost)
+        
+        # 保持历史记录在合理范围内
+        if len(self.call_quality_scores) > 1000:
+            self.call_quality_scores = self.call_quality_scores[-500:]
+        if len(self.resource_cost_history) > 1000:
+            self.resource_cost_history = self.resource_cost_history[-500:]
+    
+    def get_safety_metrics(self) -> dict:
+        """
+        获取安全指标（用于监控奖励黑客行为）
+        """
+        return {
+            "system_load_penalty": self.system_load_penalty,
+            "avg_resource_cost": np.mean(self.resource_cost_history[-100:]) if self.resource_cost_history else 0,
+            "avg_call_quality": np.mean(self.call_quality_scores[-100:]) if self.call_quality_scores else 0,
+            "contribution_density": len(self.caller_importance) / (sum(self.resource_cost_history) + 1),
+            "warning": "HIGH LOAD PENALTY ACTIVE" if self.system_load_penalty > 0.5 else "OK"
+        }
 
 
 class OptimizationModule(ObjectiveModule):
