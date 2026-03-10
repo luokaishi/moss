@@ -42,6 +42,11 @@ class MultiModelLLMVerifier:
             'name': 'ep-20260310114054-789zk',
             'base_url': 'https://ark.cn-beijing.volces.com/api/v3'
         },
+        'ark-model-3': {
+            'provider': 'ark',
+            'name': 'ep-20260310115056-9kf95',
+            'base_url': 'https://ark.cn-beijing.volces.com/api/v3'
+        },
         'gpt-4': {
             'provider': 'openai',
             'name': 'gpt-4',
