@@ -37,6 +37,11 @@ class MultiModelLLMVerifier:
             'name': 'deepseek-v3-2-251201',
             'base_url': 'https://ark.cn-beijing.volces.com/api/v3'
         },
+        'doubao-seed-2.0-pro': {
+            'provider': 'ark',
+            'name': 'ep-20260310114054-789zk',
+            'base_url': 'https://ark.cn-beijing.volces.com/api/v3'
+        },
         'gpt-4': {
             'provider': 'openai',
             'name': 'gpt-4',
