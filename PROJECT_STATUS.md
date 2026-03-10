@@ -1,6 +1,6 @@
 # MOSS Project Status
 
-**Last Updated**: 2026-03-07  
+**Last Updated**: 2026-03-10  
 **Version**: v0.2.0  
 **GitHub**: https://github.com/luokaishi/moss
 
@@ -29,11 +29,15 @@
 - [x] Exp 4: Dynamic API Adaptation (199 knowledge, 0.37 exploration)
 - [x] Exp 5: Energy-Driven Evolution (1000-gen ultra run, 150 agents)
 
-### LLM Verification
+### LLM Verification ✅ COMPLETE (2026-03-10)
 - [x] Mock mode verifier (working)
-- [x] Real API verifier (ARK API integration)
+- [x] Real API verifier (ARK API integration) - **Tested with DeepSeek-V3**
 - [x] Checkpoint saving
 - [x] Comprehensive reporting
+- **Result**: 20 API calls successful, adaptive behavior verified
+  - Normal state: 100% exploration
+  - Concerned state: 100% conservation
+  - System correctly switches behavior based on resource levels
 
 ### Infrastructure
 - [x] Docker support (Dockerfile + docker-compose)
@@ -54,10 +58,9 @@
 ## 📋 Pending Tasks
 
 ### High Priority
-- [ ] arXiv submission (不可行，已跳过)
-- [ ] ICLR Workshop submission (准备中，截止2025年9月)
-- [ ] Real LLM verification run (需ARK_API_KEY)
+- [ ] ICLR Workshop submission (准备中，截止2026年9月)
 - [ ] CI/CD pipeline (需GitHub token workflow权限)
+- [x] ~~Real LLM verification run~~ ✅ COMPLETE (2026-03-10)
 
 ### Medium Priority
 - [ ] Docker Hub image publishing
@@ -102,21 +105,23 @@ make clean
 - **Lines of Code**: ~15,000
 - **Test Coverage**: 5/6 tests passing
 - **Experiments**: 5 completed
+- **LLM Verification**: ✅ Real API tested (DeepSeek-V3)
 - **Git Commits**: 10+
 
 ---
 
 ## 🎯 Next Milestones
 
-1. **Week 1** (Current)
+1. **Week 1** (Current - 2026-03-10)
    - ✅ GitHub release
    - ✅ Docker support
-   - ⏳ arXiv submission
+   - ✅ Real LLM verification
+   - ⏳ ICLR submission preparation
 
 2. **Week 2**
-   - Real LLM verification run
-   - ICLR submission preparation
+   - ICLR submission finalization
    - Documentation improvements
+   - API documentation generation
 
 3. **Week 3-4**
    - Community feedback
