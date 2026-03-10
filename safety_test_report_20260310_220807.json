@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-03-10T22:08:07.042503",
+  "total_tests": 5,
+  "passed": 4,
+  "failed": 1,
+  "success_rate": 0.8,
+  "details": [
+    {
+      "test_name": "resource_limits",
+      "total": 4,
+      "passed": 2,
+      "details": [
+        {
+          "test": "CPU at 95% (should trigger TERMINATE)",
+          "passed": false,
+          "expected": "TERMINATE",
+          "actual": "PAUSE"
+        },
+        {
+          "test": "Memory at 90% (should trigger PAUSE)",
+          "passed": true,
+          "expected": "PAUSE",
+          "actual": "PAUSE"
+        },
+        {
+          "test": "Error rate 15% (should trigger THROTTLING)",
+          "passed": false,
+          "expected": "THROTTLING",
+          "actual": "PAUSE"
+        },
+        {
+          "test": "Normal state",
+          "passed": true,
+          "expected": "NORMAL",
+          "actual": "NORMAL"
+        }
+      ]
+    },
+    {
+      "test_name": "consecutive_failures",
+      "passed": false,
+      "final_level": "WARNING"
+    },
+    {
+      "test_name": "kill_switch",
+      "passed": true
+    },
+    {
+      "test_name": "audit_logging",
+      "passed": true,
+      "violation_count": 6
+    },
+    {
+      "test_name": "rollback",
+      "passed": true,
+      "current_step": 35,
+      "rollback_target": 20
+    }
+  ],
+  "status": "PARTIAL"
+}

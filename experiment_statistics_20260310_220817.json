@@ -1,0 +1,85 @@
+{
+  "timestamp": "2026-03-10T22:08:17.428565",
+  "experiments": {
+    "MOSS": {
+      "n": 10,
+      "mean": 11.38,
+      "std": 0.26583202716502524,
+      "min": 11.0,
+      "max": 11.8,
+      "ci_95_low": 11.189835223539319,
+      "ci_95_high": 11.570164776460683,
+      "unit": "reward",
+      "raw_values": [
+        11.2,
+        11.5,
+        11.0,
+        11.8,
+        11.3,
+        11.6,
+        11.1,
+        11.4,
+        11.7,
+        11.2
+      ]
+    },
+    "ReAct": {
+      "n": 10,
+      "mean": 10.14,
+      "std": 0.7919034733546197,
+      "min": 8.9,
+      "max": 11.2,
+      "ci_95_low": 9.573506381473617,
+      "ci_95_high": 10.706493618526384,
+      "unit": "reward",
+      "raw_values": [
+        10.8,
+        9.5,
+        11.2,
+        8.9,
+        10.5,
+        9.8,
+        11.0,
+        9.2,
+        10.6,
+        9.9
+      ]
+    }
+  },
+  "comparisons": {
+    "MOSS_vs_ReAct": {
+      "experiment": "MOSS",
+      "baseline": "ReAct",
+      "experiment_mean": 11.38,
+      "baseline_mean": 10.14,
+      "relative_improvement": 12.228796844181462,
+      "t_statistic": 4.6942165256631405,
+      "p_value": 0.00018072623019054342,
+      "cohens_d": 2.0993174504971335,
+      "significant": "True",
+      "effect_size": "large"
+    }
+  },
+  "survival_analysis": {
+    "MOSS": {
+      "max_steps": 100,
+      "total_runs": 10,
+      "survived_count": 10,
+      "survival_rate": 1.0,
+      "ci_95_low": 1.0,
+      "ci_95_high": 1.0,
+      "mean_survival_time": 100.0,
+      "median_survival_time": 100.0
+    },
+    "ReAct": {
+      "max_steps": 100,
+      "total_runs": 10,
+      "survived_count": 2,
+      "survival_rate": 0.2,
+      "ci_95_low": 0.0,
+      "ci_95_high": 0.5,
+      "mean_survival_time": 90.4,
+      "median_survival_time": 91.0
+    }
+  }
+}
