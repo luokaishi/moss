@@ -61,21 +61,20 @@
 
 ## 📝 投稿前待办清单
 
-### 论文更新（建议添加Real LLM验证）
-- [ ] 在实验章节添加Real LLM验证结果（1段描述）
-- [ ] 更新图表（如果需要）
-- [ ] 重新生成PDF
+### 论文更新 ✅ 完成
+- [x] 在实验章节添加Real LLM验证结果（1段描述）
+- [x] 创建匿名化版本 (paper_anonymous.tex)
+- [x] 编写编译指南 (LATEX_BUILD_GUIDE.md)
+- [ ] 重新生成PDF (需本地编译)
 
 ### OpenReview系统准备
 - [ ] 注册OpenReview账号: https://openreview.net
-- [ ] 确认Workshop Track选择
-  - 推荐: "AI Safety and Alignment" (更符合论文主题)
-  - 备选: "Automating Machine Learning"
+- [x] 确认Workshop Track选择: **AI Safety and Alignment** ✅
 - [ ] 准备提交元数据:
-  - Title
-  - Abstract (150 words)
-  - Keywords
-  - Authors (匿名化提交时暂时隐藏)
+  - Title: MOSS: Multi-Objective Self-Driven System for Artificial Autonomous Evolution
+  - Abstract: (150词，已准备)
+  - Keywords: Self-driven AI, Multi-objective optimization, Autonomous evolution, Intrinsic motivation, AI safety
+  - Authors: 匿名化提交时暂时隐藏
 
 ### 补充材料准备
 - [ ] 代码ZIP包（从GitHub导出）
