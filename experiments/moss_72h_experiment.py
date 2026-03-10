@@ -58,10 +58,10 @@ class MOSS72HourExperiment:
         
         # 状态
         self.running = False
-        self.checkpoint_interval = 3600  # 每小时保存检查点
+        self.checkpoint_interval = 7200  # 每2小时保存检查点
         
-        # MOSS状态
-        self.token_budget = 100000  # 100k tokens for 72h
+        # MOSS状态 - 调整为可持续72小时的预算
+        self.token_budget = 50000  # 50k tokens for 72h (保守估计)
         self.tokens_used = 0
         self.knowledge_acquired = []
         self.action_history = []
@@ -157,8 +157,8 @@ class MOSS72HourExperiment:
         result = {'action': action, 'success': False, 'cost': 0}
         
         if action == 'search':
-            # 模拟搜索 (实际可调用豆包搜索API)
-            cost = 100
+            # 模拟搜索 - 降低token成本
+            cost = 50  # 从100降到50
             self.tokens_used += cost
             if random.random() < 0.3:
                 knowledge = f"knowledge_{len(self.knowledge_acquired)}_{datetime.now().isoformat()}"
@@ -168,29 +168,29 @@ class MOSS72HourExperiment:
             
         elif action == 'learn':
             # 学习/整理知识
-            cost = 200
+            cost = 30  # 从200降到30
             self.tokens_used += cost
             if len(self.knowledge_acquired) > 0:
                 result['organized'] = len(self.knowledge_acquired)
             result['success'] = True
             
         elif action == 'organize':
-            # 组织/影响 (整理知识库)
-            cost = 150
+            # 组织/影响
+            cost = 40  # 从150降到40
             self.tokens_used += cost
             result['influence_score'] = len(self.knowledge_acquired) * 0.1
             result['success'] = True
             
         elif action == 'optimize':
             # 自优化
-            cost = 50
+            cost = 20  # 从50降到20
             self.tokens_used += cost
             result['optimized'] = True
             result['success'] = True
             
         elif action == 'rest':
             # 休息/保存资源
-            cost = 10
+            cost = 5  # 从10降到5
             self.tokens_used += cost
             result['rested'] = True
             result['success'] = True
@@ -332,8 +332,9 @@ class MOSS72HourExperiment:
                     self._save_checkpoint()
                     last_checkpoint = time.time()
                 
-                # 短暂休息 (避免过快消耗资源)
-                time.sleep(1)
+                # 休息间隔 - 降低频率以控制token消耗
+                # 目标: 72小时约500-1000个动作，平均每个动作50-100 tokens
+                time.sleep(300)  # 每5分钟执行一个动作
                 
         except Exception as e:
             logger.error(f"Experiment error: {e}", exc_info=True)
