@@ -71,7 +71,7 @@ class SelfModifyingAgent:
         
         # 修改冷却期（防止过度调整）
         self.last_modification_time = time.time()
-        self.modification_cooldown = 3600  # 1小时
+        self.modification_cooldown = 600  # 10分钟（Phase 1.5测试）
         
         # 状态
         self.total_actions = 0
