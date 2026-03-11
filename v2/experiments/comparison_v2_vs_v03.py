@@ -54,8 +54,8 @@ class ComparisonExperiment:
         self.v03_agent.modification_cooldown = float('inf')
         
         # 共享任务流（确保公平对比）
-        self.task_stream = ContinuousTaskStream(seed=42)
-        self.task_stream_v03 = ContinuousTaskStream(seed=42)  # 相同种子
+        self.task_stream = ContinuousTaskStream()
+        self.task_stream_v03 = ContinuousTaskStream()  # 相同任务分布
         
         self.results = {
             'experiment_id': self.experiment_id,
