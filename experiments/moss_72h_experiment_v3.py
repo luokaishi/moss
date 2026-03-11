@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-MOSS 72-Hour Real Autonomous Experiment V3 (High Intensity)
-72小时真实自主实验V3 - 高强度版本
+MOSS v0.3.0 - 72小时自主实验 (Exp-Beta 激进模式)
 
-相比V2的改进:
+实验代号: Exp-Beta (Intensive Mode)
+框架版本: MOSS v0.3.0 (稳定版)
+
+相比Exp-Alpha的改进:
 1. 混合真实API (30% Wikipedia + 20% GitHub)
 2. 自适应动作频率 (1-10分钟)
 3. 预加载知识库 (Wikipedia 10主题)
@@ -11,6 +13,10 @@ MOSS 72-Hour Real Autonomous Experiment V3 (High Intensity)
 5. 智能主题选择
 
 执行环境: 境外服务器 (需要外网访问)
+
+注意: 本实验属于 v0.3.0 稳定框架，与 v2.0.0 Evo 实验架构不同
+      v2.0.0 = 自演化动态权重架构 (见 v2/ 目录)
+      v0.3.0 = 固定权重优化框架 (本实验)
 """
 
 import os

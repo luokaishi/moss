@@ -14,6 +14,26 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 
 ---
 
+## 📋 命名体系说明 (Naming Guide)
+
+为避免版本混淆，本文档明确定义以下术语：
+
+| 术语 | 指代对象 | 物理位置 | 状态 |
+|------|----------|----------|------|
+| **MOSS v0.3.0** | 稳定版本（当前主框架） | 根目录 `/` | ✅ 稳定运行 |
+| **MOSS v2.0.0** | 实验版本（Evo自演化架构） | `v2/` 目录 | 🔄 实验开发 |
+| **Exp-Alpha** | 72小时保守模式实验 | `experiments/moss_72h_experiment.py` | ⏸️ 已中断 |
+| **Exp-Beta** | 72小时激进模式实验 | `experiments/moss_72h_experiment_v3.py` | ⏸️ 已中断 |
+
+### 版本关系说明
+- **v0.3.0 → v2.0.0** 是大版本跃升（固定权重 → 自演化动态权重）
+- **v2/** 目录即 **MOSS v2.0.0** 实验架构
+- **Exp-Alpha/Beta** 是 **v0.3.0** 框架下的实验变体（参数不同）
+
+> 注意：`v2/` 目录名 = `v2.0.0` 版本号，为避免破坏已发布链接，目录保留原名，通过本文档澄清语义。
+
+---
+
 ## 🎯 Core Insight
 
 Current AI is **task-driven**: Human assigns task → AI executes → Stops when complete  
