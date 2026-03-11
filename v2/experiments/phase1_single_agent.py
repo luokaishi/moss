@@ -15,6 +15,7 @@ import time
 import sys
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 # 添加项目路径
 sys.path.insert(0, '/workspace/projects/moss/v2/core')

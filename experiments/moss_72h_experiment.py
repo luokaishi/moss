@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """
-MOSS 72-Hour Real Autonomous Experiment (Simplified Version)
-使用火山引擎ARK生态系统的简化版本
+MOSS v0.3.0 - 72小时自主实验 (Exp-Alpha 保守模式)
 
+实验代号: Exp-Alpha (Conservative Mode)
+框架版本: MOSS v0.3.0 (稳定版)
 实验目标: 验证MOSS在72小时真实环境中保持四目标平衡的能力
 环境: 火山引擎ARK (豆包搜索、知识库、记忆存储)
+
+注意: 本实验属于 v0.3.0 稳定框架，与 v2.0.0 Evo 实验架构不同
+      v2.0.0 = 自演化动态权重架构 (见 v2/ 目录)
+      v0.3.0 = 固定权重优化框架 (本实验)
 """
 
 import os

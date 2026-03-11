@@ -6,7 +6,7 @@ MOSS 2.0 - Objective Evolver
 """
 
 import numpy as np
-from typing import List, Dict, Callable, Optional
+from typing import List, Dict, Callable, Optional, Tuple
 from dataclasses import dataclass
 import random
 
