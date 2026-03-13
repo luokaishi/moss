@@ -1,4 +1,10 @@
-# MOSS v2.0.0 - Evo 实验架构
+# MOSS v2.0.0 - Multi-Objective Self-Driven System for AI Autonomous Evolution
+
+**全称**: MOSS: Multi-Objective Self-Driven System for AI Autonomous Evolution
+**版本**: v2.0.0 (Evo - Evolution)
+**代号**: Evo (Evolution)
+**日期**: 2026-03-11
+**作者**: Cash, 伏羲
 
 **版本**: v2.0.0  
 **代号**: Evo (Evolution)  
