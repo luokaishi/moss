@@ -176,21 +176,21 @@ Current experiments run on single machine. Future work includes:
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.8\textwidth]{figures/fig2_performance.png}
-\caption{Cumulative reward comparison: Fixed baseline vs. Phase 1.5 (1.5h) vs. 6h long-term vs. 24h long-term. Self-modifying configurations show compounding gains over time.}
+\caption{Cumulative reward comparison: Fixed baseline vs. Phase 1.5 (1.5h) vs. 6h long-term vs. 24h long-term. Self-modifying configurations show compounding gains over time. Data sources: \texttt{experiments/data/longterm\_6h\_0311\_2108\_agent\_current.json}, \texttt{experiments/data/longterm\_24h\_0311\_2108\_agent\_current.json}, and statistical validation results in \texttt{v2/experiments/statistical\_validation/}.}
 \label{fig:performance}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/fig3_path_bifurcation.png}
-\caption{Path bifurcation: 6h experiment (Social-Exploration strategy: high influence, reduced survival) vs. 24h experiment (Knowledge-Seeking strategy: high curiosity, balanced survival). Both originate from identical initial weights $[0.2, 0.4, 0.3, 0.1]$.}
+\caption{Path bifurcation visualization based on \texttt{experiments/data/longterm\_6h\_0311\_2108\_agent\_current.json} and \texttt{experiments/data/longterm\_24h\_0311\_2108\_agent\_current.json}. The 6h experiment (Social-Exploration strategy: high influence, reduced survival) converges to $[0.05, 0.46, 0.45, 0.05]$ while the 24h experiment (Knowledge-Seeking strategy: high curiosity, balanced survival) converges to $[0.21, 0.53, 0.19, 0.07]$. Both originate from identical initial weights $[0.2, 0.4, 0.3, 0.1]$, demonstrating that runtime duration drives strategy divergence.}
 \label{fig:bifurcation}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/fig4_trajectories.png}
-\caption{Weight evolution trajectories over 6h and 24h. The 6h run rapidly converges to social-exploration (high influence), while the 24h run maintains longer adaptation, eventually settling on knowledge-seeking (high curiosity with survival balance).}
+\caption{Weight evolution trajectories over 6h and 24h, visualized from experimental data in \texttt{experiments/data/longterm\_6h\_0311\_2108\_agent\_current.json} and \texttt{experiments/data/longterm\_24h\_0311\_2108\_agent\_current.json}. The 6h run rapidly converges to social-exploration (high influence), while the 24h run maintains longer adaptation, eventually settling on knowledge-seeking (high curiosity with survival balance). Statistical validation with 15 independent runs ($N=15$) confirms this path bifurcation is robust across random seeds (60\% curiosity-dominant, 40\% influence-dominant).}
 \label{fig:trajectories}
 \end{figure}
 
