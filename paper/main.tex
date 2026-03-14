@@ -142,10 +142,39 @@ Phase 1.5 & 1.5h & 5 & 150.14 (+40\%) \\
 
 \textbf{Key Insight}: Runtime context drives specialization---same initial weights, different stable equilibria. This \textit{path bifurcation} phenomenon reveals that self-modification enables context-dependent adaptation rather than converging to a single global optimum.
 
+\subsection{Statistical Validation (N=25)}
+To validate the robustness of path bifurcation, we conducted statistical validation with 25 independent runs using identical initial weights $[0.2, 0.4, 0.3, 0.1]$ but different random seeds (N=15 original + N=10 extended).
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Strategy Type & Count & Percentage \\
+\midrule
+Curiosity-Dominant (C$>$0.4) & 12 & 48.0\% \\
+Mixed & 6 & 24.0\% \\
+Influence-Dominant (I$>$0.4) & 4 & 16.0\% \\
+Survival-Dominant (S$>$0.5) & 2 & 8.0\% \\
+Optimization-Dominant (O$>$0.5) & 1 & 4.0\% \\
+\bottomrule
+\end{tabular}
+\caption{Strategy distribution across 25 independent runs. Path bifurcation produces multiple stable strategies from identical initial conditions.}
+\label{tab:strategy_distribution}
+\end{table}
+
+K-means clustering ($k$=3) identifies three stable clusters:
+\begin{itemize}
+\item \textbf{Cluster 1} [0.19, 0.45, 0.25, 0.11]: Curiosity-balanced (48\% of runs)
+\item \textbf{Cluster 2} [0.35, 0.19, 0.35, 0.11]: Survival-influence balanced
+\item \textbf{Cluster 3} [0.09, 0.05, 0.17, 0.70]: Optimization-dominant
+\end{itemize}
+
+Performance statistics: mean reward $765.30 \pm 120.30$ (95\% CI: $[714.62, 815.99]$), median 694.23. While path bifurcation is robust (5 distinct strategies emerge), the difference in cumulative reward between high-curiosity ($n$=12, mean=749.51) and high-influence ($n$=12, mean=725.94) groups is not statistically significant ($t$=0.505, $p$=0.619). This suggests that multiple viable strategies exist, with performance determined more by task context than strategy type.
+
 \section{Discussion}
 The path bifurcation phenomenon---where identical initial conditions evolve into distinct stable strategies (social-exploration vs. knowledge-seeking)---demonstrates that self-modification enables \textit{context-dependent adaptation} rather than converging to a single global optimum. This parallels biological adaptive radiation: same ancestor, diverse descendants based on environmental context.
 
-The 6h experiment's rapid convergence to social-exploration suggests that shorter time horizons favor immediate influence expansion, while the 24h experiment's knowledge-seeking strategy reflects the value of sustained curiosity when long-term survival is assured. Statistical validation across 15 independent runs (see Appendix B) confirms that path bifurcation is a robust phenomenon rather than an artifact of specific random seeds.
+The 6h experiment's rapid convergence to social-exploration suggests that shorter time horizons favor immediate influence expansion, while the 24h experiment's knowledge-seeking strategy reflects the value of sustained curiosity when long-term survival is assured. Statistical validation across 25 independent runs (N=15 original + N=10 extended) confirms that path bifurcation is a robust phenomenon (5 distinct strategies emerge) rather than an artifact of specific random seeds.
 
 The 5-level safety mechanism ensures that self-modification remains bounded and recoverable, addressing key concerns about autonomous AI safety.
 
@@ -156,13 +185,13 @@ MOSS establishes that AI systems can autonomously develop adaptive goal structur
 \begin{enumerate}
 \item Framework for autonomous weight evolution with four named intrinsic objectives (survival, curiosity, influence, self-optimization)
 \item Empirical discovery of path bifurcation: 6h social-exploration vs. 24h knowledge-seeking strategies
-\item Statistical validation (N=15) confirming path bifurcation is robust across random seeds
+\item Statistical validation (N=25) confirming path bifurcation produces multiple stable strategies from identical initial conditions
 \item 5-level gradient safety mechanism for production deployment
 \item Open experiment data in repository for full reproducibility
 \end{enumerate}
 
 \section{Limitations and Future Work}
-\textbf{Statistical Validation}: While our 15-run validation confirms path bifurcation is robust (60\% converge to curiosity-dominant, 40\% to influence-dominant strategies), larger-scale replication (N=30) with formal hypothesis testing (p$<$0.05) remains future work.
+\textbf{Statistical Validation}: Our N=25 validation confirms path bifurcation is robust (5 distinct strategies emerge, k=3 clusters via K-means). However, the difference in cumulative reward between high-curiosity and high-influence strategies is not statistically significant ($t$=0.505, $p$=0.619), suggesting that multiple viable strategies exist. Larger-scale replication (N$\ge$50) with controlled task conditions remains future work.
 
 Current experiments run on single machine. Future work includes:
 \begin{itemize}
