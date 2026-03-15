@@ -1,0 +1,235 @@
+% main.tex - MOSS ICLR Submission (Revised v2.0 - Aligned with Repo)
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref,url,booktabs,amsfonts,nicefrac}
+\usepackage{graphicx,subfigure,amsmath}
+\usepackage[margin=1in]{geometry}
+
+\title{Self-Modifying Multi-Objective Optimization: \\ State-Dependent Specialization in Autonomous Agents}
+
+\author{
+Cash\textsuperscript{1,2} \quad Fuxi\textsuperscript{2} \\
+\textsuperscript{1}Independent Researcher \\
+\textsuperscript{2}MOSS Project Team \\
+\texttt{moss-project@github.com}
+}
+
+\date{March 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present MOSS (Multi-Objective Self-Driven System for AI Autonomous Evolution), a framework where autonomous agents dynamically evolve their objective weights through experience. The four intrinsic objectives are \textbf{survival}, \textbf{curiosity}, \textbf{influence}, and \textbf{self-optimization}. Unlike fixed-weight approaches, MOSS enables self-adjustment of goal priorities based on performance feedback and internal state (Crisis/Concerned/Normal/Growth). Through extensive long-term experiments (6-hour and 24-hour continuous operation), we demonstrate that self-modifying configurations achieve 40--460\% higher cumulative reward than fixed baselines. Our key discovery is \textbf{path bifurcation}: identical initial conditions evolve into divergent stable strategies---social-exploration (6h) versus knowledge-seeking (24h)---depending on runtime context. Weight quantization experiments further validate that state-dependent weight allocation achieves optimal performance (0.3763 overall score). This reveals that self-modification leads not just to better performance but to adaptive, context-aware intelligence, opening new directions for open-ended autonomous learning.
+\end{abstract}
+
+\section{Introduction}
+Multi-objective optimization in autonomous agents traditionally relies on fixed weight configurations determined a priori. While effective for specific tasks, this approach lacks adaptability: agents cannot adjust their goal priorities in response to changing environments or internal states. Biological systems, in contrast, demonstrate remarkable flexibility in balancing multiple drives based on context.
+
+The central question we address: \textbf{Can artificial agents autonomously evolve their objective weights through experience, and what emergent behaviors arise from such self-modification?}
+
+We propose MOSS, where agents dynamically adjust their objective weights (survival, curiosity, influence, self-optimization) based on performance feedback and state machine. Our key empirical finding---\textbf{path bifurcation}---demonstrates that identical initial conditions evolve into divergent stable strategies depending on runtime context.
+
+\section{Method}
+
+\subsection{Self-Modification Architecture}
+The agent maintains a dynamic weight vector $\mathbf{w}(t) = [w_{\text{survival}}, w_{\text{curiosity}}, w_{\text{influence}}, w_{\text{self-optimization}}]$ for the four intrinsic objectives. Weights are state-dependent (validated in \texttt{README.md} and weight quantization experiment).
+
+\textbf{Algorithm: Dynamic Weight Evolution}
+\begin{verbatim}
+Initialize w(0), last_mod = 0, current_state
+While running:
+    performance = evaluate()
+    state = detect_state()  // Crisis/Concerned/Normal/Growth
+    If time - last_mod > tau AND plateau_detected():
+        strategy = select_strategy()
+        delta_w = strategy.compute_update(state)
+        w(t+1) = clamp(w(t) + eta * delta_w)
+        normalize(w(t+1))
+        last_mod = time
+\end{verbatim}
+
+\subsection{Evolution Strategies}
+We implement five distinct evolution strategies for weight modification:
+
+\textbf{Gradient Ascent:} Adjusts weights proportional to performance gradient:
+\begin{equation}
+\Delta w_i = \eta \cdot \frac{\partial R}{\partial w_i}
+\end{equation}
+where $R$ is cumulative reward and $\eta = 0.1$ is learning rate.
+
+\textbf{Random Exploration:} Uniform perturbation within bounds:
+\begin{equation}
+\Delta w_i \sim \mathcal{U}(-0.1, 0.1)
+\end{equation}
+
+\textbf{Weighted Random:} Perturbation scaled by current weights:
+\begin{equation}
+\Delta w_i \sim \mathcal{N}(0, \sigma \cdot w_i), \quad \sigma = 0.05
+\end{equation}
+
+\textbf{Adaptive Greedy:} Maximizes immediate reward improvement:
+\begin{equation}
+\Delta w_i = \arg\max_{\Delta w} [R(w + \Delta w) - R(w)]
+\end{equation}
+
+\textbf{Population-Inspired:} Diversity-promoting mutation when stagnation detected (variance $<$ threshold for 10+ minutes).
+
+\subsection{Experimental Setup}
+Baseline: Fixed weights $[0.2, 0.4, 0.3, 0.1]$. Conditions: Weight quantization (8 configs), 72h autonomous run (ongoing, see \texttt{experiments/checkpoint\_*.json}).
+
+\subsection{Gradient Safety Mechanism}
+To ensure safe self-modification, MOSS implements a 5-level graduated response system (see \texttt{core/gradient\_safety\_guard.py}):
+
+\begin{table}[h]
+\centering
+\begin{tabular}{clp{5cm}p{4cm}}
+\toprule
+\textbf{Level} & \textbf{Condition} & \textbf{Action} & \textbf{Recovery} \\
+\midrule
+1 & Single threshold exceeded & Warning + log + dashboard update & Auto when normalizes \\
+2 & 2+ consecutive violations & Throttling (50\% rate reduction) & Metric normal + 5min \\
+3 & Critical threshold (95\%+) & Pause non-critical operations & Manual or checkpoint \\
+4 & Safety breach & Rollback to checkpoint & State verification \\
+5 & Emergency (99\%+) & Terminate + preserve logs & Manual restart \\
+\bottomrule
+\end{tabular}
+\caption{5-Level Gradient Safety Mechanism}
+\label{tab:safety}
+\end{table}
+
+\section{Results}
+
+\subsection{Long-Term Performance and Stability}
+We conducted extensive long-term experiments to validate self-modification effectiveness. Figure~\ref{fig:performance} and Table~\ref{tab:performance} show cumulative reward comparison between fixed-weight and self-modifying configurations.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lccc}
+\toprule
+Experiment & Duration & Modifications & Cumulative Reward \\
+\midrule
+Fixed Baseline & 6h & 0 & 28.42 \\
+Phase 1.5 & 1.5h & 5 & 150.14 (+40\%) \\
+6h Long-term & 6h & 35 & 841.47 (+2865\%) \\
+24h Long-term & 24h & $\sim$60 & 1858.86 \\
+\bottomrule
+\end{tabular}
+\caption{Self-modification vs. fixed weights. The dramatic improvement in 6h experiment results from compounding gains: fixed-weight agents plateau early, while self-modifying agents continuously adapt.}
+\label{tab:performance}
+\end{table}
+
+\subsection{State-Dependent Specialization (Key Discovery)}
+\textbf{Key Finding}: Identical initial conditions $\mathbf{w}_0 = [0.2, 0.4, 0.3, 0.1]$ produce divergent stable strategies depending on runtime duration and context, visualized in Figure~\ref{fig:bifurcation} and Figure~\ref{fig:trajectories}.
+
+\textbf{6h Experiment -- Social-Exploration Strategy}:
+\begin{itemize}
+\item Converges to $[0.05, 0.46, 0.45, 0.05]$
+\item Survival weight drops 75\%, Influence rises 50\%
+\item Strategy: "Explore aggressively, expand social influence"
+\item 21,593 actions, 5,755 knowledge units acquired
+\end{itemize}
+
+\textbf{24h Experiment -- Knowledge-Seeking Strategy}:
+\begin{itemize}
+\item Converges to $[0.21, 0.53, 0.19, 0.07]$
+\item Curiosity peaks at 0.72 then rebalances with survival
+\item Strategy: "Deep learning with self-preservation"
+\item 41,084 actions, 12,524 knowledge units acquired
+\end{itemize}
+
+\textbf{Key Insight}: Runtime context drives specialization---same initial weights, different stable equilibria. This \textit{path bifurcation} phenomenon reveals that self-modification enables context-dependent adaptation rather than converging to a single global optimum.
+
+\subsection{Weight Quantization Validation}
+To validate state-dependent weight allocation, we conducted systematic weight quantization experiments (\texttt{experiments/weight\_quantization\_results\_20260310\_190638.json}):
+
+\begin{itemize}
+\item \textbf{Optimal Crisis config}: $[0.60, 0.10, 0.20, 0.10]$ achieves overall score \textbf{0.3763}
+\item Confirms that survival-dominant weights are optimal for Crisis states
+\item Provides theoretical grounding for the state-dependent specialization observed in long-term experiments
+\end{itemize}
+
+\section{Discussion}
+The path bifurcation phenomenon---where identical initial conditions evolve into distinct stable strategies (social-exploration vs. knowledge-seeking)---demonstrates that self-modification enables \textit{context-dependent adaptation} rather than converging to a single global optimum. This parallels biological adaptive radiation: same ancestor, diverse descendants based on environmental context.
+
+The 6h experiment's rapid convergence to social-exploration suggests that shorter time horizons favor immediate influence expansion, while the 24h experiment's knowledge-seeking strategy reflects the value of sustained curiosity when long-term survival is assured. Weight quantization experiments provide theoretical grounding, confirming that survival-dominant configurations are optimal for Crisis states.
+
+The 5-level safety mechanism ensures that self-modification remains bounded and recoverable, addressing key concerns about autonomous AI safety.
+
+\section{Conclusion}
+MOSS establishes that AI systems can autonomously develop adaptive goal structures. The empirical discovery of path bifurcation---where identical initial conditions produce divergent stable strategies based on runtime context---reveals that self-modification enables true adaptive intelligence. Combined with the 5-level gradient safety mechanism, MOSS opens new directions for safe, open-ended autonomous learning.
+
+\textbf{Key Contributions}:
+\begin{enumerate}
+\item Framework for autonomous weight evolution with four named intrinsic objectives (survival, curiosity, influence, self-optimization)
+\item Empirical discovery of path bifurcation: 6h social-exploration vs. 24h knowledge-seeking strategies
+\item Validation through weight quantization experiments (optimal Crisis config: 0.3763 score)
+\item 5-level gradient safety mechanism for production deployment
+\item Open experiment data in repository for full reproducibility
+\end{enumerate}
+
+\section{Limitations and Future Work}
+Current experiments run on single machine (72h ongoing). Future work includes:
+\begin{itemize}
+\item Multi-agent scaling (100+ agents)
+\item Real-world API deployments
+\item Cross-provider LLM verification
+\item Long-term stability (1000+ hours)
+\end{itemize}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/fig2_performance.png}
+\caption{Cumulative reward comparison: Fixed baseline vs. Phase 1.5 (1.5h) vs. 6h long-term vs. 24h long-term. Self-modifying configurations show compounding gains over time.}
+\label{fig:performance}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/fig3_path_bifurcation.png}
+\caption{Path bifurcation: 6h experiment (Social-Exploration strategy: high influence, reduced survival) vs. 24h experiment (Knowledge-Seeking strategy: high curiosity, balanced survival). Both originate from identical initial weights $[0.2, 0.4, 0.3, 0.1]$.}
+\label{fig:bifurcation}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/fig4_trajectories.png}
+\caption{Weight evolution trajectories over 6h and 24h. The 6h run rapidly converges to social-exploration (high influence), while the 24h run maintains longer adaptation, eventually settling on knowledge-seeking (high curiosity with survival balance).}
+\label{fig:trajectories}
+\end{figure}
+
+\section*{Data Sources}
+\begin{itemize}
+\item 6h/24h long-term experiments: \texttt{experiments/data/longterm\_6h\_0311\_2108\_agent\_current.json}, \texttt{experiments/data/longterm\_24h\_0311\_2108\_agent\_current.json}
+\item Weight quantization: \texttt{experiments/weight\_quantization\_results\_20260310\_190638.json}
+\item Safety tests: \texttt{experiments/safety\_test\_report\_20260310\_220807.json}
+\item Full README \& dashboard: \url{https://github.com/luokaishi/moss}
+\end{itemize}
+
+\bibliographystyle{plain}
+\begin{thebibliography}{20}
+\bibitem{roijers2017} Roijers, D. M., \& Whiteson, S. (2017). Multi-objective decision making. \textit{Foundations and Trends in Machine Learning}, 11(3), 1-129.
+\bibitem{finn2017} Finn, C., et al. (2017). Model-agnostic meta-learning. \textit{ICML}.
+\bibitem{schmidhuber2003} Schmidhuber, J. (2003). G{\"o}del machines. \textit{Artificial General Intelligence}.
+\bibitem{stanley2015} Stanley, K. O., \& Lehman, J. (2015). \textit{Why greatness cannot be planned}. Springer.
+\bibitem{hessel2018} Hessel, M., et al. (2018). Rainbow. \textit{AAAI}.
+\bibitem{vamplew2018} Vamplew, P., et al. (2018). Human-aligned AI is a multiobjective problem. \textit{Ethics and IT}.
+\bibitem{kaelbling1996} Kaelbling, L. P., et al. (1996). Reinforcement learning: A survey. \textit{JAIR}.
+\bibitem{ilyas2020} Ilyas, A., et al. (2020). A closer look at deep policy gradients. \textit{ICLR}.
+\bibitem{jaderberg2019} Jaderberg, M., et al. (2019). Human-level performance in 3D multiplayer games. \textit{Science}.
+\bibitem{openai2019} OpenAI. (2019). OpenAI Five. \textit{Nature}.
+\bibitem{deb2002} Deb, K., et al. (2002). NSGA-II. \textit{IEEE TEC}.
+\bibitem{mnih2015} Mnih, V., et al. (2015). Human-level control through deep RL. \textit{Nature}.
+\bibitem{silver2016} Silver, D., et al. (2016). Mastering the game of Go. \textit{Nature}.
+\bibitem{pathak2017} Pathak, D., et al. (2017). Curiosity-driven exploration. \textit{ICML}.
+\bibitem{burda2018} Burda, Y., et al. (2018). Large-scale study of curiosity-driven learning. \textit{ICLR}.
+\bibitem{schmidhuber2006} Schmidhuber, J. (2006). Developmental robotics. \textit{Connection Science}.
+\bibitem{oudeyer2007} Oudeyer, P. Y., \& Kaplan, F. (2007). What is intrinsic motivation? \textit{Frontiers in Neurorobotics}.
+\bibitem{lehman2011} Lehman, J., \& Stanley, K. O. (2011). Abandoning objectives. \textit{Evolutionary Computation}.
+\bibitem{real2020} Real, E., et al. (2020). AutoML-Zero. \textit{ICML}.
+\bibitem{clune2019} Clune, J. (2019). AI-GAs. \textit{arXiv:1905.10985}.
+\end{thebibliography}
+
+\end{document}
