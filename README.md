@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v0.3.0-green.svg)](https://github.com/luokaishi/moss/releases)
-[![Paper](https://img.shields.io/badge/paper-ICLR%202027-red.svg)](./docs/paper_simple.pdf)
+[![Version](https://img.shields.io/badge/version-v2.0.0-green.svg)](https://github.com/luokaishi/moss/releases)
+[![Paper](https://img.shields.io/badge/paper-NeurIPS%202026-red.svg)](https://github.com/luokaishi/moss/releases/tag/v2.0.0)
 [![Experiments](https://img.shields.io/badge/experiments-150%2B-9cf.svg)](./docs/)
 
 > **Self-driven motivation is the key missing ingredient for AI autonomous evolution.**
@@ -20,8 +20,8 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 
 | 术语 | 指代对象 | 物理位置 | 状态 |
 |------|----------|----------|------|
-| **MOSS v0.3.0** | 稳定版本（当前主框架） | 根目录 `/` | ✅ 稳定运行 |
-| **MOSS v2.0.0** | 实验版本（Evo自演化架构） | `v2/` 目录 | 🔄 实验开发 |
+| **MOSS v2.0.0** | 正式发布版本（论文对应） | `v2/` 目录 | ✅ 正式发布 |
+| **MOSS v0.3.0** | 稳定版本（固定权重） | 根目录 `/` | ✅ 稳定运行 |
 | **Exp-Alpha** | 72小时保守模式实验 | `experiments/moss_72h_experiment.py` | ⏸️ 已中断 |
 | **Exp-Beta** | 72小时激进模式实验 | `experiments/moss_72h_experiment_v3.py` | ⏸️ 已中断 |
 
