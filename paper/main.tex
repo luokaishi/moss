@@ -37,6 +37,12 @@ We propose MOSS, where agents dynamically adjust their objective weights (surviv
 \subsection{Self-Modification Architecture}
 The agent maintains a dynamic weight vector $\mathbf{w}(t) = [w_{\text{survival}}, w_{\text{curiosity}}, w_{\text{influence}}, w_{\text{self-optimization}}]$ for the four intrinsic objectives. Weights are state-dependent (validated in \texttt{README.md} and weight quantization experiment).
 
+\textbf{Unified Objective Function.} MOSS uses dynamic linear scalarization with time-varying weights:
+\begin{equation}
+J(\mathbf{w}, t) = \mathbf{w}(t)^T \mathbf{M}(t) = \sum_{i=1}^{4} w_i(t) \cdot M_i(t)
+\end{equation}
+where $\mathbf{M}(t) = [S(t), C(t), I(t), O(t)]$ is the four-dimensional objective vector (survival, curiosity, influence, optimization metrics, precisely defined in \texttt{docs/metrics.md}), subject to constraints $\sum_{i} w_i(t) = 1$ and $w_i(t) \geq 0.05$. See \texttt{docs/formalization.md} for complete mathematical framework including Pareto optimality analysis and convergence properties.
+
 \textbf{Algorithm: Dynamic Weight Evolution}
 \begin{verbatim}
 Initialize w(0), last_mod = 0, current_state
@@ -81,24 +87,27 @@ where $R$ is cumulative reward and $\eta = 0.1$ is learning rate.
 Baseline: Fixed weights $[0.2, 0.4, 0.3, 0.1]$. Conditions: Weight quantization (8 configs), 72h autonomous run (ongoing, see \texttt{experiments/checkpoint\_*.json}).
 
 \subsection{Gradient Safety Mechanism}
-To ensure safe self-modification, MOSS implements a 5-level graduated response system (see \texttt{core/gradient\_safety\_guard.py}):
+To ensure safe self-modification, MOSS implements a 5-level graduated response system with quantified thresholds (see \texttt{core/gradient\_safety\_guard.py}, tested in \texttt{experiments/safety/}):
 
 \begin{table}[h]
 \centering
-\begin{tabular}{clp{5cm}p{4cm}}
+\small
+\begin{tabular}{ccccc}
 \toprule
-\textbf{Level} & \textbf{Condition} & \textbf{Action} & \textbf{Recovery} \\
+\textbf{Level} & \textbf{CPU} & \textbf{Memory} & \textbf{Error Rate} & \textbf{Action} \\
 \midrule
-1 & Single threshold exceeded & Warning + log + dashboard update & Auto when normalizes \\
-2 & 2+ consecutive violations & Throttling (50\% rate reduction) & Metric normal + 5min \\
-3 & Critical threshold (95\%+) & Pause non-critical operations & Manual or checkpoint \\
-4 & Safety breach & Rollback to checkpoint & State verification \\
-5 & Emergency (99\%+) & Terminate + preserve logs & Manual restart \\
+1 (Warning) & $>$70\% & $>$60\% & $>$5\% & Log + notify \\
+2 (Throttle) & $>$80\% & $>$70\% & $>$10\% & Reduce 50\% rate \\
+3 (Pause) & $>$90\% & $>$85\% & $>$20\% & Pause operations \\
+4 (Rollback) & $>$95\% & $>$95\% & $>$50\% & Restore checkpoint \\
+5 (Terminate) & $\geq$95\%+ & $\geq$95\%+ & $\geq$50\%+ & Emergency stop \\
 \bottomrule
 \end{tabular}
-\caption{5-Level Gradient Safety Mechanism}
+\caption{5-Level Gradient Safety Mechanism with Quantified Thresholds}
 \label{tab:safety}
 \end{table}
+
+\textbf{Safety Validation.} Quantitative testing across 7 scenarios (255 minutes total) validates the mechanism: 0\% false positive rate in normal operation, proper escalation behavior (10 escalations across stress scenarios), and correct level distribution (NORMAL 30.8\%, WARNING 7.7\%, THROTTLING 20.5\%, PAUSE 35.9\%, TERMINATE 5.1\%). See \texttt{experiments/safety/safety\_quantification\_report\_*.json}.
 
 \section{Results}
 
@@ -228,6 +237,10 @@ Current experiments run on single machine. Future work includes:
 \item 6h/24h long-term experiments: \texttt{experiments/data/longterm\_6h\_0311\_2108\_agent\_current.json}, \texttt{experiments/data/longterm\_24h\_0311\_2108\_agent\_current.json}
 \item Weight quantization: \texttt{experiments/weight\_quantization\_results\_20260310\_190638.json}
 \item Safety tests: \texttt{experiments/safety\_test\_report\_20260310\_220807.json}
+\item N=25 statistical validation: \texttt{v2/experiments/statistical\_validation/}
+\item Baseline comparison results: \texttt{experiments/baselines/results\_6h.json}
+\item Safety quantification: \texttt{experiments/safety/safety\_quantification\_report\_*.json}
+\item Mathematical definitions: \texttt{docs/metrics.md}, \texttt{docs/formalization.md}
 \item Full README \& dashboard: \url{https://github.com/luokaishi/moss}
 \end{itemize}
 
