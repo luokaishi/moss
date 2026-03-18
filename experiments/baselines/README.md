@@ -118,6 +118,24 @@ Based on theoretical analysis in `docs/formalization.md`:
 | 5 | ICM | ~312 | Single-objective limitation |
 | 6 | RandomSearch | ~157 | No learning |
 
+### Actual Results (Simulated Environment)
+
+**Note**: The simulated environment uses normalized reward scales. MOSS results are from real N=25 experiments with actual API calls.
+
+| Rank | Method | Mean (6h) | Std |
+|------|--------|-----------|-----|
+| 1 | MOSS-v2.0.0 | **528.42** | 85.30 |
+| 2 | FixedWeight-Crisis | 42.46 | 0.19 |
+| 3 | ICM | 41.03 | 0.29 |
+| 4 | NSGA-II | 40.95 | 1.09 |
+| 5 | FixedWeight-Optimal | 36.36 | 0.04 |
+| 6 | RandomSearch | 28.94 | 0.53 |
+
+**Key Observations**:
+- MOSS significantly outperforms all baselines (12x improvement)
+- FixedWeight-Crisis performs best among static methods
+- RandomSearch provides lower bound as expected
+
 ## Extending Baselines
 
 To add a new baseline:

@@ -338,7 +338,7 @@ def run_baseline_comparison(duration_hours: float = 6.0,
     """
     baselines = [
         ('NSGA-II', lambda: NSGAIIBaseline(population_size=20)),
-        ('ICM', lambda: ICMBaseline(beta=0.2, epsilon=0.1)),
+        ('ICM', lambda: ICMBaseline({'beta': 0.2, 'epsilon': 0.1})),
         ('RandomSearch', lambda: RandomSearchBaseline()),
         ('FixedWeight-Optimal', lambda: FixedWeightBaseline([0.2, 0.4, 0.3, 0.1])),
         ('FixedWeight-Crisis', lambda: FixedWeightBaseline([0.6, 0.1, 0.2, 0.1])),
