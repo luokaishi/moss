@@ -103,6 +103,11 @@ class MultiAgentSociety:
         - 自身的norm值
         - 历史互动
         """
+        # 如果没有社交模块，使用简单策略（纯博弈）
+        if not agent.enable_social or agent.other_module is None:
+            # 纯理性选择：背叛更有利（囚徒困境纳什均衡）
+            return random.choice(['cooperate', 'defect'])
+        
         # 默认行动
         action = 'cooperate'
         
@@ -175,39 +180,42 @@ class MultiAgentSociety:
         else:
             self.defection_count += 1
         
-        # 更新信任和norm
-        # Agent A的视角
-        outcome_a = 'cooperate' if action_b == 'cooperate' else 'defect'
-        agent_a.other_module.update_trust(agent_b_id, outcome_a, payoff_a)
-        agent_a.norm_module.update_norm(
-            action_a, {},
-            0.5 if outcome_a == 'cooperate' else -0.5
-        )
-        agent_a.norm_module.update_reputation(agent_b_id, action_b, self.current_step)
+        # 更新信任和norm（仅当启用社交时）
+        if agent_a.enable_social and agent_a.other_module:
+            # Agent A的视角
+            outcome_a = 'cooperate' if action_b == 'cooperate' else 'defect'
+            agent_a.other_module.update_trust(agent_b_id, outcome_a, payoff_a)
+            agent_a.norm_module.update_norm(
+                action_a, {},
+                0.5 if outcome_a == 'cooperate' else -0.5
+            )
+            agent_a.norm_module.update_reputation(agent_b_id, action_b, self.current_step)
+            
+            # 观察
+            behavior_b = {
+                'action': action_b,
+                'reward': payoff_b,
+                'state': 'normal'
+            }
+            agent_a.other_module.observe_agent(agent_b_id, behavior_b, self.current_step)
         
-        # Agent B的视角
-        outcome_b = 'cooperate' if action_a == 'cooperate' else 'defect'
-        agent_b.other_module.update_trust(agent_a_id, outcome_b, payoff_b)
-        agent_b.norm_module.update_norm(
-            action_b, {},
-            0.5 if outcome_b == 'cooperate' else -0.5
-        )
-        agent_b.norm_module.update_reputation(agent_a_id, action_a, self.current_step)
-        
-        # 互相观察
-        behavior_b = {
-            'action': action_b,
-            'reward': payoff_b,
-            'state': 'normal'
-        }
-        agent_a.other_module.observe_agent(agent_b_id, behavior_b, self.current_step)
-        
-        behavior_a = {
-            'action': action_a,
-            'reward': payoff_a,
-            'state': 'normal'
-        }
-        agent_b.other_module.observe_agent(agent_a_id, behavior_a, self.current_step)
+        if agent_b.enable_social and agent_b.other_module:
+            # Agent B的视角
+            outcome_b = 'cooperate' if action_a == 'cooperate' else 'defect'
+            agent_b.other_module.update_trust(agent_a_id, outcome_b, payoff_b)
+            agent_b.norm_module.update_norm(
+                action_b, {},
+                0.5 if outcome_b == 'cooperate' else -0.5
+            )
+            agent_b.norm_module.update_reputation(agent_a_id, action_a, self.current_step)
+            
+            # 观察
+            behavior_a = {
+                'action': action_a,
+                'reward': payoff_a,
+                'state': 'normal'
+            }
+            agent_b.other_module.observe_agent(agent_a_id, behavior_a, self.current_step)
         
         return interaction
     
@@ -228,17 +236,21 @@ class MultiAgentSociety:
         
         # 所有agent执行一步（处理观察到的信息）
         for agent_id, agent in self.agents.items():
-            # 构建观察到的行为
-            observed = {}
-            for other_id in agent.other_module.other_models:
-                if other_id != agent_id:
-                    model = agent.other_module.other_models[other_id]
-                    if model.behavior_history:
-                        last_behavior = model.behavior_history[-1]
-                        observed[other_id] = last_behavior['behavior']
-            
-            # agent step
-            agent.step(observed_behaviors=observed)
+            if agent.enable_social and agent.other_module:
+                # 构建观察到的行为
+                observed = {}
+                for other_id in agent.other_module.other_models:
+                    if other_id != agent_id:
+                        model = agent.other_module.other_models[other_id]
+                        if model.behavior_history:
+                            last_behavior = model.behavior_history[-1]
+                            observed[other_id] = last_behavior['behavior']
+                
+                # agent step
+                agent.step(observed_behaviors=observed)
+            else:
+                # 无社交模块，直接step
+                agent.step()
     
     def run_simulation(self, n_steps: int = 100):
         """运行完整模拟"""
@@ -272,36 +284,40 @@ class MultiAgentSociety:
         
         for agent_id, agent in self.agents.items():
             agent_analysis = {
-                'personality': agent.valence_module.get_preference_profile(),
-                'social': agent.other_module.get_social_summary(),
-                'norm': agent.norm_module.get_norm_summary()
+                'personality': agent.valence_module.get_preference_profile() if agent.valence_module else None,
+                'social': agent.other_module.get_social_summary() if agent.other_module else None,
+                'norm': agent.norm_module.get_norm_summary() if agent.norm_module else None
             }
             analysis['agents'][agent_id] = agent_analysis
         
         # 整体统计
-        convergence_types = [a['norm']['convergence_type'] 
-                           for a in analysis['agents'].values()]
+        convergence_types = []
+        for a in analysis['agents'].values():
+            if a['norm'] and 'convergence_type' in a['norm']:
+                convergence_types.append(a['norm']['convergence_type'])
+        
         analysis['society_convergence'] = {
             'strong_norm': convergence_types.count('strong_norm'),
             'opportunistic': convergence_types.count('opportunistic'),
             'norm_collapse': convergence_types.count('norm_collapse'),
             'transitional': convergence_types.count('transitional')
-        }
+        } if convergence_types else {'none': self.n_agents}
         
-        # 信任网络分析
-        trust_scores = []
-        for agent in self.agents.values():
-            if agent.other_module.other_models:
-                scores = [m.trust_score for m in agent.other_module.other_models.values()]
-                trust_scores.extend(scores)
-        
-        if trust_scores:
-            analysis['trust_network'] = {
-                'mean_trust': np.mean(trust_scores),
-                'std_trust': np.std(trust_scores),
-                'high_trust_pairs': sum(1 for t in trust_scores if t > 0.7),
-                'low_trust_pairs': sum(1 for t in trust_scores if t < 0.3)
-            }
+        # 信任网络分析（仅当启用社交时）
+        if self.agents and list(self.agents.values())[0].enable_social:
+            trust_scores = []
+            for agent in self.agents.values():
+                if agent.other_module and agent.other_module.other_models:
+                    scores = [m.trust_score for m in agent.other_module.other_models.values()]
+                    trust_scores.extend(scores)
+            
+            if trust_scores:
+                analysis['trust_network'] = {
+                    'mean_trust': np.mean(trust_scores),
+                    'std_trust': np.std(trust_scores),
+                    'high_trust_pairs': sum(1 for t in trust_scores if t > 0.7),
+                    'low_trust_pairs': sum(1 for t in trust_scores if t < 0.3)
+                }
         
         return analysis
     
