@@ -234,6 +234,18 @@ class PurposeGenerator:
         # Purpose强度（第9维）
         purpose_strength = purpose_vector[8]
         
+        # 处理不同维度的权重
+        n_current = len(current_weights)
+        n_purpose = len(purpose_8d)
+        
+        if n_current < n_purpose:
+            # 扩展当前权重到8维（用默认值填充D5-D8）
+            extended_weights = np.zeros(n_purpose)
+            extended_weights[:n_current] = current_weights
+            # D5-D8默认权重
+            extended_weights[4:8] = 0.05  # 最小值
+            current_weights = extended_weights
+        
         # 计算权重调整
         # 目标：向Purpose方向移动
         target_weights = purpose_8d / (purpose_8d.sum() + 1e-10)
@@ -245,6 +257,10 @@ class PurposeGenerator:
         # 确保最小值和归一化
         new_weights = np.maximum(new_weights, 0.05)
         new_weights = new_weights / new_weights.sum()
+        
+        # 如果输入是4维，只返回前4维
+        if n_current == 4:
+            new_weights = new_weights[:4]
         
         return new_weights
     
