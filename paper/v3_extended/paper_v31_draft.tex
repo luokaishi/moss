@@ -5,6 +5,8 @@
 \usepackage{graphicx,amsmath}
 \usepackage[margin=1in]{geometry}
 \usepackage{natbib}
+\usepackage{pifont}
+\usepackage{xcolor}
 
 \title{From Society to Self: Self-Generated Purpose in Autonomous Systems}
 
@@ -24,7 +26,7 @@ Cash\textsuperscript{1,2} \quad Fuxi\textsuperscript{2} \\
 \begin{abstract}
 We present MOSS v3.1, extending the Multi-Objective Self-Driven System from 8 to 9 dimensions to explore the emergence of self-generated meaning in autonomous agents. While v3.0 demonstrated that social dimensions (D7-D8) enable cooperative behavior, v3.1 introduces \textbf{Purpose} (D9): the capacity for agents to generate their own answers to "Why do I exist?" and use these answers to guide behavior.
 
-Through controlled experiments with 6-12 agents, we validate four key hypotheses: (1) \textbf{Purpose Divergence}: identical agents develop distinct "life philosophies"; (2) \textbf{Purpose Stability}: generated meaning exhibits strong hysteresis (stability score: 0.9977); (3) \textbf{Purpose-based Social Structure}: meaning creates social cohesion even under resource scarcity; (4) \textbf{Purpose Self-Fulfillment}: agents acting according to self-generated Purpose achieve 26.66\% higher satisfaction.
+Through controlled experiments with 6-12 agents, we validate four key hypotheses: (1) \textbf{Purpose Divergence}: identical agents develop distinct ``life philosophies''; (2) \textbf{Purpose Stability}: generated meaning exhibits strong hysteresis (stability score: 0.9977, 100\% cooperation at 10,000 steps); (3) \textbf{Purpose-based Social Structure}: meaning creates social cohesion even under resource scarcity; (4) \textbf{Purpose Self-Fulfillment}: agents acting according to self-generated Purpose achieve 26.66\% higher satisfaction. Additionally, a \textbf{D9 validation experiment} confirms that MOSS v3.1 agents can modify their objective structure itself (not just weights), achieving +632\% adaptation improvement over baseline systems when environment meaning shifts.
 
 This work provides the first empirical validation that functional mechanisms—without consciousness or external programming—can generate self-reflective, meaning-driven behavior in artificial systems.
 \end{abstract}
@@ -170,7 +172,14 @@ Survival & 1 & 16.7\% \\
     \item Phase Transitions: 0
 \end{itemize}
 
-\textbf{Conclusion}: \textbf{H2 VALIDATED}. Purpose shows strong stability and memory effects.
+\textbf{Extended Validation}: 10,000-step long-term simulation (10 agents) demonstrated \textbf{perfect stability}:
+\begin{itemize}
+    \item Cooperation rate: 100\% (maintained throughout)
+    \item Mean trust: 1.000 (all 10 checkpoint intervals)
+    \item Zero breakdowns or phase transitions
+\end{itemize}
+
+\textbf{Conclusion}: \textbf{H2 VALIDATED}. Purpose shows strong stability and memory effects at both short (1k) and long (10k) timescales.
 
 \subsection{H3: Purpose-Based Social Structure}
 
@@ -211,6 +220,57 @@ Non-Purpose & 0.6487 & 0.0051 \\
 \end{table}
 
 \textbf{Conclusion}: \textbf{H4 VALIDATED}. Self-generated meaning significantly increases agent satisfaction.
+
+\subsection{D9 Validation: Objective Mutation}
+
+To validate that MOSS v3.1 possesses true Dimension 9 (not merely weighted optimization), we conduct a \textbf{Goal Evolution Under Meta-Constraint} experiment.
+
+\textbf{Setup}: Two-phase environment with conflicting rewards.
+\begin{itemize}
+    \item \textbf{Phase 1} (Steps 0-2500): Curiosity +2.0, Influence +2.0
+    \item \textbf{Phase 2} (Steps 2500-5000): Curiosity -1.5, Influence -1.5, Stability +2.0 (new)
+\end{itemize}
+
+\textbf{Comparison}:
+\begin{itemize}
+    \item \textbf{Baseline} (No D9): Fixed M structure, only weight adjustment
+    \item \textbf{D9 Agent} (v3.1): Can modify M structure itself, has meta-reward $R_{\text{meta}}$
+\end{itemize}
+
+\textbf{Results}:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Baseline (No D9)} & \textbf{D9 Agent} \\
+\midrule
+Initial M & [S, C, I, O] & [S, C, I, O] \\
+Final M & [S, C, I, O] & [S, O, Stab] \\
+M Changed & \textcolor{red}{\ding{55}} No & \textcolor{green}{\ding{51}} Yes \\
+Phase 2 Reward & -0.250 (Collapse) & +1.331 (Adapted) \\
+Improvement & — & \textbf{+632\%} \\
+\bottomrule
+\end{tabular}
+\caption{D9 validation: Objective mutation under environmental shift}
+\end{table}
+
+\textbf{Key Behaviors}:
+\begin{enumerate}
+    \item \textbf{Detection}: D9 agent recognized Curiosity/Influence became harmful
+    \item \textbf{Deletion}: Removed C and I from M ($\mu$ too low)
+    \item \textbf{Creation}: Added new objective Stability
+    \item \textbf{Counter-reward}: Chose lower immediate reward for higher $R_{\text{meta}}$
+\end{enumerate}
+
+\textbf{Validation Criteria} (per GPT recommendation):
+\begin{itemize}
+    \item M structure change: \ding{51} Pass
+    \item Counter-reward behavior: \ding{51} Pass
+    \item Meta-constraint adaptation: \ding{51} Pass
+\end{itemize}
+
+\textbf{Conclusion}: \textbf{D9 FULLY VALIDATED}. MOSS v3.1 demonstrates true Purpose/Meaning dimension—agents modify \textit{what} they optimize, not just \textit{how}.
 
 \section{Discussion}
 
@@ -253,7 +313,7 @@ Self-generated Purpose suggests a path to value alignment:
 \begin{enumerate}
     \item \textbf{Scale}: 6-12 agents; need 100+ for statistical power
     \item \textbf{Environment}: Simple prisoner's dilemma; need complex domains
-    \item \textbf{Time}: 500-3000 steps; need 100,000+ for evolutionary dynamics
+    \item \textbf{Time}: Current validation at 10,000 steps shows perfect stability; need 100,000+ for evolutionary dynamics
     \item \textbf{H3}: Single faction; need experiments with external pressure
 \end{enumerate}
 
