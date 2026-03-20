@@ -20,10 +20,23 @@
   "log_file": "/tmp/72h_full_experiment.log",
   "action_log": "experiments/real_world_actions.jsonl",
   "report_file": "experiments/real_world_72h_report.json",
+  "current_progress": {
+    "last_check": "2026-03-20T21:26:00",
+    "elapsed_time": "2h57m",
+    "progress_percent": 4.1,
+    "total_steps": 105600,
+    "real_world_actions": 1085,
+    "purpose_generations": 53
+  },
+  "resource_usage": {
+    "memory_mb": 209,
+    "memory_percent": 5.0,
+    "cpu_percent": 0.5,
+    "status": "healthy"
+  },
   "monitoring": {
     "check_interval_minutes": 30,
-    "last_check": "2026-03-20T18:30:00",
     "alert_on_completion": true
   },
-  "notes": "Full 72-hour autonomy validation with resource optimization. Memory optimized to 3-4GB, Purpose interval 2000 steps."
+  "notes": "Full 72-hour autonomy validation with resource optimization. Memory optimized to 3-4GB, Purpose interval 2000 steps. Running smoothly."
 }
