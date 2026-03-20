@@ -25,7 +25,10 @@ MOSS v3.0.0 - Multi-Objective Self-Driven System
 __version__ = "3.0.0-dev"
 __author__ = "Cash"
 
-from .core import MOSSv3Agent
-from .coherence import CoherenceModule
+# v3.0 - 8D Agent
+# v3.1 - 9D Agent (with Purpose)
+# Import specific agents from submodules as needed
+# from .core.agent_8d import MOSSv3Agent8D
+# from .core.agent_9d import MOSSv3Agent9D
 
-__all__ = ['MOSSv3Agent', 'CoherenceModule']
+__all__ = []

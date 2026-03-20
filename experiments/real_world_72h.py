@@ -89,7 +89,6 @@ class RealWorldExperiment:
             import numpy as np
             agent = MOSSv3Agent9D(
                 agent_id="real_world_agent",
-                initial_weights=np.array([0.25] * 8),
                 enable_purpose=True
             )
             logger.info("[72h Experiment] Using real MOSSv3Agent9D")

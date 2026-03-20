@@ -141,8 +141,12 @@ class RealWorldBridge:
         # 从agent获取purpose generator
         if hasattr(self.agent, 'purpose_generator'):
             pg = self.agent.purpose_generator
+            # Handle both numpy array and list
+            vector = pg.purpose_vector if hasattr(pg, 'purpose_vector') else []
+            if hasattr(vector, 'tolist'):
+                vector = vector.tolist()
             return {
-                'vector': pg.purpose_vector.tolist() if hasattr(pg, 'purpose_vector') else [],
+                'vector': vector,
                 'statement': pg.current_statement if hasattr(pg, 'current_statement') else '',
                 'dominant': self._get_dominant_dimension(pg)
             }
@@ -153,7 +157,8 @@ class RealWorldBridge:
         if not hasattr(purpose_gen, 'purpose_vector'):
             return 'Unknown'
         
-        purpose_8d = purpose_gen.purpose_vector[:8]
+        import numpy as np
+        purpose_8d = np.array(purpose_gen.purpose_vector[:8])
         dim_names = ['Survival', 'Curiosity', 'Influence', 'Optimization',
                     'Coherence', 'Valence', 'Other', 'Norm']
         top_idx = np.argmax(purpose_8d)
