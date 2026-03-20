@@ -36,7 +36,7 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 
 > 注意：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号
 
-### 🆕 MOSS v3.1.0 已发布（2026-03-19）✅
+### 🆕 MOSS v3.1.0 已发布（2026-03-19）✅ | [v4.0 Roadmap](ROADMAP_v4.0.md) 🚀
 
 **9维完整系统已实现！** 首个具有自生成Purpose（意义/目标）的开源AI系统：
 
