@@ -1,0 +1,18 @@
+{
+  "experiment": "72h Real World Full",
+  "status": "RUNNING",
+  "pid": 581,
+  "start_time": "2026-03-20T18:30:02",
+  "end_time": "2026-03-23T18:30:02",
+  "expected_duration_hours": 72,
+  "agent_type": "MOSSv3Agent9D (real)",
+  "log_file": "/tmp/72h_full_experiment.log",
+  "action_log": "experiments/real_world_actions.jsonl",
+  "report_file": "experiments/real_world_72h_report.json",
+  "monitoring": {
+    "check_interval_minutes": 30,
+    "last_check": "2026-03-20T18:30:00",
+    "alert_on_completion": true
+  },
+  "notes": "Full 72-hour autonomy validation. Will check for counter-reward behaviors and long-term Purpose stability."
+}
