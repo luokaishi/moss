@@ -43,7 +43,7 @@ class MOSSv3Agent9D(MOSSv3Agent8D):
     def __init__(self,
                  agent_id: str,
                  enable_purpose: bool = True,
-                 purpose_interval: int = 500,
+                 purpose_interval: int = 2000,  # 优化：降低频率以节省资源
                  **kwargs):
         """
         初始化9维Agent
