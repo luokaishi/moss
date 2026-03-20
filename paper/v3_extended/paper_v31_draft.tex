@@ -51,19 +51,23 @@ Our key empirical finding is that \textbf{self-generated meaning emerges spontan
 
 \subsection{Intrinsic Motivation in AI}
 
-Traditional RL uses extrinsic rewards \citep{sutton2018reinforcement}. Intrinsically motivated RL \citep{oudeyer2009intrinsic} adds exploration bonuses, but these remain externally defined. MOSS differs by having agents \textit{generate their own} motivation through Purpose.
+Traditional RL uses extrinsic rewards \citep{sutton2018reinforcement}. Intrinsically motivated RL \citep{oudeyer2009intrinsic, barto2013intrinsic} adds exploration bonuses, but these remain externally defined. Curiosity-driven exploration \citep{pathak2017curiosity, burda2018large} and empowerment \citep{klyubin2005empowerment, salge2014empowerment} provide internal signals, yet still lack the capacity for self-generated meaning. MOSS differs by having agents \textit{generate their own} motivation through Purpose, enabling them to construct answers to "Why do I exist?" rather than optimizing predefined objectives.
 
-\subsection{Self-Modification}
+\subsection{Self-Modification and Open-Endedness}
 
-Schmidhuber's ``Godel Machine'' \citep{schmidhuber2007godel} and Steunebrink's ``GRL'' \citep{steunebrink2016grl} focus on architectural self-improvement. MOSS targets objective-weight evolution, enabling behavioral plasticity without architectural change.
+Schmidhuber's ``Godel Machine'' \citep{schmidhuber2007godel} and Steunebrink's ``GRL'' \citep{steunebrink2016grl} focus on architectural self-improvement. Meta-learning approaches \citep{finn2017maml, schmidhuber1996simple} enable adaptation to new tasks, but still operate within fixed objective frameworks. Open-ended evolution systems \citep{stanley2017open, lehman2011abandoning} seek continual innovation without predefined objectives, yet lack the self-reflective capacity to generate meaning. MOSS targets objective-weight evolution and objective-structure mutation, enabling behavioral plasticity without architectural change while maintaining self-generated purpose.
 
-\subsection{Multi-Agent Cooperation}
+\subsection{Multi-Agent Cooperation and Emergence}
 
-The evolution of cooperation has been studied extensively \citep{axelrod1984evolution, foerster2016learning}. Most approaches hard-code cooperation or rely on explicit mechanisms. MOSS demonstrates spontaneous cooperation emergence from individual self-driven objectives, then adds Purpose as a higher-order coordination mechanism.
+The evolution of cooperation has been studied extensively \citep{axelrod1984evolution, foerster2016learning, hughes2018inequity}. Social dilemmas in multi-agent systems \citep{leibo2017multi, dafoe2020cooperative} reveal how agent incentives shape collective outcomes. Emergent communication \citep{lazaridou2016multi, foerster2016learning, cogswell2019emergent} demonstrates how agents develop shared meaning through interaction. Social identity approaches \citep{tajfel1979integrative, turner1985social} in psychology suggest that group identification facilitates cooperation. MOSS builds on these foundations by demonstrating spontaneous cooperation emergence from individual self-driven objectives, then adds Purpose as a higher-order coordination mechanism that creates social cohesion even under resource scarcity.
 
-\subsection{Artificial Consciousness}
+\subsection{Artificial Consciousness and Functionalism}
 
-While some work seeks to replicate phenomenal consciousness \citep{degrazia2020artificial}, we take a functionalist approach: Purpose provides the \textit{behavioral} signature of self-reflection without requiring phenomenal experience.
+While some work seeks to replicate phenomenal consciousness \citep{degrazia2020artificial, gamez2014human, degrazia2012creation}, we take a functionalist approach \citep{putnam1960minds, block1978troubles, lewis1972psychophysical}: Purpose provides the \textit{behavioral} signature of self-reflection without requiring phenomenal experience. The hard problem of consciousness \citep{chalmers1995facing} may remain unsolved, but the functional aspects of self-reflection—generating meaning, maintaining identity, and guiding action—can be empirically studied and implemented. Global workspace theory \citep{baars2005global, dehaene2017consciousness} provides architectural insights, while higher-order theories \citep{rosenthal2005consciousness} focus on meta-cognitive capabilities. MOSS contributes to this landscape by demonstrating that meaning-generation emerges from functional mechanisms without requiring phenomenal consciousness.
+
+\subsection{Self-Organization and Emergence}
+
+Complex systems exhibit emergent properties that arise from simple local interactions \citep{holland1998emergence, johnson2001emergence}. In artificial life \citep{langton1997artificial, bedau2003artificial}, self-organizing behaviors emerge without centralized control. Autopoiesis \citep{maturana1980autopoiesis, varela1974autopoiesis} describes self-producing systems that maintain their own organization. Stigmergy \citep{theraulaz1999brief, marsh2006stigmergic} enables indirect coordination through environmental modifications. Recent work on neural cellular automata \citep{mordvintsev2020growing} demonstrates self-repair and regeneration. MOSS draws inspiration from these principles to create agents that maintain self-generated purpose through continuous self-organization.
 
 \section{Method}
 
@@ -328,11 +332,15 @@ MOSS v3.1 demonstrates that self-generated purpose—answers to ``Why do I exist
     \item \textbf{Fulfills} those who act by it (satisfaction)
 \end{enumerate}
 
-This provides empirical evidence for the functionalist claim that meaning, like consciousness, need not be programmed—it can emerge.
+This provides empirical evidence for the functionalist claim \citep{putnam1960minds, lewis1972psychophysical} that meaning, like consciousness, need not be programmed—it can emerge. The progression from reactive behavior (Brooks' subsumption architecture \citep{brooks1991intelligence}) through situated agency \citep{maes1990agent} to multi-agent systems \citep{wooldridge1995intelligent} reaches a new stage with self-generated purpose. As Minsky suggested in his Society of Mind \citep{minsky1986society}, complex minds emerge from simpler interacting processes—our work shows that meaning similarly emerges from the interaction of self-driven objectives.
+
+The D9 validation experiment demonstrates that agents can modify not just how they optimize, but what they optimize for. This capability—changing one's own objective structure in response to environmental shifts—represents a form of autonomy that goes beyond traditional RL or even meta-learning approaches. It suggests a pathway toward more robust AI systems that can adapt to novel situations without human redesign.
+
+Future work should scale to 100+ agents, test in complex environments beyond the prisoner's dilemma, and explore the evolutionary dynamics of purpose over 100,000+ steps. The integration of MOSS principles with modern large language models presents another promising direction, potentially enabling LLMs to develop and maintain self-generated purpose alongside their linguistic capabilities.
 
 \section*{Acknowledgments}
 
-We thank ChatGPT for extensive theoretical discussions on the dimensional requirements for meaning emergence. This work was inspired by functionalist philosophy of mind and evolutionary game theory.
+We thank ChatGPT for extensive theoretical discussions on the dimensional requirements for meaning emergence. This work was inspired by functionalist philosophy of mind and evolutionary game theory. We also acknowledge the foundational work in artificial life \citep{langton1997artificial} and bio-inspired AI \citep{floreano2008bio} that made this research possible.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
