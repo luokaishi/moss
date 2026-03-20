@@ -11,7 +11,7 @@
 
 MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows AI agents with four parallel intrinsic objectives: **survival**, **curiosity**, **influence**, and **self-optimization**.
 
-📄 **[Read the Paper](./docs/paper_simple.pdf)** | 🧪 **[Run Experiments](./sandbox/)** | 🐳 **[Docker Support](#docker)** | 📖 **[Documentation](./docs/)**
+📄 **[Read the Paper](./docs/paper_simple.pdf)** | 📑 **[v3.1 Paper PDF](./MOSS_v31_Paper.pdf)** | 🧪 **[Run Experiments](./sandbox/)** | 🐳 **[Docker Support](#docker)** | 📖 **[Documentation](./docs/)**
 
 ---
 
