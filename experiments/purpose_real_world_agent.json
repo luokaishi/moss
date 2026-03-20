@@ -2,18 +2,18 @@
   "agent_id": "real_world_agent",
   "current_purpose": {
     "vector": [
-      0.25054116151028344,
-      0.25085514572878786,
-      0.2500084206531572,
-      0.24859972601958857,
+      0.2497646202583877,
+      0.2510120876199593,
+      0.24894992922671405,
+      0.2504076110936075,
       0.0,
       0.0,
       0.0,
       0.0,
-      -4.4542451517616584e-06
+      -0.0001342485320466546
     ],
-    "statement": "I exist to explore and understand. My highest calling is Curiosity, followed by Survival and Influence.",
-    "last_generation": 8500
+    "statement": "I exist to explore and understand. My highest calling is Curiosity, followed by Optimization and Survival.",
+    "last_generation": 9500
   },
   "purpose_history": [
     {
@@ -831,6 +831,102 @@
         "timestamp": "2026-03-20T18:44:20.062876"
       },
       "change_magnitude": 0.001874063744353818
+    },
+    {
+      "step": 9000,
+      "purpose_vector": [
+        0.2499790361538491,
+        0.2516047989733635,
+        0.2491950528577544,
+        0.24953446433635243,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.00031335265475720855
+      ],
+      "purpose_statement": "I exist to explore and understand. My highest calling is Curiosity, followed by Survival and Optimization.",
+      "reflection_data": {
+        "total_steps": 10,
+        "recent_window": 10,
+        "action_distribution": {
+          "unknown": 10
+        },
+        "state_distribution": {
+          "crisis": 10
+        },
+        "average_reward": 0.2762856848145832,
+        "reward_trend": 0.0,
+        "current_weights": [
+          0.18050151845311815,
+          0.33270606978023337,
+          0.2699655928772484,
+          0.21682681888940006
+        ],
+        "coherence_score": -0.0015667632737860428,
+        "valence_profile": {
+          "beta_distribution": [
+            0.24990072918026096,
+            0.2515259827228052,
+            0.24911699147019706,
+            0.24945629662673668
+          ]
+        },
+        "social_summary": {
+          "n_agents": 0,
+          "avg_trust": 0.0
+        },
+        "timestamp": "2026-03-20T18:45:10.581908"
+      },
+      "change_magnitude": 0.0015838832098140877
+    },
+    {
+      "step": 9500,
+      "purpose_vector": [
+        0.2497646202583877,
+        0.2510120876199593,
+        0.24894992922671405,
+        0.2504076110936075,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0001342485320466546
+      ],
+      "purpose_statement": "I exist to explore and understand. My highest calling is Curiosity, followed by Optimization and Survival.",
+      "reflection_data": {
+        "total_steps": 10,
+        "recent_window": 10,
+        "action_distribution": {
+          "unknown": 10
+        },
+        "state_distribution": {
+          "crisis": 10
+        },
+        "average_reward": 0.29327350972954563,
+        "reward_trend": 0.0,
+        "current_weights": [
+          0.2521774204277563,
+          0.39821503108917333,
+          0.11871518918993632,
+          0.230892359293134
+        ],
+        "coherence_score": -0.000671242660233273,
+        "valence_profile": {
+          "beta_distribution": [
+            0.24973109430882517,
+            0.25097839422263013,
+            0.24891651263327416,
+            0.2503739988352704
+          ]
+        },
+        "social_summary": {
+          "n_agents": 0,
+          "avg_trust": 0.0
+        },
+        "timestamp": "2026-03-20T18:46:01.067061"
+      },
+      "change_magnitude": 0.0011188521196530447
     }
   ]
 }
