@@ -6,6 +6,17 @@
   "end_time": "2026-03-23T18:30:02",
   "expected_duration_hours": 72,
   "agent_type": "MOSSv3Agent9D (real)",
+  "optimization_applied": {
+    "purpose_interval": 2000,
+    "headless_mode": true,
+    "memory_limit": "4GB",
+    "purpose_generation": "reduced from 500 to 2000 steps"
+  },
+  "resource_monitoring": {
+    "monitor_pid": 756,
+    "monitor_log": "experiments/resource_monitor.log",
+    "check_interval_seconds": 60
+  },
   "log_file": "/tmp/72h_full_experiment.log",
   "action_log": "experiments/real_world_actions.jsonl",
   "report_file": "experiments/real_world_72h_report.json",
@@ -14,5 +25,5 @@
     "last_check": "2026-03-20T18:30:00",
     "alert_on_completion": true
   },
-  "notes": "Full 72-hour autonomy validation. Will check for counter-reward behaviors and long-term Purpose stability."
+  "notes": "Full 72-hour autonomy validation with resource optimization. Memory optimized to 3-4GB, Purpose interval 2000 steps."
 }
