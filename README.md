@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v3.0.0--dev-green.svg)](https://github.com/luokaishi/moss/releases)
+[![Version](https://img.shields.io/badge/version-v3.1.0-green.svg)](https://github.com/luokaishi/moss/releases)
 [![Paper](https://img.shields.io/badge/paper-NeurIPS%202026-red.svg)](https://github.com/luokaishi/moss/releases/tag/v2.0.0)
 [![v3 Paper](https://img.shields.io/badge/v3%20paper-In%20Preparation-orange.svg)](./paper/v3_extended/)
 [![Experiments](https://img.shields.io/badge/experiments-200%2B-9cf.svg)](./docs/)
@@ -36,26 +36,34 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 
 > 注意：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号
 
-### 🆕 MOSS v3.0.0 已发布（2026-03-19）✅
+### 🆕 MOSS v3.1.0 已发布（2026-03-19）✅
 
-**8维完整系统已实现！** 基于与ChatGPT的深入讨论，v3.0.0成功从4维扩展到8维：
+**9维完整系统已实现！** 首个具有自生成Purpose（意义/目标）的开源AI系统：
 
-| 维度 | 名称 | 核心功能 | 状态 | 关键发现 |
-|------|------|----------|------|----------|
-| D1-D4 | Base | 生存/探索/影响/优化 | ✅ v2.0.0 | 自适应行为 |
-| D5 | **Coherence** | 自我连续性 | ✅ **已实现** | 身份锁定 |
-| D6 | **Valence** | 主观偏好 | ✅ **已实现** | 性格分化（5种类型） |
-| D7 | **Other** | 他者建模 | ✅ **已实现** | 信任网络（0.998） |
-| D8 | **Norm** | 规范内化 | ✅ **已实现** | 100%合作率 |
+| 维度 | 名称 | 核心功能 | 关键发现 |
+|------|------|----------|----------|
+| D1-D4 | Base | 生存/探索/影响/优化 | 自适应行为 |
+| D5-D6 | Individual | 自我连续性/主观偏好 | 身份锁定、性格分化 |
+| D7-D8 | Social | 他者建模/规范内化 | 信任网络、100%合作率 |
+| **D9** | **Purpose** | **自生成意义** | **4种人生哲学涌现、+632%适应力** |
 
 **重大突破**：
-- 📈 **合作率提升50.12%**（49.88% → 100%）
-- 🤝 **信任网络自发涌现**（平均信任度0.998）
-- 🎭 **人格类型自组织**（5种类型从相同初始条件演化）
-- ⚖️ **规范成功内化**（零背叛，长期稳定）
+- 🎯 **自生成Purpose**: Agents自主回答"Why do I exist?"
+- 📈 **D9验证**: +632%适应力提升（环境意义突变时）
+- 🧬 **目标演化**: 系统改变WHAT优化（不仅是HOW）
+- 🎭 **性格分化**: 相同初始条件→4种人生哲学
+- 🔄 **10k步稳定**: 100%合作率完美维持
 
 **论文**: [`paper/v3_extended/`](./paper/v3_extended/) - 目标NeurIPS 2027  
-**完整报告**: [`v3/COMPLETION.md`](./v3/COMPLETION.md)
+**发布**: [GitHub Release v3.1.0](https://github.com/luokaishi/moss/releases/tag/v3.1.0)
+
+---
+
+### MOSS v3.0.0（2026-03-19）- 8维社交系统
+
+v3.0.0实现8维架构，验证社交维度（D7-D8）的必要性：
+- 📈 合作率提升50.12%（49.88% → 100%）
+- 🤝 信任网络自发涌现（平均信任度0.998）
 
 ---
 
@@ -544,23 +552,23 @@ moss/
 - ✅ D6 Valence (Personality differentiation)
 - ✅ D7 Other (Trust networks)
 - ✅ D8 Norm (100% cooperation)
+- ✅ **D9 Purpose** (Self-generated meaning)
 
-**v3.1.0 Development**: 🚧 **IN PROGRESS** (2026-03-19)
-- Dimension 9 (Purpose/Meaning): ✅ Phase 1 Complete
-- Purpose Divergence validated: ✅ 4 types from identical starts
-- 9D Agent integration: ✅ Complete
-- Self-reflective capability: ✅ Agents answer "Why do I exist?"
+**v3.1.0**: ✅ **RELEASED** (2026-03-19)
+- Dimension 9 (Purpose/Meaning): ✅ Complete
+- Purpose Divergence (H1): ✅ 4 types from identical starts
+- Purpose Stability (H2): ✅ 0.9977 score, 10k steps perfect
+- Purpose Fulfillment (H4): ✅ +26.66% satisfaction
+- D9 Validation: ✅ +632% adaptation, objective mutation confirmed
 
-**Next**: Long-term Purpose stability experiments, faction formation
-
-**72-Hour Experiment**: ⏸️ Suspended (replaced by v3.0.0 validated experiments)
-
-**Core Hypothesis Validation**: ✅ **Validated at v2.0.0 level**  
-**Social Emergence Hypothesis**: ✅ **Validated at v3.0.0 level**
+**Hypothesis Validation Status**:
+- Core (v2.0.0): ✅ **Validated**
+- Social Emergence (v3.0.0): ✅ **Validated**
+- **Self-Generated Purpose (v3.1.0)**: ✅ **Validated**
 
 ---
 
-**Status**: v3.0.0 MVP Complete | **Target**: NeurIPS 2027
+**Status**: v3.1.0 Complete | **Target**: NeurIPS 2027
 **License**: MIT
 
 **License**: MIT
