@@ -1,37 +1,42 @@
 version: '3.8'
 
 services:
-  moss:
-    build: .
-    container_name: moss_agent
-    environment:
-      - MOSS_MODE=safe
-      - MOSS_AGENT_ID=moss_docker
-      - PYTHONUNBUFFERED=1
+  moss-openclaw:
+    image: moss-openclaw:latest
+    container_name: moss-openclaw
+    restart: unless-stopped
+    mem_limit: 4g
+    memswap_limit: 4g
+    pids_limit: 256
+    cpu_shares: 512
     volumes:
-      - ./logs:/app/logs
       - ./data:/app/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "python3", "-c", "print('healthy')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+      - ./logs:/app/logs
+      - ./experiments:/app/experiments
+    environment:
+      - OPENCLAW_HEADLESS=true
+      - OPENCLAW_RESOURCE_BLOCKING=true
+      - MOSS_PURPOSE_INTERVAL=2000
+    networks:
+      - moss-network
 
-  # Optional: Redis for distributed MOSS
-  redis:
-    image: redis:7-alpine
-    container_name: moss_redis
+  moss-agent:
+    build: .
+    container_name: moss-agent
+    restart: unless-stopped
+    mem_limit: 2g
+    memswap_limit: 2g
+    depends_on:
+      - moss-openclaw
     volumes:
-      - redis_data:/data
-    restart: unless-stopped
-    profiles:
-      - distributed
+      - .:/workspace/projects/moss
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - MOSS_MODE=real_world
+      - MOSS_EXPERIMENT_DURATION=72h
+    networks:
+      - moss-network
 
-volumes:
-  redis_data:
+networks:
+  moss-network:
+    driver: bridge
