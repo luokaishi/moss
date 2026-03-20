@@ -21,20 +21,21 @@ print()
 
 # Create 3 agents with identical initial conditions
 print("Creating 3 identical agents...")
+import numpy as np
 agents = [
-    MOSSAgent9D(agent_id=f"agent_{i}", initial_weights=[0.25]*8)
+    MOSSAgent9D(agent_id=f"agent_{i}", initial_weights=np.array([0.25]*8))
     for i in range(3)
 ]
 print(f"✓ Created {len(agents)} agents with uniform weights [0.25, 0.25, 0.25, 0.25]")
 print()
 
-# Run for 100 steps
-print("Running 100 steps...")
-for step in range(100):
+# Run for 600 steps (Purpose generates every 500 steps)
+print("Running 600 steps (Purpose generates at step 500)...")
+for step in range(600):
     for agent in agents:
         agent.step()
-    if step % 20 == 0:
-        print(f"  Step {step}/100")
+    if step % 100 == 0:
+        print(f"  Step {step}/600")
 print("✓ Simulation complete")
 print()
 
@@ -45,16 +46,16 @@ print("=" * 70)
 print()
 
 for agent in agents:
-    purpose = agent.get_purpose()
-    purpose_type = agent.get_purpose_type()
+    purpose = agent.get_purpose_summary()
+    purpose_type = purpose.get('dominant_dimension', 'Unknown')
     print(f"Agent {agent.agent_id}:")
-    print(f"  Type: {purpose_type}")
-    print(f"  Statement: {purpose['statement']}")
-    print(f"  Dominant: {purpose['dominant']}")
+    print(f"  Dominant Type: {purpose_type}")
+    print(f"  Weight: {purpose.get('dominant_weight', 0):.3f}")
+    print(f"  Purpose Strength: {purpose.get('purpose_strength', 0):.3f}")
     print()
 
 # Check if purposes diverged
-purpose_types = [a.get_purpose_type() for a in agents]
+purpose_types = [a.get_purpose_summary().get('dominant_dimension', 'Unknown') for a in agents]
 unique_types = set(purpose_types)
 
 print("=" * 70)

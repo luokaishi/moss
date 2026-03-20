@@ -71,9 +71,12 @@ class MOSSv3Agent8D:
         self.agent_id = agent_id
         self.enable_social = enable_social
         
-        # 基础4维权重
+        # 基础4维权重 (D1-D4)
         if initial_weights is not None:
-            self.weights = initial_weights.copy()
+            if len(initial_weights) >= 4:
+                self.weights = initial_weights[:4].copy()  # 只取前4维
+            else:
+                self.weights = np.array([0.25, 0.25, 0.25, 0.25])
         else:
             self.weights = np.array([0.25, 0.25, 0.25, 0.25])
         
