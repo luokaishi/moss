@@ -24,6 +24,7 @@ from typing import Dict
 
 sys.path.insert(0, '/workspace/projects/moss')
 sys.path.insert(0, '/workspace/projects/moss/v3')
+sys.path.insert(0, '/workspace/projects/moss/v3/core')
 sys.path.insert(0, '/workspace/projects/moss/core')
 
 from core.real_world_bridge import RealWorldBridge
@@ -85,7 +86,7 @@ class RealWorldExperiment:
         """初始化MOSS agent（使用mock或真实agent）"""
         try:
             # 尝试导入真实v3.1 agent
-            from v3.core.agent_9d import MOSSv3Agent9D
+            from agent_9d import MOSSv3Agent9D
             import numpy as np
             agent = MOSSv3Agent9D(
                 agent_id="real_world_agent",
@@ -95,6 +96,8 @@ class RealWorldExperiment:
             return agent
         except Exception as e:
             logger.warning(f"[72h Experiment] Using mock agent: {e}")
+            import traceback
+            logger.warning(f"[72h Experiment] Traceback: {traceback.format_exc()}")
             return MockAgent()
     
     def run(self):
