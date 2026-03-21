@@ -2,18 +2,18 @@
   "agent_id": "real_world_agent",
   "current_purpose": {
     "vector": [
-      0.24987840583288856,
-      0.24904436515524145,
-      0.25130680754691226,
-      0.24987378011118105,
+      0.2507917831321039,
+      0.2480976304780387,
+      0.25228145089540066,
+      0.2492580943568277,
       0.0,
       0.0,
       0.0,
       0.0,
-      -0.00010335897959117019
+      -0.0004289591958473423
     ],
     "statement": "I exist to shape and impact. My primary goal is Influence, alongside Survival and Optimization.",
-    "last_generation": 8000
+    "last_generation": 10000
   },
   "purpose_history": [
     {
@@ -207,6 +207,54 @@
         "timestamp": "2026-03-21T09:15:44.475738"
       },
       "change_magnitude": 0.0015743792332024035
+    },
+    {
+      "step": 10000,
+      "purpose_vector": [
+        0.2507917831321039,
+        0.2480976304780387,
+        0.25228145089540066,
+        0.2492580943568277,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.0004289591958473423
+      ],
+      "purpose_statement": "I exist to shape and impact. My primary goal is Influence, alongside Survival and Optimization.",
+      "reflection_data": {
+        "total_steps": 10,
+        "recent_window": 10,
+        "action_distribution": {
+          "unknown": 10
+        },
+        "state_distribution": {
+          "concerned": 10
+        },
+        "average_reward": 0.2858078649983081,
+        "reward_trend": 0.0,
+        "current_weights": [
+          0.2939674305079943,
+          0.14579129455429546,
+          0.43616551654430297,
+          0.1240757583934072
+        ],
+        "coherence_score": -0.0021447959792367114,
+        "valence_profile": {
+          "beta_distribution": [
+            0.2506842499014518,
+            0.2479912524325173,
+            0.25217327893254937,
+            0.24915121873348145
+          ]
+        },
+        "social_summary": {
+          "n_agents": 0,
+          "avg_trust": 0.0
+        },
+        "timestamp": "2026-03-21T09:19:06.295571"
+      },
+      "change_magnitude": 0.0017792073362687272
     }
   ]
 }
