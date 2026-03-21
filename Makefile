@@ -1,89 +1,70 @@
-.PHONY: help install test test-v1 test-v2 docker run-docker clean web-monitor
+# MOSS v4.0 Makefile
+# 便捷命令管理
+
+.PHONY: help install test experiment dashboard clean
 
 help:
-	@echo "MOSS Development Commands"
-	@echo ""
-	@echo "  make install     - Install dependencies"
-	@echo "  make test        - Run all tests"
-	@echo "  make test-v1     - Run v1.0 tests"
-	@echo "  make test-v2     - Run v2.0 tests"
-	@echo "  make docker      - Build Docker image"
-	@echo "  make run-docker  - Run MOSS in Docker"
-	@echo "  make web-monitor - Start web monitoring dashboard"
-	@echo "  make experiments - Run all experiments (1-5)"
-	@echo "  make llm-verify  - Run LLM verification (mock mode)"
-	@echo "  make llm-real    - Run LLM verification (requires API key)"
-	@echo "  make clean       - Clean up generated files"
+	@echo "MOSS v4.0 - 可用命令"
+	@echo "====================="
+	@echo "make install       - 安装依赖"
+	@echo "make test          - 运行测试"
+	@echo "make experiment    - 启动72小时实验"
+	@echo "make dashboard     - 启动监控仪表盘"
+	@echo "make status        - 查看实验状态"
+	@echo "make stop          - 停止实验"
+	@echo "make analyze       - 分析实验数据"
+	@echo "make clean         - 清理临时文件"
+	@echo "make backup        - 备份实验数据"
 
 install:
 	pip install -r requirements.txt
 
-test: test-v1 test-v2
+test:
+	python -m pytest tests/ -v
 
-test-v1:
-	@echo "Running v1.0 tests..."
-	python tests/test_basic.py
+experiment:
+	@echo "启动72小时实验..."
+	nohup python3 experiments/real_world_72h.py --hours 72 > experiments/real_world_72h.out 2>&1 &
+	@echo "实验已启动，使用 'make dashboard' 查看状态"
 
-test-v2:
-	@echo "Running v2.0 tests..."
-	python tests/test_v2_comprehensive.py || true
+dashboard:
+	@python3 scripts/experiment_dashboard.py
 
-docker:
-	@echo "Building Docker image..."
-	docker build -t moss:latest .
+status:
+	@echo "=== 实验状态 ==="
+	@ps aux | grep "real_world_72h" | grep -v grep || echo "实验未运行"
+	@echo ""
+	@echo "=== 最新日志 ==="
+	@tail -5 experiments/real_world_72h.log 2>/dev/null || echo "暂无日志"
 
-run-docker:
-	@echo "Running MOSS in Docker..."
-	docker run -it --rm \
-		-v $(PWD)/logs:/app/logs \
-		-e MOSS_MODE=safe \
-		moss:latest
+stop:
+	@echo "停止实验..."
+	@pkill -f "real_world_72h.py" && echo "实验已停止" || echo "实验未运行"
 
-docker-compose:
-	@echo "Starting MOSS with docker-compose..."
-	docker-compose up -d
+analyze:
+	@python3 scripts/analyze_72h_experiment.py
 
-docker-compose-down:
-	@echo "Stopping MOSS..."
-	docker-compose down
-
-llm-verify:
-	@echo "Running LLM verification (mock mode)..."
-	cd sandbox && python moss_llm_real_verifier.py --steps 50 --mock
-
-llm-real:
-	@echo "Running LLM verification (real API mode)..."
-	@read -p "Enter ARK_API_KEY: " key; \
-	cd sandbox && ARK_API_KEY=$$key python moss_llm_real_verifier.py --steps 20
-
-run-v2:
-	@echo "Running MOSS v2.0..."
-	python -c "from agents.moss_agent_v2 import MOSSAgentV2; agent = MOSSAgentV2('manual_test', mode='demo'); agent.run(steps=10)"
-
-web-monitor:
-	@echo "Starting web monitoring dashboard..."
-	@echo "Open http://localhost:5000 in your browser"
-	python web/monitor.py
-
-experiments:
-	@echo "Running all experiments..."
-	./scripts/run_experiments.sh
+backup:
+	@echo "备份实验数据..."
+	@mkdir -p experiments/backups
+	@cp experiments/real_world_actions.jsonl experiments/backups/ 2>/dev/null || true
+	@cp experiments/real_world_72h.log experiments/backups/ 2>/dev/null || true
+	@cp experiments/purpose_real_world_agent.json experiments/backups/ 2>/dev/null || true
+	@echo "备份完成"
 
 clean:
-	@echo "Cleaning up..."
-	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.pyo" -delete
-	find . -type f -name "*checkpoint*.json" -delete
-	find . -type f -name "*report*.json" -delete
-	rm -rf build/ dist/ *.egg-info/
-	rm -rf .pytest_cache/ .coverage htmlcov/
+	@echo "清理临时文件..."
+	@find . -type f -name "*.pyc" -delete
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.log" -not -path "./experiments/*" -delete
+	@echo "清理完成"
 
-lint:
-	@echo "Running linters..."
-	black agents/ core/ integration/ tests/ || true
-	flake8 agents/ core/ integration/ tests/ --max-line-length=120 || true
+# Phase 2 命令
+society:
+	@echo "启动多Agent社会实验..."
+	@python3 experiments/multi_agent_society_real.py
 
-format:
-	@echo "Formatting code..."
-	black agents/ core/ integration/ tests/
+pricing:
+	@echo "打开定价页面..."
+	@python3 -m http.server 8080 --directory docs &
+	@echo "访问 http://localhost:8080/pricing.html"
