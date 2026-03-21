@@ -179,7 +179,7 @@ class PurposeGenerator:
         # 添加第9维：Purpose自身的强度
         # 基于一致性：越一致→Purpose越强烈
         coherence = reflection_data['coherence_score']
-        purpose_9th = coherence * 0.2  # 0-0.2范围
+        purpose_9th = abs(coherence) * 0.2  # 0-0.2范围 (取绝对值确保非负)
         
         # 调整前8维，为第9维留出空间
         purpose = purpose * (1 - purpose_9th)
