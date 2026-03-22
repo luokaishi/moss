@@ -158,7 +158,6 @@ class Run32Experiment:
         self.hours = hours
         self.total_steps = int(hours * 3600 * 100)  # 100 steps/sec
         self.agent = None
-        self.bridge = None
         self.checkpoint_mgr = EnhancedCheckpointManager()
         self.task_injector = TaskInjector()
         self.start_time = None
@@ -200,7 +199,6 @@ class Run32Experiment:
         
         # 初始化agent
         self.agent = MOSSv3Agent9D(agent_id="run_3_2_agent")
-        self.bridge = RealWorldBridge(safety_mode="demo")
         
         self.start_time = datetime.now()
         return start_step
