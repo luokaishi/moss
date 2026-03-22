@@ -48,15 +48,18 @@ moss/docs/v4.0/
 
 ### ✅ Completed
 - [x] World Model core module (`core/world_model.py`)
+- [x] LLM Reasoning Layer (`core/llm_reasoning.py`)
+- [x] Open-ended Goal Space (`core/open_goal_space.py`)
+- [x] Cost-Benefit Evaluator (in `integration/agent_v4.py`)
+- [x] Full v4.0 Agent integration (`integration/agent_v4.py`)
 - [x] World Model integration demo (`demo_world_model_integration.py`)
 - [x] Architecture blueprint (`docs/v4.0_ARCHITECTURE_BLUEPRINT.md`)
 - [x] v3.1 archival report (`docs/v3.1_ARCHIVAL_REPORT.md`)
 
 ### 🔄 In Progress
-- [ ] LLM Reasoning Layer
-- [ ] Open-ended Goal Space
-- [ ] Cost-Benefit Evaluator
-- [ ] Full v4.0 Agent integration
+- [ ] Extended experiments with v4.0 features
+- [ ] Performance optimization
+- [ ] Integration with v3.1 Purpose system
 
 ### ⏸️ Planned
 - [ ] Chaos/Phase transition experiments
