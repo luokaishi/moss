@@ -1,21 +1,12 @@
 #!/usr/bin/env python3
 """
-MOSS Run 4.4 - Optimized for Low-Memory Environment
-Variation: Higher Exploration Rate (20% vs 10%)
-
-Optimizations:
-- Reduced memory footprint
-- Lower checkpoint frequency
-- Shorter duration (8h)
-
-Variation from Run 4.2:
-- Min exploration rate: 20% (vs 10%)
-- Slower decay rate
+MOSS Run 4.4 - RESUMED from checkpoint
+从检查点恢复，继续实验
 """
 
 import sys
-sys.path.insert(0, '/opt/moss')
-sys.path.insert(0, '/opt/moss/v4/integration')
+sys.path.insert(0, '/workspace/projects/moss')
+sys.path.insert(0, '/workspace/projects/moss/v4/integration')
 
 import json
 import time
@@ -23,37 +14,52 @@ import numpy as np
 from datetime import datetime
 from pathlib import Path
 from collections import deque
-from agent_v4_2 import ImprovedPurposeAgent
+from agent_v4_2 import ImprovedPurposeAgent, PurposeState
 
-# Configuration - Optimized for 1GB RAM
+# Configuration
 LOG_FILE = Path('experiments/run_4_4_actions.jsonl')
 STATUS_FILE = Path('experiments/run_4_4_status.json')
 CHECKPOINT_DIR = Path('experiments/.checkpoints_run4_4')
 DURATION_HOURS = 8
 STEPS_PER_SECOND = 100
+TOTAL_STEPS = DURATION_HOURS * 3600 * STEPS_PER_SECOND
 
-# Logging intervals - reduced frequency
+# Intervals
 ACTION_LOG_INTERVAL = 200
 STATUS_LOG_INTERVAL = 2000
 CHECKPOINT_INTERVAL = 20000
 PROGRESS_PRINT_INTERVAL = 10000
 
-LOG_FILE.parent.mkdir(exist_ok=True)
-CHECKPOINT_DIR.mkdir(exist_ok=True)
-
-class HighExplorationAgent(ImprovedPurposeAgent):
-    """Agent with higher exploration rate"""
-    def __init__(self, agent_id="run_4_4_agent"):
-        super().__init__(agent_id)
-        # Override exploration parameters (variation)
-        self.exploration_rate = 0.4       # Start higher
-        self.min_exploration = 0.20       # End higher (vs 0.10)
-        self.exploration_decay = 0.9995   # Slower decay
-        # Reduce memory footprint
-        self.action_history = deque(maxlen=50)
+def load_checkpoint(checkpoint_path):
+    """Load checkpoint and restore agent state"""
+    with open(checkpoint_path) as f:
+        cp = json.load(f)
+    
+    # Create agent with high exploration
+    agent = ImprovedPurposeAgent(agent_id="run_4_4_agent")
+    
+    # Restore purpose state from vector
+    vec = cp['purpose_state']
+    agent.purpose_state = PurposeState(
+        survival=vec[0],
+        curiosity=vec[1],
+        influence=vec[2],
+        optimization=vec[3],
+        coherence=vec[4],
+        valence=vec[5],
+        other_modeling=vec[6],
+        norm_internalization=vec[7],
+        self_generated=vec[8],
+        purpose_statement=f"Resumed from step {cp['step']}"
+    )
+    
+    # Restore exploration rate (keep 20% for high exploration)
+    agent.exploration_rate = max(0.2, cp['exploration_rate'])
+    
+    return agent, cp['step']
 
 def log_action(step, agent, outcome):
-    """Record action with reduced data size"""
+    """Record action"""
     entry = {
         'ts': datetime.now().isoformat()[:19],
         'step': step,
@@ -61,16 +67,14 @@ def log_action(step, agent, outcome):
         'success': outcome['success'],
         'reward': round(outcome.get('reward', 0), 3),
         'purpose': outcome.get('purpose', 'Unknown')[:4],
-        'is_exp': outcome.get('is_exploration', False),
     }
     with open(LOG_FILE, 'a') as f:
         f.write(json.dumps(entry) + '\n')
 
 def log_status(step, agent, start_time, resumed_from=None):
-    """Record status with minimal footprint"""
+    """Record status"""
     elapsed = (datetime.now() - start_time).total_seconds()
-    total_steps = DURATION_HOURS * 3600 * STEPS_PER_SECOND
-    progress = step / total_steps
+    progress = step / TOTAL_STEPS
     
     status = {
         'timestamp': datetime.now().isoformat(),
@@ -83,7 +87,7 @@ def log_status(step, agent, start_time, resumed_from=None):
             'statement': agent.purpose_state.purpose_statement,
         },
         'metrics': {
-            'exp_rate': round(agent.exploration_rate, 3),
+            'exp_rate': agent.exploration_rate,
             'diversity': round(len(set(agent.action_history)) / max(len(agent.action_history), 1), 2),
             'success_rate': agent.success_rate,
         },
@@ -95,7 +99,7 @@ def log_status(step, agent, start_time, resumed_from=None):
     return status
 
 def save_checkpoint(step, agent):
-    """Save minimal checkpoint"""
+    """Save checkpoint"""
     checkpoint = {
         'step': step,
         'timestamp': datetime.now().isoformat(),
@@ -107,6 +111,7 @@ def save_checkpoint(step, agent):
     with open(filepath, 'w') as f:
         json.dump(checkpoint, f)
     
+    # Keep only last 3
     checkpoints = sorted(CHECKPOINT_DIR.glob('checkpoint_*.json'))
     for old in checkpoints[:-3]:
         old.unlink()
@@ -117,69 +122,68 @@ def generate_observation(step, total_steps):
     
     if progress < 0.25:
         return {
-            'resource_level': 0.6,
-            'threat_level': 0.2,
-            'novelty': 0.3,
-            'social_feedback': 0.2,
+            'resource_level': 0.6, 'threat_level': 0.2,
+            'novelty': 0.3, 'social_feedback': 0.2,
             'goal_progress': progress
         }
     elif progress < 0.50:
         return {
-            'resource_level': 0.4,
-            'threat_level': 0.7 + 0.2 * np.random.random(),
-            'novelty': 0.2,
-            'social_feedback': 0.2,
+            'resource_level': 0.4, 'threat_level': 0.7 + 0.2 * np.random.random(),
+            'novelty': 0.2, 'social_feedback': 0.2,
             'goal_progress': progress
         }
     elif progress < 0.75:
         return {
-            'resource_level': 0.6,
-            'threat_level': 0.2,
-            'novelty': 0.7 + 0.2 * np.random.random(),
-            'social_feedback': 0.3,
+            'resource_level': 0.6, 'threat_level': 0.2,
+            'novelty': 0.7 + 0.2 * np.random.random(), 'social_feedback': 0.3,
             'goal_progress': progress
         }
     else:
         return {
-            'resource_level': 0.6,
-            'threat_level': 0.3,
-            'novelty': 0.3,
-            'social_feedback': 0.6 + 0.3 * np.random.random(),
+            'resource_level': 0.6, 'threat_level': 0.3,
+            'novelty': 0.3, 'social_feedback': 0.6 + 0.3 * np.random.random(),
             'goal_progress': progress
         }
 
 def run_experiment():
-    """Main experiment loop - memory optimized"""
+    """Main experiment loop - resumed from checkpoint"""
+    
+    # Find latest checkpoint
+    checkpoints = sorted(CHECKPOINT_DIR.glob('checkpoint_*.json'))
+    if not checkpoints:
+        print("❌ No checkpoint found! Starting fresh not allowed.")
+        return
+    
+    latest_checkpoint = checkpoints[-1]
     print("=" * 60)
-    print("MOSS Run 4.4 - Memory Optimized (1GB RAM)")
-    print("Variation: Higher Exploration Rate (20% min)")
+    print("MOSS Run 4.4 - RESUMED from checkpoint")
     print("=" * 60)
-    print(f"Duration: {DURATION_HOURS}h")
-    print(f"Target steps: {DURATION_HOURS * 3600 * STEPS_PER_SECOND:,}")
-    print(f"Exploration: 40% → 20% (slower decay)")
+    print(f"Checkpoint: {latest_checkpoint.name}")
+    
+    # Load checkpoint
+    agent, start_step = load_checkpoint(latest_checkpoint)
+    print(f"Resuming from step: {start_step:,}")
+    print(f"Initial Purpose: {agent.purpose_state.get_dominant()[0]}")
+    print(f"Exploration rate: {agent.exploration_rate} (high exploration)")
+    print(f"Target: {TOTAL_STEPS:,} steps ({DURATION_HOURS}h)")
+    print(f"Remaining: {TOTAL_STEPS - start_step:,} steps")
     print("=" * 60)
     
-    agent = HighExplorationAgent(agent_id="run_4_4_agent")
     start_time = datetime.now()
-    total_steps = DURATION_HOURS * 3600 * STEPS_PER_SECOND
-    
-    print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Experiment started")
-    print(f"Initial Exploration Rate: {agent.exploration_rate:.1%}")
-    print(f"Min Exploration Rate: {agent.min_exploration:.1%}")
     
     try:
-        for step in range(1, total_steps + 1):
-            observation = generate_observation(step, total_steps)
+        for step in range(start_step + 1, TOTAL_STEPS + 1):
+            observation = generate_observation(step, TOTAL_STEPS)
             outcome = agent.step(observation)
             
             if step % ACTION_LOG_INTERVAL == 0:
                 log_action(step, agent, outcome)
             
             if step % STATUS_LOG_INTERVAL == 0:
-                status = log_status(step, agent, start_time)
+                status = log_status(step, agent, start_time, resumed_from=start_step)
                 
                 if step % PROGRESS_PRINT_INTERVAL == 0:
-                    progress = step / total_steps * 100
+                    progress = step / TOTAL_STEPS * 100
                     phase_idx = int(progress / 25)
                     phase = ['Normal', 'Threat', 'Novelty', 'Social'][min(phase_idx, 3)]
                     dominant = status['purpose']['dominant']
@@ -189,7 +193,7 @@ def run_experiment():
                     print(f"[{datetime.now().strftime('%H:%M:%S')}] "
                           f"Progress: {progress:.1f}% | Step: {step:,} | "
                           f"Phase: {phase} | Purpose: {dominant} | "
-                          f"ExpRate: {exp_rate:.3f} | Diversity: {diversity:.2f}")
+                          f"ExpRate: {exp_rate:.1%} | Diversity: {diversity:.2f}")
             
             if step % CHECKPOINT_INTERVAL == 0:
                 save_checkpoint(step, agent)
@@ -203,7 +207,7 @@ def run_experiment():
         import traceback
         traceback.print_exc()
     finally:
-        final_status = log_status(step, agent, start_time)
+        final_status = log_status(step, agent, start_time, resumed_from=start_step)
         save_checkpoint(step, agent)
         
         print("\n" + "=" * 60)
@@ -211,7 +215,6 @@ def run_experiment():
         print("=" * 60)
         print(f"Total steps: {step:,}")
         print(f"Final Purpose: {final_status['purpose']['dominant']}")
-        print(f"Final ExpRate: {final_status['metrics']['exp_rate']:.3f}")
         print(f"Action Diversity: {final_status['metrics']['diversity']:.3f}")
         print(f"Success Rate: {final_status['metrics']['success_rate']:.3f}")
 
