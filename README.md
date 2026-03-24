@@ -37,7 +37,8 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 - **v3/** 目录即 **MOSS v3.0.0** 开发架构
 - **Exp-Alpha/Beta** 是 **v0.3.0** 框架下的实验变体（参数不同）
 
-> 注意：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号
+> **注意**：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号  
+> **当前重点**：`72h Real World` 实验正在阿里云OpenClaw运行中（2026-03-24 10:12启动，预计3月27日完成）
 
 ### 🆕 MOSS v4.1.0 已发布（2026-03-24）✅ | [Purpose Evolution Validated](https://github.com/luokaishi/moss/releases/tag/v4.1.0) 🎯
 
