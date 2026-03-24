@@ -2,9 +2,9 @@
 **From Self-Generated Meaning to Real-World Autonomous Operation**
 
 **版本**：v4.0  
-**发布日期**：2026-03-20  
+**发布日期**：2026-03-24  
 **作者**：Cash (luokaishi)  
-**当前状态**：v3.1.0 已完成（D1–D9 完整落地，Purpose Divergence + Goal Evolution 实验验证通过）
+**当前状态**：v4.1.0 已发布（Run 4.x Series完成，Purpose Evolution Reproducibility验证通过，72h真实世界实验进行中）
 
 ---
 
