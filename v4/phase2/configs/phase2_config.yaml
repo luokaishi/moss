@@ -1,0 +1,169 @@
+# MOSS Phase 2 Configuration
+# 多Agent实验配置文件
+
+experiment:
+  name: "moss_phase2_multiagent"
+  duration_hours: 168  # 7 days
+  start_time: "TBD"  # 2026-03-27T10:00:00Z after Phase 1 complete
+  
+  # Agent配置
+  agents:
+    count: 10
+    
+    # Purpose分布配置
+    purpose_profiles:
+      - name: "security_guardian"
+        distribution: 0.20  # 20% of agents
+        purpose:
+          survival: 0.60
+          curiosity: 0.15
+          influence: 0.10
+          optimization: 0.15
+        specialization: "security"
+        
+      - name: "code_optimizer"
+        distribution: 0.25
+        purpose:
+          survival: 0.10
+          curiosity: 0.20
+          influence: 0.15
+          optimization: 0.55
+        specialization: "optimization"
+        
+      - name: "doc_writer"
+        distribution: 0.20
+        purpose:
+          survival: 0.15
+          curiosity: 0.50
+          influence: 0.20
+          optimization: 0.15
+        specialization: "documentation"
+        
+      - name: "test_engineer"
+        distribution: 0.20
+        purpose:
+          survival: 0.20
+          curiosity: 0.40
+          influence: 0.15
+          optimization: 0.25
+        specialization: "testing"
+        
+      - name: "community_manager"
+        distribution: 0.15
+        purpose:
+          survival: 0.10
+          curiosity: 0.20
+          influence: 0.55
+          optimization: 0.15
+        specialization: "community"
+
+  # 任务市场配置
+  task_market:
+    # 任务来源
+    sources:
+      - type: "github_webhook"
+        repositories:
+          - "github.com/example/project1"
+          - "github.com/example/project2"
+      
+      - type: "synthetic"
+        generation_rate_per_hour: 10
+    
+    # 任务类型分布
+    task_types:
+      - type: "security_audit"
+        weight: 0.20
+        avg_reward: 50
+        required_purpose: ["survival"]
+        
+      - type: "code_optimization"
+        weight: 0.25
+        avg_reward: 45
+        required_purpose: ["optimization"]
+        
+      - type: "documentation"
+        weight: 0.20
+        avg_reward: 30
+        required_purpose: ["curiosity"]
+        
+      - type: "testing"
+        weight: 0.20
+        avg_reward: 40
+        required_purpose: ["curiosity"]
+        
+      - type: "community"
+        weight: 0.15
+        avg_reward: 35
+        required_purpose: ["influence"]
+
+  # 通信配置
+  communication:
+    protocol_version: "1.0"
+    transport: "websocket"
+    
+    network:
+      hub_port: 8080
+      heartbeat_interval: 30
+      connection_timeout: 300
+      
+    security:
+      enable_signature: true
+      min_trust_default: 0.3
+      
+    market:
+      task_bid_timeout: 600  # 10 minutes
+      reputation_update_interval: 3600
+
+  # 资源限制
+  resources:
+    max_memory_per_agent_mb: 4096
+    max_cpu_percent_per_agent: 20
+    max_disk_per_agent_gb: 10
+
+  # 观察指标配置
+  metrics:
+    collection_interval_seconds: 60
+    
+    # 分工指标
+    specialization:
+      calculate_entropy: true
+      track_task_distribution: true
+      
+    # 信任指标
+    trust:
+      track_network_evolution: true
+      calculate_density: true
+      
+    # 价值交换指标
+    value_exchange:
+      track_all_transactions: true
+      calculate_price_convergence: true
+
+  # 数据收集
+  data_collection:
+    save_message_logs: true
+    save_task_history: true
+    save_trust_evolution: true
+    
+    snapshot_interval_minutes: 60
+    output_directory: "experiments/phase2_data"
+
+  # 商业MVP测试配置
+  mvp:
+    enabled: true
+    pricing_model: "freemium"
+    
+    tiers:
+      - name: "free"
+        max_agents: 1
+        features: ["basic_monitoring"]
+        
+      - name: "pro"
+        price_usd: 29
+        max_agents: 1
+        features: ["auto_fix", "24h_monitoring"]
+        
+      - name: "team"
+        price_usd: 99
+        max_agents: 5
+        features: ["multi_agent", "sla"]
