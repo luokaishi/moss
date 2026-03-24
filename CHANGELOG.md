@@ -2,6 +2,76 @@
 
 All notable changes to the MOSS project.
 
+## [4.1.0] - 2026-03-24
+
+### 🎯 Major Release: Purpose Evolution Reproducibility Validated
+
+**Run 4.x Series: Three Independent Experiments Prove Influence is Stable Attractor**
+
+### Added
+
+#### Run 4.x Experimental Series (`experiments/run_4_series/`)
+Three independent long-running experiments (2,880,000 steps each) validating Purpose system reproducibility:
+
+- **Run 4.2 (Baseline)**
+  - Initial Purpose: Survival, Exploration Rate: 10%
+  - Trajectory: Survival → Curiosity → **Influence**
+  - Duration: 4.9h, Success Rate: 57.7%
+  - Data: 44,159 action records
+
+- **Run 4.3 (Curiosity Initial)**
+  - Initial Purpose: Curiosity, Exploration Rate: 10%
+  - Trajectory: Curiosity → Survival → **Influence**
+  - Duration: 3.3h, Success Rate: 46%
+  - Data: 14,449 action records
+  - **Key Finding**: Initial Purpose affects path, not endpoint
+
+- **Run 4.4 (High Exploration)**
+  - Initial Purpose: Survival, Exploration Rate: 20%
+  - Trajectory: Survival → Curiosity → **Influence**
+  - Duration: 3.3h, Success Rate: 58%
+  - Data: 14,549 action records
+  - **Key Finding**: Higher exploration delays but doesn't prevent convergence
+
+#### Analysis Tools
+- **Cross-Run Analysis Script** (`experiments/analysis/analyze_run4_series.py`)
+  - Automated comparison of Purpose evolution across experiments
+  - Purpose distribution analysis
+  - Success rate and diversity metrics
+
+- **Comprehensive Report** (`experiments/analysis/RUN_4_SERIES_FINAL_REPORT.md`)
+  - Detailed experimental results and findings
+  - Hypothesis validation summary
+  - Research implications
+
+#### Project Management Framework
+- **Management Guidelines** (`docs/PROJECT_MANAGEMENT_FRAMEWORK.md`)
+  - Triple-verification mechanism for experiment status reporting
+  - Chaos prevention protocols
+  - Sub-Agent deployment specifications
+
+### Key Findings
+
+1. **Influence is Stable Attractor in Social Phase**
+   - All three experiments (100%) converged to Influence
+   - Demonstrates reproducible Purpose evolution
+   - Environment Phase determines attractor, not initialization
+
+2. **Path Dependence vs Endpoint Determinism**
+   - Initial Purpose affects evolution path
+   - Exploration rate affects convergence speed
+   - Environment Phase determines final Purpose state
+
+3. **Phase-Locked Adaptation**
+   - Threat Phase → Survival Purpose
+   - Novelty Phase → Curiosity Purpose
+   - Social Phase → Influence Purpose
+
+### Paper Update
+- Added "Purpose Evolution Reproducibility (Run 4.x Series)" section to paper
+- Updated experimental results in `paper/v3_extended/main.tex`
+- Validates robustness of Purpose-driven behavior
+
 ## [3.1.0] - 2026-03-19
 
 ### 🚀 Major Release: Self-Generated Purpose (9D System)
