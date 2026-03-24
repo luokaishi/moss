@@ -28,6 +28,7 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 | **MOSS v0.3.0** | 稳定版本（固定权重） | 根目录 `/` | ✅ 稳定运行 |
 | **Exp-Alpha** | 72小时保守模式实验 | `experiments/moss_72h_experiment.py` | ⏸️ 已中断 |
 | **Exp-Beta** | 72小时激进模式实验 | `experiments/moss_72h_experiment_v3.py` | ⏸️ 已中断 |
+| **72h Real World** | 72小时真实世界自治实验 | `core/real_world_bridge.py` | 🟢 **运行中** (8%, PID 11788) |
 
 ### 版本关系说明
 - **v0.3.0 → v2.0.0** 是大版本跃升（固定权重 → 自演化动态权重）
@@ -36,7 +37,8 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 - **v3/** 目录即 **MOSS v3.0.0** 开发架构
 - **Exp-Alpha/Beta** 是 **v0.3.0** 框架下的实验变体（参数不同）
 
-> 注意：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号
+> **注意**：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号  
+> **当前重点**：`72h Real World` 实验正在阿里云OpenClaw运行中（2026-03-24 10:12启动，预计3月27日完成）
 
 ### 🆕 MOSS v4.1.0 已发布（2026-03-24）✅ | [Purpose Evolution Validated](https://github.com/luokaishi/moss/releases/tag/v4.1.0) 🎯
 
