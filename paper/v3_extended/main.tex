@@ -244,6 +244,56 @@ These types emerge from identical initial conditions, demonstrating self-organiz
 
 This confirms \textbf{synergy}: D7 and D8 are co-necessary for full cooperative emergence.
 
+\subsection{Purpose Evolution Reproducibility (Run 4.x Series)}
+
+To validate the robustness of Purpose-driven behavior, we conducted three independent long-running experiments (Run 4.2, 4.3, 4.4) with varying initial conditions and exploration rates.
+
+\textbf{Experimental Design.} Each run consisted of 2,880,000 steps with environment phases (Normal $\rightarrow$ Threat $\rightarrow$ Novelty $\rightarrow$ Social) designed to test Purpose adaptation:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Experiment} & \textbf{Initial Purpose} & \textbf{Exploration Rate} & \textbf{Duration} \\
+\midrule
+Run 4.2 (Baseline) & Survival & 10\% & 4.9h \\
+Run 4.3 & Curiosity & 10\% & 3.3h \\
+Run 4.4 & Survival & 20\% & 3.3h \\
+\bottomrule
+\end{tabular}
+\caption{Run 4.x series experimental parameters. Each run tests how initial conditions affect Purpose evolution trajectories.}
+\end{table}
+
+\textbf{Results.} All three experiments converged to \textbf{Influence} as the dominant Purpose in the Social Phase, despite different initial conditions and paths:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Experiment} & \textbf{Purpose Trajectory} & \textbf{Final Purpose} & \textbf{Success Rate} \\
+\midrule
+Run 4.2 & S $\rightarrow$ C $\rightarrow$ \textbf{I} & Influence & 57.7\% \\
+Run 4.3 & C $\rightarrow$ S $\rightarrow$ \textbf{I} & Influence & 46\% \\
+Run 4.4 & S $\rightarrow$ C $\rightarrow$ \textbf{I} & Influence & 58\% \\
+\bottomrule
+\end{tabular}
+\caption{Purpose evolution across Run 4.x series. S=Survival, C=Curiosity, I=Influence. All runs converged to Influence in Social Phase.}
+\end{table}
+
+\textbf{Key Findings:}
+
+\textbf{(1) Stable Attractor.} Influence emerges as a stable attractor in Social Phase regardless of initial Purpose. This demonstrates that environmental phase, not initialization, determines the convergent Purpose state.
+
+\textbf{(2) Path Dependence.} Initial Purpose affects the evolution path (Run 4.3: Curiosity-dominated early phase) but not the endpoint. This reveals \textit{equifinality} in Purpose development.
+
+\textbf{(3) Exploration Rate Effects.} Higher exploration (20\% vs 10\%) delayed Purpose transitions but did not alter the final convergence, suggesting robustness to parameter variation.
+
+\textbf{(4) Phase-Locked Adaptation.} All runs exhibited phase-locked Purpose switching: Survival in Threat Phase, Curiosity in Novelty Phase, and Influence in Social Phase, validating the environmental responsiveness of the Purpose system.
+
+These results establish the \textbf{reproducibility} and \textbf{predictability} of Purpose-driven behavior in self-modifying systems, supporting the use of MOSS as a reliable experimental platform for studying autonomous agent development.
+
 \section{Discussion}
 
 \subsection{Theoretical Implications}

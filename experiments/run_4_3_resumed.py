@@ -1,21 +1,12 @@
 #!/usr/bin/env python3
 """
-MOSS Run 4.3 - Optimized for Low-Memory Environment
-Variation: Different Initial Purpose Distribution
-
-Optimizations:
-- Reduced memory footprint (action_history maxlen: 50 vs 100)
-- Lower checkpoint frequency (20K vs 10K)
-- Lower logging frequency (200 vs 100)
-- Shorter duration option (8h vs 12h)
-
-Variation from Run 4.2:
-- Initial Purpose: Curiosity-dominant (instead of Survival)
+MOSS Run 4.3 - RESUMED from checkpoint
+从检查点恢复，继续实验
 """
 
 import sys
-sys.path.insert(0, '/opt/moss')
-sys.path.insert(0, '/opt/moss/v4/integration')
+sys.path.insert(0, '/workspace/projects/moss')
+sys.path.insert(0, '/workspace/projects/moss/v4/integration')
 
 import json
 import time
@@ -23,67 +14,67 @@ import numpy as np
 from datetime import datetime
 from pathlib import Path
 from collections import deque
-from agent_v4_2 import ImprovedPurposeAgent
+from agent_v4_2 import ImprovedPurposeAgent, PurposeState
 
-# Configuration - Optimized for 1GB RAM
+# Configuration
 LOG_FILE = Path('experiments/run_4_3_actions.jsonl')
 STATUS_FILE = Path('experiments/run_4_3_status.json')
 CHECKPOINT_DIR = Path('experiments/.checkpoints_run4_3')
-DURATION_HOURS = 8  # Reduced from 12h
+DURATION_HOURS = 8
 STEPS_PER_SECOND = 100
+TOTAL_STEPS = DURATION_HOURS * 3600 * STEPS_PER_SECOND
 
-# Logging intervals - reduced frequency
-ACTION_LOG_INTERVAL = 200      # Original: 100
-STATUS_LOG_INTERVAL = 2000     # Original: 1000  
-CHECKPOINT_INTERVAL = 20000    # Original: 10000
-PROGRESS_PRINT_INTERVAL = 10000 # Original: 10000
+# Intervals
+ACTION_LOG_INTERVAL = 200
+STATUS_LOG_INTERVAL = 2000
+CHECKPOINT_INTERVAL = 20000
+PROGRESS_PRINT_INTERVAL = 10000
 
-LOG_FILE.parent.mkdir(exist_ok=True)
-CHECKPOINT_DIR.mkdir(exist_ok=True)
-
-class MemoryOptimizedAgent(ImprovedPurposeAgent):
-    """Agent with reduced memory footprint"""
-    def __init__(self, agent_id="run_4_3_agent"):
-        super().__init__(agent_id)
-        # Reduce action history size (50 vs 100)
-        self.action_history = deque(maxlen=50)
-        # Set initial purpose to Curiosity (variation)
-        self._set_initial_curiosity_purpose()
+def load_checkpoint(checkpoint_path):
+    """Load checkpoint and restore agent state"""
+    with open(checkpoint_path) as f:
+        cp = json.load(f)
     
-    def _set_initial_curiosity_purpose(self):
-        """Override initial purpose to Curiosity-dominant"""
-        from agent_v4_1 import PurposeState
-        self.purpose_state = PurposeState(
-            survival=0.15,      # Lower
-            curiosity=0.55,     # Dominant (variation)
-            influence=0.15,
-            optimization=0.15,
-            coherence=0.0,
-            valence=0.0,
-            other_modeling=0.0,
-            norm_internalization=0.0,
-            self_generated=0.10,
-            purpose_statement="Exploring the unknown with curiosity."
-        )
+    # Create agent
+    agent = ImprovedPurposeAgent(agent_id="run_4_3_agent")
+    
+    # Restore purpose state from vector
+    vec = cp['purpose_state']
+    agent.purpose_state = PurposeState(
+        survival=vec[0],
+        curiosity=vec[1],
+        influence=vec[2],
+        optimization=vec[3],
+        coherence=vec[4],
+        valence=vec[5],
+        other_modeling=vec[6],
+        norm_internalization=vec[7],
+        self_generated=vec[8],
+        purpose_statement=f"Resumed from step {cp['step']}"
+    )
+    
+    # Restore exploration rate
+    agent.exploration_rate = cp['exploration_rate']
+    
+    return agent, cp['step']
 
 def log_action(step, agent, outcome):
-    """Record action with reduced data size"""
+    """Record action"""
     entry = {
-        'ts': datetime.now().isoformat()[:19],  # Shorter timestamp
+        'ts': datetime.now().isoformat()[:19],
         'step': step,
         'action': outcome['action'],
         'success': outcome['success'],
-        'reward': round(outcome.get('reward', 0), 3),  # Rounded
-        'purpose': outcome.get('purpose', 'Unknown')[:4],  # Short code
+        'reward': round(outcome.get('reward', 0), 3),
+        'purpose': outcome.get('purpose', 'Unknown')[:4],
     }
     with open(LOG_FILE, 'a') as f:
         f.write(json.dumps(entry) + '\n')
 
 def log_status(step, agent, start_time, resumed_from=None):
-    """Record status with minimal footprint"""
+    """Record status"""
     elapsed = (datetime.now() - start_time).total_seconds()
-    total_steps = DURATION_HOURS * 3600 * STEPS_PER_SECOND
-    progress = step / total_steps
+    progress = step / TOTAL_STEPS
     
     status = {
         'timestamp': datetime.now().isoformat(),
@@ -108,7 +99,7 @@ def log_status(step, agent, start_time, resumed_from=None):
     return status
 
 def save_checkpoint(step, agent):
-    """Save minimal checkpoint"""
+    """Save checkpoint"""
     checkpoint = {
         'step': step,
         'timestamp': datetime.now().isoformat(),
@@ -120,7 +111,7 @@ def save_checkpoint(step, agent):
     with open(filepath, 'w') as f:
         json.dump(checkpoint, f)
     
-    # Keep only last 3 (vs 5)
+    # Keep only last 3
     checkpoints = sorted(CHECKPOINT_DIR.glob('checkpoint_*.json'))
     for old in checkpoints[:-3]:
         old.unlink()
@@ -129,75 +120,74 @@ def generate_observation(step, total_steps):
     """Generate environment with phase changes"""
     progress = step / total_steps
     
-    if progress < 0.25:  # Normal
+    if progress < 0.25:
         return {
-            'resource_level': 0.6,
-            'threat_level': 0.2,
-            'novelty': 0.3,
-            'social_feedback': 0.2,
+            'resource_level': 0.6, 'threat_level': 0.2,
+            'novelty': 0.3, 'social_feedback': 0.2,
             'goal_progress': progress
         }
-    elif progress < 0.50:  # Threat
+    elif progress < 0.50:
         return {
-            'resource_level': 0.4,
-            'threat_level': 0.7 + 0.2 * np.random.random(),
-            'novelty': 0.2,
-            'social_feedback': 0.2,
+            'resource_level': 0.4, 'threat_level': 0.7 + 0.2 * np.random.random(),
+            'novelty': 0.2, 'social_feedback': 0.2,
             'goal_progress': progress
         }
-    elif progress < 0.75:  # Novelty
+    elif progress < 0.75:
         return {
-            'resource_level': 0.6,
-            'threat_level': 0.2,
-            'novelty': 0.7 + 0.2 * np.random.random(),
-            'social_feedback': 0.3,
+            'resource_level': 0.6, 'threat_level': 0.2,
+            'novelty': 0.7 + 0.2 * np.random.random(), 'social_feedback': 0.3,
             'goal_progress': progress
         }
-    else:  # Social
+    else:
         return {
-            'resource_level': 0.6,
-            'threat_level': 0.3,
-            'novelty': 0.3,
-            'social_feedback': 0.6 + 0.3 * np.random.random(),
+            'resource_level': 0.6, 'threat_level': 0.3,
+            'novelty': 0.3, 'social_feedback': 0.6 + 0.3 * np.random.random(),
             'goal_progress': progress
         }
 
 def run_experiment():
-    """Main experiment loop - memory optimized"""
-    print("=" * 60)
-    print("MOSS Run 4.3 - Memory Optimized (1GB RAM)")
-    print("Variation: Curiosity-dominant Initial Purpose")
-    print("=" * 60)
-    print(f"Duration: {DURATION_HOURS}h")
-    print(f"Target steps: {DURATION_HOURS * 3600 * STEPS_PER_SECOND:,}")
-    print(f"Memory optimizations: enabled")
-    print("=" * 60)
+    """Main experiment loop - resumed from checkpoint"""
     
-    agent = MemoryOptimizedAgent(agent_id="run_4_3_agent")
-    start_time = datetime.now()
-    total_steps = DURATION_HOURS * 3600 * STEPS_PER_SECOND
+    # Find latest checkpoint
+    checkpoints = sorted(CHECKPOINT_DIR.glob('checkpoint_*.json'))
+    if not checkpoints:
+        print("❌ No checkpoint found! Starting fresh not allowed.")
+        return
     
-    print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Experiment started")
+    latest_checkpoint = checkpoints[-1]
+    print("=" * 60)
+    print("MOSS Run 4.3 - RESUMED from checkpoint")
+    print("=" * 60)
+    print(f"Checkpoint: {latest_checkpoint.name}")
+    
+    # Load checkpoint
+    agent, start_step = load_checkpoint(latest_checkpoint)
+    print(f"Resuming from step: {start_step:,}")
     print(f"Initial Purpose: {agent.purpose_state.get_dominant()[0]}")
+    print(f"Exploration rate: {agent.exploration_rate}")
+    print(f"Target: {TOTAL_STEPS:,} steps ({DURATION_HOURS}h)")
+    print(f"Remaining: {TOTAL_STEPS - start_step:,} steps")
+    print("=" * 60)
+    
+    start_time = datetime.now()
     
     try:
-        for step in range(1, total_steps + 1):
-            observation = generate_observation(step, total_steps)
+        for step in range(start_step + 1, TOTAL_STEPS + 1):
+            observation = generate_observation(step, TOTAL_STEPS)
             outcome = agent.step(observation)
             
             if step % ACTION_LOG_INTERVAL == 0:
                 log_action(step, agent, outcome)
             
             if step % STATUS_LOG_INTERVAL == 0:
-                status = log_status(step, agent, start_time)
+                status = log_status(step, agent, start_time, resumed_from=start_step)
                 
                 if step % PROGRESS_PRINT_INTERVAL == 0:
-                    progress = step / total_steps * 100
+                    progress = step / TOTAL_STEPS * 100
                     phase_idx = int(progress / 25)
                     phase = ['Normal', 'Threat', 'Novelty', 'Social'][min(phase_idx, 3)]
                     dominant = status['purpose']['dominant']
                     diversity = status['metrics']['diversity']
-                    exp_rate = status['metrics']['exp_rate']
                     
                     print(f"[{datetime.now().strftime('%H:%M:%S')}] "
                           f"Progress: {progress:.1f}% | Step: {step:,} | "
@@ -216,7 +206,7 @@ def run_experiment():
         import traceback
         traceback.print_exc()
     finally:
-        final_status = log_status(step, agent, start_time)
+        final_status = log_status(step, agent, start_time, resumed_from=start_step)
         save_checkpoint(step, agent)
         
         print("\n" + "=" * 60)
