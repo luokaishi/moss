@@ -25,7 +25,7 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Tuple
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt  # Optional for visualization
 
 sys.path.insert(0, '/workspace/projects/moss')
 sys.path.insert(0, '/workspace/projects/moss/v5/core')
@@ -230,7 +230,7 @@ class ComparisonExperiment:
     
     def _draw_conclusion(self, metrics: Dict) -> str:
         """根据指标得出结论"""
-        ratio = metrics['comparison']['reward_ratio']
+        ratio = metrics.get('comparison', {}).get('reward_ratio', 1.0)
         
         if ratio > 1.2:
             return "LLM版本显著优于纯算法，自驱力可能依赖LLM (H1)"
@@ -279,10 +279,10 @@ class ComparisonExperiment:
 {metrics['comparison']['conclusion']}
 
 ## Implications
-{"""
+"""
+        
         if metrics['comparison']['reward_ratio'] > 0.9 and metrics['comparison']['reward_ratio'] < 1.1:
-            report += """
-The similarity in performance between pure algorithm and LLM-enhanced agents 
+            report += """\nThe similarity in performance between pure algorithm and LLM-enhanced agents 
 suggests that the emergent self-driven behavior in MOSS primarily stems from 
 the algorithmic architecture rather than LLM hallucination or interpretation.
 
@@ -290,8 +290,7 @@ This validates the core hypothesis that multi-objective optimization with
 dynamic purpose adaptation can produce genuine self-driven intelligence.
 """
         else:
-            report += """
-Further analysis is needed to understand the performance difference and 
+            report += """\nFurther analysis is needed to understand the performance difference and 
 its implications for the nature of self-driven behavior in AI systems.
 """
         

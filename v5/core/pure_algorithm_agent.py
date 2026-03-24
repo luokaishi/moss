@@ -71,7 +71,7 @@ class PureDecisionEngine:
     """
     
     def __init__(self, action_space_size: int = 20):
-        self.action_space_size = action_space_space_size
+        self.action_space_size = action_space_size
         # 预训练的决策矩阵 (可解释性强)
         self.decision_matrix = self._init_decision_matrix()
         self.epsilon = 0.1  # 探索率
