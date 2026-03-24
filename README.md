@@ -21,8 +21,10 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 
 | 术语 | 指代对象 | 物理位置 | 状态 |
 |------|----------|----------|------|
-| **MOSS v3.0.0** | 维度扩展版本（8维） | `v3/` 目录 | 🚧 开发中 |
-| **MOSS v2.0.0** | 正式发布版本（4维，论文对应） | `v2/` 目录 | ✅ 正式发布 |
+| **MOSS v4.1.0** | Purpose演化验证版本（4维+实验验证） | `experiments/run_4_series/` | ✅ 已发布 |
+| **MOSS v3.1.0** | 自生成Purpose版本（9维） | `v3/` 目录 | ✅ 已发布 |
+| **MOSS v3.0.0** | 维度扩展版本（8维） | `v3/` 目录 | ✅ 已发布 |
+| **MOSS v2.0.0** | 正式发布版本（4维，论文对应） | `v2/` 目录 | ✅ 已发布 |
 | **MOSS v0.3.0** | 稳定版本（固定权重） | 根目录 `/` | ✅ 稳定运行 |
 | **Exp-Alpha** | 72小时保守模式实验 | `experiments/moss_72h_experiment.py` | ⏸️ 已中断 |
 | **Exp-Beta** | 72小时激进模式实验 | `experiments/moss_72h_experiment_v3.py` | ⏸️ 已中断 |
@@ -36,7 +38,30 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 
 > 注意：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号
 
-### 🆕 MOSS v3.1.0 已发布（2026-03-19）✅ | [v4.0 Roadmap](ROADMAP_v4.0.md) 🚀
+### 🆕 MOSS v4.1.0 已发布（2026-03-24）✅ | [Purpose Evolution Validated](https://github.com/luokaishi/moss/releases/tag/v4.1.0) 🎯
+
+**Run 4.x Series Complete: Purpose Evolution Reproducibility Validated**
+
+三个独立实验（Run 4.2/4.3/4.4）验证Purpose系统可重复性：
+
+| 实验 | 初始Purpose | 探索率 | 演化路径 | 终点 |
+|------|-------------|--------|----------|------|
+| Run 4.2 | Survival | 10% | S→C→**I** | **Influence** |
+| Run 4.3 | Curiosity | 10% | C→S→**I** | **Influence** |
+| Run 4.4 | Survival | 20% | S→C→**I** | **Influence** |
+
+**核心发现**：
+- 🎯 **Influence是Social Phase的稳定吸引子**（3/3实验验证）
+- 🔄 **路径依赖 vs 终点决定论**：初始条件影响演化路径，但不影响终点
+- 📊 **高探索率延迟但不改变收敛**：20%探索率延缓Purpose切换，但最终仍收敛到Influence
+
+**数据**: `experiments/run_4_series/` - 完整实验数据（1.9MB/run）  
+**报告**: [RUN_4_SERIES_FINAL_REPORT.md](./experiments/analysis/RUN_4_SERIES_FINAL_REPORT.md)  
+**发布**: [GitHub Release v4.1.0](https://github.com/luokaishi/moss/releases/tag/v4.1.0)
+
+---
+
+### MOSS v3.1.0（2026-03-19）✅ | [v4.0 Roadmap](ROADMAP_v4.0.md) 🚀
 
 **9维完整系统已实现！** 首个具有自生成Purpose（意义/目标）的开源AI系统：
 
