@@ -46,9 +46,10 @@ def t_test_one_tailed(a, b):
     t_stat = (mean_a - mean_b) / (se + 1e-10)
     
     # Approximate p-value using normal distribution (for large n)
-    # This is a conservative approximation
+    # One-tailed test: P(T > t_stat) for H1: mean_a > mean_b
     from math import erfc
-    p_value = 0.5 * erfc(-t_stat / np.sqrt(2))
+    # For t_stat > 0, we want right-tail probability
+    p_value = 0.5 * erfc(t_stat / np.sqrt(2))
     
     return t_stat, p_value
 
