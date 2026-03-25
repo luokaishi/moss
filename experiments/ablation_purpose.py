@@ -32,6 +32,26 @@ from typing import Dict, List, Tuple
 from collections import defaultdict
 from datetime import datetime
 
+# Statistical functions using numpy only (scipy may not be available)
+def t_test_one_tailed(a, b):
+    """One-tailed independent t-test (a > b) using numpy only"""
+    n_a, n_b = len(a), len(b)
+    mean_a, mean_b = np.mean(a), np.mean(b)
+    var_a, var_b = np.var(a, ddof=1), np.var(b, ddof=1)
+    
+    # Pooled standard error
+    se = np.sqrt(var_a/n_a + var_b/n_b)
+    
+    # t-statistic
+    t_stat = (mean_a - mean_b) / (se + 1e-10)
+    
+    # Approximate p-value using normal distribution (for large n)
+    # This is a conservative approximation
+    from math import erfc
+    p_value = 0.5 * erfc(-t_stat / np.sqrt(2))
+    
+    return t_stat, p_value
+
 from moss.core import UnifiedMOSSAgent, MOSSConfig
 from moss.core.causal_purpose import CausalPurposeGenerator, CausalPurposeConfig
 
@@ -226,11 +246,58 @@ def run_ablation_experiments(steps: int, runs: int) -> Dict:
     return results
 
 
+def compute_statistics(values_a: List[float], values_b: List[float], 
+                       label_a: str = "Group A", label_b: str = "Group B") -> Dict:
+    """
+    计算两组的统计比较
+    
+    Returns:
+        - mean_a, mean_b: 平均值
+        - std_a, std_b: 标准差
+        - ci_a, ci_b: 95%置信区间 [lower, upper]
+        - cohens_d: Cohen's d effect size
+        - t_stat, p_value: 配对t检验结果
+    """
+    n_a = len(values_a)
+    n_b = len(values_b)
+    
+    mean_a = np.mean(values_a)
+    mean_b = np.mean(values_b)
+    std_a = np.std(values_a, ddof=1)  # Sample std
+    std_b = np.std(values_b, ddof=1)
+    
+    # 95% CI using normal approximation (for large n)
+    se_a = std_a / np.sqrt(n_a)
+    se_b = std_b / np.sqrt(n_b)
+    z_crit = 1.96  # Two-tailed, 95% (normal approximation)
+    
+    ci_a = [mean_a - z_crit * se_a, mean_a + z_crit * se_a]
+    ci_b = [mean_b - z_crit * se_b, mean_b + z_crit * se_b]
+    
+    # Cohen's d (pooled std)
+    pooled_std = np.sqrt(((n_a - 1) * std_a**2 + (n_b - 1) * std_b**2) / (n_a + n_b - 2))
+    cohens_d = (mean_a - mean_b) / (pooled_std + 1e-8)
+    
+    # Independent t-test (one-tailed, A > B) - numpy only
+    t_stat, p_value = t_test_one_tailed(values_a, values_b)
+    
+    return {
+        'n_a': n_a, 'n_b': n_b,
+        'mean_a': mean_a, 'mean_b': mean_b,
+        'std_a': std_a, 'std_b': std_b,
+        'ci_a': ci_a, 'ci_b': ci_b,
+        'cohens_d': cohens_d,
+        't_stat': t_stat,
+        'p_value': p_value,
+        'significant': p_value < 0.05
+    }
+
+
 def analyze_results(results: Dict) -> Dict:
-    """分析结果"""
+    """分析结果（含统计检验）"""
     
     print("\n" + "=" * 70)
-    print("📊 Results Analysis")
+    print("📊 Results Analysis with Statistical Tests")
     print("=" * 70)
     
     analysis = {}
@@ -244,66 +311,114 @@ def analyze_results(results: Dict) -> Dict:
     
     # 1. Causal vs No Purpose (必要性)
     if causal and no_purpose:
+        causal_rewards = [r['avg_reward'] for r in causal.get('raw_results', [])]
+        no_purpose_rewards = [r['avg_reward'] for r in no_purpose.get('raw_results', [])]
+        
+        stats_result = compute_statistics(causal_rewards, no_purpose_rewards, 
+                                         "Causal", "No Purpose")
+        
         improvement = (causal['avg_reward'] - no_purpose['avg_reward']) / abs(no_purpose['avg_reward'] + 0.001)
+        
         analysis['necessity'] = {
             'causal_reward': causal['avg_reward'],
             'no_purpose_reward': no_purpose['avg_reward'],
             'improvement': improvement,
-            'passed': improvement > 0.1  # >10% improvement
+            **{k: v for k, v in stats_result.items() if k not in ['label_a', 'label_b']},
+            'passed': improvement > 0.1 and stats_result['significant']
         }
         
         print(f"\n1️⃣ Necessity Test (Causal vs No Purpose):")
-        print(f"   Causal: {causal['avg_reward']:.4f} ± {causal['std_reward']:.4f}")
-        print(f"   No Purpose: {no_purpose['avg_reward']:.4f} ± {no_purpose['std_reward']:.4f}")
+        print(f"   Causal: {stats_result['mean_a']:.4f} ± {stats_result['std_a']:.4f}")
+        print(f"           95% CI: [{stats_result['ci_a'][0]:.4f}, {stats_result['ci_a'][1]:.4f}]")
+        print(f"   No Purpose: {stats_result['mean_b']:.4f} ± {stats_result['std_b']:.4f}")
+        print(f"               95% CI: [{stats_result['ci_b'][0]:.4f}, {stats_result['ci_b'][1]:.4f}]")
         print(f"   Improvement: {improvement*100:.1f}%")
+        print(f"   Cohen's d: {stats_result['cohens_d']:.3f}")
+        print(f"   p-value: {stats_result['p_value']:.4f} {'✅' if stats_result['significant'] else '❌'}")
         print(f"   Status: {'✅ PASS' if analysis['necessity']['passed'] else '❌ FAIL'}")
     
     # 2. Causal vs Static (动态价值)
     if causal and static:
+        causal_rewards = [r['avg_reward'] for r in causal.get('raw_results', [])]
+        static_rewards = [r['avg_reward'] for r in static.get('raw_results', [])]
+        
+        stats_result = compute_statistics(causal_rewards, static_rewards,
+                                         "Causal", "Static")
+        
         improvement = (causal['avg_reward'] - static['avg_reward']) / abs(static['avg_reward'] + 0.001)
+        
         analysis['dynamic_value'] = {
             'causal_reward': causal['avg_reward'],
             'static_reward': static['avg_reward'],
             'improvement': improvement,
-            'passed': improvement > 0.05  # >5% improvement
+            **{k: v for k, v in stats_result.items() if k not in ['label_a', 'label_b']},
+            'passed': improvement > 0.05 and stats_result['significant']
         }
         
         print(f"\n2️⃣ Dynamic Value Test (Causal vs Static):")
-        print(f"   Causal: {causal['avg_reward']:.4f}")
-        print(f"   Static: {static['avg_reward']:.4f}")
+        print(f"   Causal: {stats_result['mean_a']:.4f} ± {stats_result['std_a']:.4f}")
+        print(f"           95% CI: [{stats_result['ci_a'][0]:.4f}, {stats_result['ci_a'][1]:.4f}]")
+        print(f"   Static: {stats_result['mean_b']:.4f} ± {stats_result['std_b']:.4f}")
+        print(f"           95% CI: [{stats_result['ci_b'][0]:.4f}, {stats_result['ci_b'][1]:.4f}]")
         print(f"   Improvement: {improvement*100:.1f}%")
+        print(f"   Cohen's d: {stats_result['cohens_d']:.3f}")
+        print(f"   p-value: {stats_result['p_value']:.4f} {'✅' if stats_result['significant'] else '❌'}")
         print(f"   Status: {'✅ PASS' if analysis['dynamic_value']['passed'] else '❌ FAIL'}")
     
     # 3. Causal vs Random (非随机性)
     if causal and random_p:
+        causal_rewards = [r['avg_reward'] for r in causal.get('raw_results', [])]
+        random_rewards = [r['avg_reward'] for r in random_p.get('raw_results', [])]
+        
+        stats_result = compute_statistics(causal_rewards, random_rewards,
+                                         "Causal", "Random")
+        
         improvement = (causal['avg_reward'] - random_p['avg_reward']) / abs(random_p['avg_reward'] + 0.001)
+        
         analysis['non_random'] = {
             'causal_reward': causal['avg_reward'],
             'random_reward': random_p['avg_reward'],
             'improvement': improvement,
-            'passed': improvement > 0.15  # >15% improvement
+            **{k: v for k, v in stats_result.items() if k not in ['label_a', 'label_b']},
+            'passed': improvement > 0.15 and stats_result['significant']
         }
         
         print(f"\n3️⃣ Non-Random Test (Causal vs Random):")
-        print(f"   Causal: {causal['avg_reward']:.4f}")
-        print(f"   Random: {random_p['avg_reward']:.4f}")
+        print(f"   Causal: {stats_result['mean_a']:.4f} ± {stats_result['std_a']:.4f}")
+        print(f"           95% CI: [{stats_result['ci_a'][0]:.4f}, {stats_result['ci_a'][1]:.4f}]")
+        print(f"   Random: {stats_result['mean_b']:.4f} ± {stats_result['std_b']:.4f}")
+        print(f"           95% CI: [{stats_result['ci_b'][0]:.4f}, {stats_result['ci_b'][1]:.4f}]")
         print(f"   Improvement: {improvement*100:.1f}%")
+        print(f"   Cohen's d: {stats_result['cohens_d']:.3f}")
+        print(f"   p-value: {stats_result['p_value']:.4f} {'✅' if stats_result['significant'] else '❌'}")
         print(f"   Status: {'✅ PASS' if analysis['non_random']['passed'] else '❌ FAIL'}")
     
     # 4. Causal vs Old (不弱于旧方法)
     if causal and old:
+        causal_rewards = [r['avg_reward'] for r in causal.get('raw_results', [])]
+        old_rewards = [r['avg_reward'] for r in old.get('raw_results', [])]
+        
+        stats_result = compute_statistics(causal_rewards, old_rewards,
+                                         "Causal", "Old")
+        
         relative = (causal['avg_reward'] - old['avg_reward']) / abs(old['avg_reward'] + 0.001)
+        
         analysis['not_worse'] = {
             'causal_reward': causal['avg_reward'],
             'old_reward': old['avg_reward'],
             'relative': relative,
-            'passed': relative >= -0.05  # Not worse than 5%
+            **{k: v for k, v in stats_result.items() if k not in ['label_a', 'label_b']},
+            'passed': relative >= -0.05  # Not significantly worse
         }
         
         print(f"\n4️⃣ Not Worse Test (Causal vs Old v5.0):")
-        print(f"   Causal (v5.1): {causal['avg_reward']:.4f}")
-        print(f"   Old (v5.0): {old['avg_reward']:.4f}")
+        print(f"   Causal (v5.1): {stats_result['mean_a']:.4f} ± {stats_result['std_a']:.4f}")
+        print(f"                  95% CI: [{stats_result['ci_a'][0]:.4f}, {stats_result['ci_a'][1]:.4f}]")
+        print(f"   Old (v5.0): {stats_result['mean_b']:.4f} ± {stats_result['std_b']:.4f}")
+        print(f"               95% CI: [{stats_result['ci_b'][0]:.4f}, {stats_result['ci_b'][1]:.4f}]")
         print(f"   Relative: {relative*100:+.1f}%")
+        print(f"   Cohen's d: {stats_result['cohens_d']:.3f}")
+        print(f"   p-value: {stats_result['p_value']:.4f}")
         print(f"   Status: {'✅ PASS' if analysis['not_worse']['passed'] else '❌ FAIL'}")
     
     # 总体评估
