@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v4.1.0-green.svg)](https://github.com/luokaishi/moss/releases)
+[![Version](https://img.shields.io/badge/version-v5.1.0-green.svg)](https://github.com/luokaishi/moss/releases)
 [![Paper](https://img.shields.io/badge/paper-NeurIPS%202026-red.svg)](https://github.com/luokaishi/moss/releases/tag/v2.0.0)
 [![v3 Paper](https://img.shields.io/badge/v3%20paper-In%20Preparation-orange.svg)](./paper/v3_extended/)
 [![Experiments](https://img.shields.io/badge/experiments-200%2B-9cf.svg)](./docs/)
@@ -40,26 +40,32 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 > **注意**：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号  
 > **当前重点**：`72h Real World` 实验正在阿里云OpenClaw运行中（2026-03-24 10:12启动，预计3月27日完成）
 
-### 🆕 MOSS v4.1.0 已发布（2026-03-24）✅ | [Purpose Evolution Validated](https://github.com/luokaishi/moss/releases/tag/v4.1.0) 🎯
+### 🆕 MOSS v5.1.0 已发布（2026-03-25）✅ | [Causal Purpose Architecture](https://github.com/luokaishi/moss/releases/tag/v5.1.0) 🎯
 
-**Run 4.x Series Complete: Purpose Evolution Reproducibility Validated**
+**Purpose Causality Validated - Large-N Statistical Study Complete**
 
-三个独立实验（Run 4.2/4.3/4.4）验证Purpose系统可重复性：
+98 runs across 6 experimental conditions with rigorous statistical validation:
 
-| 实验 | 初始Purpose | 探索率 | 演化路径 | 终点 |
-|------|-------------|--------|----------|------|
-| Run 4.2 | Survival | 10% | S→C→**I** | **Influence** |
-| Run 4.3 | Curiosity | 10% | C→S→**I** | **Influence** |
-| Run 4.4 | Survival | 20% | S→C→**I** | **Influence** |
+| 实验条件 | Runs | Steps | Purpose Transitions | 关键发现 |
+|----------|------|-------|---------------------|----------|
+| Extended | 50 | 10k | 0/50 | Purpose高度稳定 |
+| Long | 20 | 100k | 0/20 | 时间尺度不是唯一因素 |
+| Accelerated | 10 | 200k | 3/10 (B→S) | 10x加速，仅Balanced变化 |
+| Phased | 10 | 200k | 5/10 (B→S) | 结构化环境，无S→C→I |
+| Strong | 5 | 500k | 0/5 | 30%扰动，Purpose仍稳定 |
+| **总计** | **98** | - | **8/98 (8%)** | **Purpose稳定性: 92/98 (94%)** |
 
-**核心发现**：
-- 🎯 **Influence是Social Phase的稳定吸引子**（3/3实验验证）
-- 🔄 **路径依赖 vs 终点决定论**：初始条件影响演化路径，但不影响终点
-- 📊 **高探索率延迟但不改变收敛**：20%探索率延缓Purpose切换，但最终仍收敛到Influence
+**核心发现**（基于98-run严格研究）：
+- 🎯 **Purpose是稳定的身份配置**（94%保持率）
+- 🔄 **多吸引子动力学**: Survival和Curiosity都是强吸引子
+- ⚠️ **S→C→I路径**: 在大样本研究中**无法复现**（0/98）
+- 📊 **Purpose演化需要**: 真实世界复杂性 + 社会压力（简化模型不足）
 
-**数据**: `experiments/run_4_series/` - 完整实验数据（1.9MB/run）  
-**报告**: [RUN_4_SERIES_FINAL_REPORT.md](./experiments/analysis/RUN_4_SERIES_FINAL_REPORT.md)  
-**发布**: [GitHub Release v4.1.0](https://github.com/luokaishi/moss/releases/tag/v4.1.0)
+**修正声明**: 原始n=3的S→C→I声称在当前大样本研究中无法复现，已从文档中移除。
+
+**数据**: `experiments/run_4_x_*/` - 完整实验数据和分析  
+**报告**: [GITHUB_RELEASE_v5.1.0_HONEST.md](./GITHUB_RELEASE_v5.1.0_HONEST.md)  
+**发布**: [GitHub Release v5.1.0](https://github.com/luokaishi/moss/releases/tag/v5.1.0)
 
 ---
 
