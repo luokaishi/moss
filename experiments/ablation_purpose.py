@@ -30,6 +30,7 @@ import json
 import argparse
 from typing import Dict, List, Tuple
 from collections import defaultdict
+from datetime import datetime
 
 from moss.core import UnifiedMOSSAgent, MOSSConfig
 from moss.core.causal_purpose import CausalPurposeGenerator, CausalPurposeConfig
@@ -94,7 +95,7 @@ class OldPurposeAgent(UnifiedMOSSAgent):
             purpose_interval=100,
             log_dir="experiments/ablation"
         )
-        super().__init__(agent_id=agent_id)
+        super().__init__(config)
 
 
 class CausalPurposeAgent(UnifiedMOSSAgent):
@@ -337,17 +338,16 @@ def save_results(results: Dict, analysis: Dict, output_path: str):
     
     output = {
         'timestamp': str(datetime.now()),
-        'results': results,
-        'analysis': analysis
+        'results': {k: {**v, 'raw_results': []} if 'raw_results' in v else v 
+                    for k, v in results.items()},
+        'analysis': {k: v if not isinstance(v, dict) else 
+                    {kk: bool(vv) if isinstance(vv, np.bool_) else vv 
+                     for kk, vv in v.items()} 
+                    for k, v in analysis.items()}
     }
     
-    # 移除raw_results以减小文件大小
-    for name in output['results']:
-        if 'raw_results' in output['results'][name]:
-            del output['results'][name]['raw_results']
-    
     with open(output_path, 'w') as f:
-        json.dump(output, f, indent=2)
+        json.dump(output, f, indent=2, default=str)
     
     print(f"\n💾 Results saved to: {output_path}")
 
