@@ -2,18 +2,18 @@
   "agent_id": "real_world_agent",
   "current_purpose": {
     "vector": [
-      0.24953862352475997,
-      0.25013431278369747,
-      0.2503893213811967,
-      0.24968584894158904,
+      0.2514038782483793,
+      0.25000858039992113,
+      0.24988786911305366,
+      0.24856263209683696,
       0.0,
       0.0,
       0.0,
       0.0,
-      0.0002518930355074322
+      0.00013703980852144209
     ],
-    "statement": "I exist to shape and impact. My primary goal is Influence, alongside Curiosity and Optimization.",
-    "last_generation": 2000
+    "statement": "I exist to persist and endure. My core drive is Survival, supported by Curiosity and Influence.",
+    "last_generation": 4000
   },
   "purpose_history": [
     {
@@ -63,6 +63,54 @@
         "timestamp": "2026-03-21T10:26:31.820551"
       },
       "change_magnitude": 0.375592279138601
+    },
+    {
+      "step": 4000,
+      "purpose_vector": [
+        0.2514038782483793,
+        0.25000858039992113,
+        0.24988786911305366,
+        0.24856263209683696,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.00013703980852144209
+      ],
+      "purpose_statement": "I exist to persist and endure. My core drive is Survival, supported by Curiosity and Influence.",
+      "reflection_data": {
+        "total_steps": 10,
+        "recent_window": 10,
+        "action_distribution": {
+          "unknown": 10
+        },
+        "state_distribution": {
+          "concerned": 10
+        },
+        "average_reward": 0.30059440160610723,
+        "reward_trend": 0.0,
+        "current_weights": [
+          0.3938457552589844,
+          0.24961537861309843,
+          0.177222468572786,
+          0.1793163975551312
+        ],
+        "coherence_score": -0.0006851990426072105,
+        "valence_profile": {
+          "beta_distribution": [
+            0.2514383353935178,
+            0.2500428463070374,
+            0.24992211847561074,
+            0.24859669982383403
+          ]
+        },
+        "social_summary": {
+          "n_agents": 0,
+          "avg_trust": 0.0
+        },
+        "timestamp": "2026-03-25T08:31:46.214122"
+      },
+      "change_magnitude": 0.0022408135883254425
     }
   ]
 }
