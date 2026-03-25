@@ -28,6 +28,11 @@ from .objectives import (
 )
 
 from .purpose import PurposeGenerator
+from .causal_purpose import (
+    CausalPurposeGenerator,
+    CausalPurposeConfig,
+    PurposeState
+)
 from .dimensions import (
     CoherenceModule,
     ValenceModule,
@@ -48,6 +53,9 @@ __all__ = [
     'OptimizationObjective',
     'ObjectiveManager',
     'PurposeGenerator',
+    'CausalPurposeGenerator',
+    'CausalPurposeConfig',
+    'PurposeState',
     'CoherenceModule',
     'ValenceModule',
     'OtherModelingModule',
