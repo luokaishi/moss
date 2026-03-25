@@ -277,6 +277,10 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         if self.config.enable_purpose:
             self._init_purpose_generator()
         
+        # 行动历史（用于Purpose反思）
+        self.action_history = []
+        self.max_action_history = 1000
+        
         logger.info(f"[UnifiedMOSSAgent] {self.agent_id} ready with {self._get_enabled_dimensions()} dimensions")
     
     def _init_dimensions(self):
@@ -323,11 +327,15 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
             from .purpose import PurposeGenerator
             self.purpose_generator = PurposeGenerator(
                 agent_id=self.agent_id,
-                generation_interval=self.config.purpose_interval
+                generation_interval=self.config.purpose_interval,
+                output_dir=self.config.log_dir
             )
+            # 尝试加载之前的Purpose历史
+            self.purpose_generator.load()
             logger.info("[UnifiedMOSSAgent] Purpose Generator initialized")
         except ImportError as e:
             logger.warning(f"[UnifiedMOSSAgent] Could not load Purpose Generator: {e}")
+            self.purpose_generator = None
     
     def _get_enabled_dimensions(self) -> int:
         """获取启用的维度数"""
@@ -404,8 +412,21 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         reward = np.random.random() * 0.5 if success else -0.1
         
         # 更新Purpose (如果启用)
-        if self.purpose_generator and self.step_count % self.config.purpose_interval == 0:
-            self._update_purpose()
+        if self.purpose_generator and self.config.enable_purpose:
+            purpose_result = self._update_purpose()
+            # 应用Purpose到权重
+            if purpose_result.get('purpose_generated') and purpose_result.get('weight_adjustment') is not None:
+                adjustment = purpose_result['weight_adjustment']
+                if len(adjustment) >= len(self.weights):
+                    self.weights = self.weights + adjustment[:len(self.weights)]
+                    self.weights = np.maximum(self.weights, 0.05)
+                    self.weights = self.weights / self.weights.sum()
+                    logger.debug(f"[UnifiedMOSSAgent] Weights adjusted by Purpose: {self.weights.round(3)}")
+        
+        # 记录行动历史
+        self.action_history.append(action)
+        if len(self.action_history) > self.max_action_history:
+            self.action_history.pop(0)
         
         result = ActionResult(
             action_id=f"step_{self.step_count}",
@@ -419,14 +440,32 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         self.step_count += 1
         return result
     
-    def _update_purpose(self):
+    def _update_purpose(self) -> Dict:
         """更新Purpose"""
-        # 简化版：实际应调用PurposeGenerator
-        logger.info(f"[UnifiedMOSSAgent] Purpose update at step {self.step_count}")
+        if not self.purpose_generator:
+            return {'purpose_generated': False}
+        
+        # 构建历史数据（简化版，实际应从历史记录中提取）
+        agent_history = [
+            {'action': self.action_history[i] if i < len(self.action_history) else 'unknown',
+             'reward': 0.1,
+             'state': self.current_state}
+            for i in range(min(100, self.step_count))
+        ]
+        
+        result = self.purpose_generator.step(
+            agent_step=self.step_count,
+            agent_history=agent_history,
+            current_weights=self.weights,
+            coherence_score=0.5,  # 简化值
+            valence_profile=None,
+            social_summary=None
+        )
+        
+        return result
     
     def _get_purpose_vector(self) -> Optional[np.ndarray]:
         """获取Purpose向量"""
         if self.purpose_generator:
-            # return self.purpose_generator.purpose_vector
-            pass
+            return self.purpose_generator.purpose_vector
         return None

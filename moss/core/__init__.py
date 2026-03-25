@@ -7,6 +7,7 @@ MOSS Unified Core Package
 Usage:
     from moss.core import UnifiedMOSSAgent, MOSSConfig
     from moss.core.objectives import ObjectiveManager
+    from moss.core.purpose import PurposeGenerator
 """
 
 from .unified_agent import (
@@ -26,6 +27,14 @@ from .objectives import (
     ObjectiveManager
 )
 
+from .purpose import PurposeGenerator
+from .dimensions import (
+    CoherenceModule,
+    ValenceModule,
+    OtherModelingModule,
+    NormInternalizationModule
+)
+
 __all__ = [
     'BaseMOSSAgent',
     'UnifiedMOSSAgent',
@@ -38,4 +47,9 @@ __all__ = [
     'InfluenceObjective',
     'OptimizationObjective',
     'ObjectiveManager',
+    'PurposeGenerator',
+    'CoherenceModule',
+    'ValenceModule',
+    'OtherModelingModule',
+    'NormInternalizationModule',
 ]
