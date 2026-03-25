@@ -182,25 +182,19 @@
 
 ## 📅 本周计划（3月25-31日）
 
-### Day 1 (Today) - ✅ 完成
+### Day 1 (Today) - ✅ 历史性完成
 - TypeError Bug修复
-- 统计框架实现
-- 最小理论化文档
+- 统计框架实现（CI, p-value, Cohen's d）
+- Ablation实验（200 runs, 4/4通过）
+- Purpose dynamics代码（dP/dt方程）
+- 论文Draft v1（~4,500词，4图表）
+- Phase 2准备文档
 
-### Day 2-3 (Mar 26-27)
-- 运行ablation实验（新统计）
-- Purpose dynamics代码
-- 72h实验完成监控
-
-### Day 4-5 (Mar 28-29)
-- Phase 2准备
-- 论文Draft v1结构
-- Multi-agent配置
-
-### Day 6-7 (Mar 30-31)
-- Phase 2启动（10-20 agents）
-- 论文Draft v1内容
-- Week 1总结
+### Day 2-7 (Mar 26-31) - Phase 2时代
+- 72h实验完成监控（~46小时剩余）
+- Phase 2多Agent实现
+- 论文图表完善
+- 10-20 agent部署准备
 
 ---
 
@@ -209,6 +203,9 @@
 | 提交 | 时间 | 内容 |
 |------|------|------|
 | `359fb2f6` | 今日 | p-value Bug修复 + Ablation实验完成 |
+| `b4f4760d` | 今日 | Phase 2准备文档 |
+| `7276098a` | 今日 | 论文图表集成（4 figures） |
+| `b1785172` | 今日 | 论文图表生成脚本 |
 | `6a4d7390` | 今日 | 论文Draft v1.0完成 |
 | `530656ed` | 今日 | Purpose Dynamics模块实现 |
 | `359fb2f6` | 今日 | p-value Bug修复 + Ablation实验完成 |
@@ -217,11 +214,12 @@
 | `e4839b02` | 今日 | 评估文档 |
 | `f79484b5` | 今日 | README更新 |
 
-**今日提交**: 7次  
-**代码变更**: ~2,500行  
-**论文**: ~4,500词，7章节，22引用  
+**今日提交**: 10次  
+**代码变更**: ~3,500行  
+**论文**: ~4,500词，7章节，22引用，4图表  
 **实验**: 50 runs x 4 groups = 200 runs completed  
-**测试**: 全部通过（2个测试文件）
+**测试**: 全部通过（2个测试文件）  
+**图表**: 4 publication-quality figures
 
 ---
 
