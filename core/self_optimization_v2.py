@@ -102,8 +102,11 @@ class SelfOptimizationModule:
         
         # 检查2: 性能平台期
         if len(self.performance_history) >= 2:
-            recent_perf = self.performance_history[-10:]  # 最近10个
-            if len(recent_perf) >= 10:
+            # 提取最近10个记录的task_completion_rate（或第一个可用指标）
+            recent_records = self.performance_history[-10:]  # 最近10个
+            if len(recent_records) >= 10:
+                # 从metrics字典中提取task_completion_rate，如果不存在则使用0
+                recent_perf = [r['metrics'].get('task_completion_rate', 0) for r in recent_records]
                 improvement = max(recent_perf) - min(recent_perf)
                 if improvement < self.trigger_config['min_performance_improvement']:
                     self.consecutive_no_improvement += 1
