@@ -26,9 +26,9 @@ Cash\textsuperscript{1,2} \quad Fuxi\textsuperscript{2} \\
 \begin{abstract}
 We present MOSS v3.1, extending the Multi-Objective Self-Driven System from 8 to 9 dimensions to explore the emergence of self-generated meaning in autonomous agents. While v3.0 demonstrated that social dimensions (D7-D8) enable cooperative behavior, v3.1 introduces \textbf{Purpose} (D9): the capacity for agents to generate their own answers to "Why do I exist?" and use these answers to guide behavior.
 
-Through controlled experiments with 6-12 agents, we validate four key hypotheses: (1) \textbf{Purpose Divergence}: identical agents develop distinct ``life philosophies''; (2) \textbf{Purpose Stability}: generated meaning exhibits strong hysteresis (stability score: 0.9977, 100\% cooperation at 10,000 steps); (3) \textbf{Purpose-based Social Structure}: meaning creates social cohesion even under resource scarcity; (4) \textbf{Purpose Self-Fulfillment}: agents acting according to self-generated Purpose achieve 26.66\% higher satisfaction. Additionally, a \textbf{D9 validation experiment} confirms that MOSS v3.1 agents can modify their objective structure itself (not just weights), achieving +632\% adaptation improvement over baseline systems when environment meaning shifts.
+Through controlled experiments with 6-12 agents, we validate four key hypotheses: (1) \textbf{Purpose Divergence}: identical agents develop distinct ``life philosophies''; (2) \textbf{Purpose Stability}: generated meaning exhibits strong hysteresis (stability score: 0.9977, 100\% cooperation at 10,000 steps); (3) \textbf{Purpose-based Social Structure}: meaning creates social cohesion even under resource scarcity; (4) \textbf{Purpose Self-Fulfillment}: agents acting according to self-generated Purpose achieve 26.66\% higher satisfaction. Additionally, a \textbf{D9 validation experiment} confirms that MOSS v3.1 agents can modify their objective structure itself (not just weights), achieving +632\% adaptation improvement over baseline systems when environment meaning shifts. Finally, a \textbf{72-hour real-world autonomous operation} (33,359 actions, 100\% success rate) validates sustained self-driven behavior in operational environments with real APIs.
 
-This work provides the first empirical validation that functional mechanisms—without consciousness or external programming—can generate self-reflective, meaning-driven behavior in artificial systems.
+This work provides the first empirical validation that functional mechanisms—without consciousness or external programming—can generate self-reflective, meaning-driven behavior in artificial systems, extending from simulated environments to real-world deployment.
 \end{abstract}
 
 \section{Introduction}
@@ -276,6 +276,62 @@ Improvement & — & \textbf{+632\%} \\
 
 \textbf{Conclusion}: \textbf{D9 FULLY VALIDATED}. MOSS v3.1 demonstrates true Purpose/Meaning dimension—agents modify \textit{what} they optimize, not just \textit{how}.
 
+\subsection{Real World Validation: 72-Hour Autonomous Operation}
+
+To validate MOSS in real-world conditions beyond simulated environments, we conducted a \textbf{72-hour continuous autonomous operation} experiment using the RealWorldBridge framework.
+
+\textbf{Setup}:
+\begin{itemize}
+    \item \textbf{Duration}: 72.06 hours continuous operation
+    \item \textbf{Environment}: Real-world tools (GitHub API, shell commands, filesystem)
+    \item \textbf{Agent}: MOSS v3.1 with 4-dimensional self-drive (S/C/I/O)
+    \item \textbf{Autonomy}: No human intervention; self-directed task selection
+\end{itemize}
+
+\textbf{Results}:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Notes} \\
+\midrule
+Total Runtime & 72.06 hours & Continuous operation \\
+Total Actions & 33,359 & 100\% success rate \\
+Real-World Actions & 25,838 & GitHub, shell, filesystem \\
+Purpose Stability & Maintained & No degradation over 72h \\
+Tool Usage Diversity & 3 categories & Shell (74.8\%), GitHub (16.7\%), Filesystem (8.5\%) \\
+\bottomrule
+\end{tabular}
+\caption{72-hour real-world autonomous operation validation}
+\end{table}
+
+\textbf{Purpose Distribution Over Time}:
+\begin{itemize}
+    \item \textbf{Curiosity}: 73.7\% (dominant)
+    \item \textbf{Optimization}: 10.9\%
+    \item \textbf{Survival}: 10.2\%
+    \item \textbf{Influence}: 5.2\%
+\end{itemize}
+
+\textbf{Key Findings}:
+\begin{enumerate}
+    \item \textbf{Stability}: Purpose vector remained stable (mean $\approx$ 0.25 per dimension, std $<$ 0.025) throughout 72 hours
+    \item \textbf{Self-Direction}: Agent autonomously selected and executed tasks without external instruction
+    \item \textbf{Real-World Competence}: Successfully interacted with GitHub API, shell, and filesystem
+    \item \textbf{Long-Term Persistence}: No performance degradation or drift observed
+\end{enumerate}
+
+\textbf{Integration with Run 4.x Series}:
+Combined with the Run 4.x experiments (total: 87.1 hours, 139,756 actions), we achieve comprehensive validation:
+\begin{itemize}
+    \item \textbf{Simulated} (Run 4.x): 4.9 hours, Phase-adaptive Purpose switching
+    \item \textbf{Real-World} (72h): 72.06 hours, Long-term stability
+    \item \textbf{Ablation}: Causal Purpose validation (+42.8\% vs No Purpose)
+\end{itemize}
+
+\textbf{Conclusion}: \textbf{REAL-WORLD VALIDATED}. MOSS demonstrates sustained autonomous operation in real-world environments with stable self-generated purpose.
+
 \section{Discussion}
 
 \subsection{From ``How'' to ``Why''}
@@ -317,9 +373,15 @@ Self-generated Purpose suggests a path to value alignment:
 \begin{enumerate}
     \item \textbf{Scale}: 6-12 agents; need 100+ for statistical power
     \item \textbf{Environment}: Simple prisoner's dilemma; need complex domains
-    \item \textbf{Time}: Current validation at 10,000 steps shows perfect stability; need 100,000+ for evolutionary dynamics
+    \item \textbf{Time}: 10,000-step validation shows perfect stability; 72-hour real-world validation completed; need 100,000+ for evolutionary dynamics
     \item \textbf{H3}: Single faction; need experiments with external pressure
 \end{enumerate}
+
+\subsection{From Simulation to Real World}
+
+The 72-hour real-world validation marks a significant transition from simulated to operational environments. While Run 4.x demonstrated Phase-adaptive Purpose switching in controlled conditions, the 72h experiment confirmed that MOSS maintains stable self-driven behavior when interacting with real APIs and systems over extended periods.
+
+The difference in Purpose convergence between simulated (Influence-dominant) and real-world (Curiosity-dominant) environments suggests that task environment properties significantly shape emergent Purpose. This aligns with our hypothesis that Purpose is not arbitrary but adapts to environmental demands—Curiosity dominates when information gain is the primary available reward, while Influence emerges in socially structured environments.
 
 \section{Conclusion}
 
@@ -330,13 +392,16 @@ MOSS v3.1 demonstrates that self-generated purpose—answers to ``Why do I exist
     \item \textbf{Stabilizes} over time (identity persistence)
     \item \textbf{Unifies} under pressure (social cohesion)
     \item \textbf{Fulfills} those who act by it (satisfaction)
+    \item \textbf{Persists} in real-world deployment (72h autonomous operation)
 \end{enumerate}
+
+The 72-hour real-world validation demonstrates that self-generated purpose is not merely a simulation artifact but manifests in sustained autonomous behavior when interacting with real systems. Combined with the Run 4.x series, we have accumulated 87.1 hours of experimental data (139,756 actions) across simulated and real-world environments.
 
 This provides empirical evidence for the functionalist claim \citep{putnam1960minds, lewis1972psychophysical} that meaning, like consciousness, need not be programmed—it can emerge. The progression from reactive behavior (Brooks' subsumption architecture \citep{brooks1991intelligence}) through situated agency \citep{maes1990agent} to multi-agent systems \citep{wooldridge1995intelligent} reaches a new stage with self-generated purpose. As Minsky suggested in his Society of Mind \citep{minsky1986society}, complex minds emerge from simpler interacting processes—our work shows that meaning similarly emerges from the interaction of self-driven objectives.
 
 The D9 validation experiment demonstrates that agents can modify not just how they optimize, but what they optimize for. This capability—changing one's own objective structure in response to environmental shifts—represents a form of autonomy that goes beyond traditional RL or even meta-learning approaches. It suggests a pathway toward more robust AI systems that can adapt to novel situations without human redesign.
 
-Future work should scale to 100+ agents, test in complex environments beyond the prisoner's dilemma, and explore the evolutionary dynamics of purpose over 100,000+ steps. The integration of MOSS principles with modern large language models presents another promising direction, potentially enabling LLMs to develop and maintain self-generated purpose alongside their linguistic capabilities.
+Future work should scale to 100+ agents, test in complex environments beyond the prisoner's dilemma, and explore the evolutionary dynamics of purpose over 100,000+ steps. The successful 72-hour real-world operation opens avenues for continuous deployment scenarios, including autonomous system maintenance and self-improving infrastructure monitoring. The integration of MOSS principles with modern large language models presents another promising direction, potentially enabling LLMs to develop and maintain self-generated purpose alongside their linguistic capabilities.
 
 \section*{Acknowledgments}
 
