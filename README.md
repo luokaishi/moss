@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v5.1.0-green.svg)](https://github.com/luokaishi/moss/releases)
+[![Version](https://img.shields.io/badge/version-v5.2.0-green.svg)](https://github.com/luokaishi/moss/releases)
 [![Paper](https://img.shields.io/badge/paper-NeurIPS%202026-red.svg)](https://github.com/luokaishi/moss/releases/tag/v2.0.0)
 [![v3 Paper](https://img.shields.io/badge/v3%20paper-In%20Preparation-orange.svg)](./paper/v3_extended/)
 [![Experiments](https://img.shields.io/badge/experiments-200%2B-9cf.svg)](./docs/)
@@ -68,6 +68,43 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 **数据**: `experiments/run_4_x_*/` - 完整实验数据和分析  
 **报告**: [GITHUB_RELEASE_v5.1.0_HONEST.md](./GITHUB_RELEASE_v5.1.0_HONEST.md)  
 **发布**: [GitHub Release v5.1.0](https://github.com/luokaishi/moss/releases/tag/v5.1.0)
+
+---
+
+### 🆕 MOSS v5.2.0 已发布（2026-03-29）✅ | [Real-World Validation](https://github.com/luokaishi/moss/releases/tag/v5.2.0) 🌐
+
+**72-Hour Real-World Autonomous Operation Complete + Full Data Integration**
+
+**核心成果**:
+- 🕐 **72小时真实世界自治**: 33,359 actions, 100%成功率
+- 📊 **完整数据整合**: 6实验, 87.1h, 139,756 actions
+- 📝 **论文更新**: NeurIPS 2027投稿含72h验证章节
+- 🏗️ **v5.0设计基础**: 数据驱动的架构决策文档
+
+**实验数据**:
+
+| 实验 | 时长 | Actions | 关键发现 |
+|------|------|---------|----------|
+| Run 4.1 | 3.5h | 33,240 | Phase感知基线 |
+| Run 4.2 | 4.9h | 44,159 | Purpose适配验证 |
+| Run 4.3 | 3.3h | 14,449 | Curiosity初始条件 |
+| Run 4.4 | 3.3h | 14,549 | 高探索率测试 |
+| Ablation | — | — | 因果验证4/4通过 |
+| **72h Real World** | **72.1h** | **33,359** | **长期稳定性验证** |
+| **总计** | **87.1h** | **139,756** | — |
+
+**72h实验详情**:
+- **Purpose分布**: Curiosity 73.7%, Optimization 10.9%, Survival 10.2%, Influence 5.2%
+- **工具使用**: Shell 74.8%, GitHub 16.7%, Filesystem 8.5%
+- **稳定性**: Purpose向量72小时保持稳定 (std < 0.025)
+
+**数据资产位置**:
+- 分析报告: `experiments/analysis_72h/`
+- 整合数据: `experiments/integrated_data/`
+- 论文更新: `paper/v3_extended/paper_v31_draft.tex`
+- v5.0设计: `v5/docs/DATA_SUPPORT_DESIGN.md`
+
+**发布**: [GitHub Release v5.2.0](https://github.com/luokaishi/moss/releases/tag/v5.2.0) | [Release Notes](./releases/v5.2.0_RELEASE_NOTES.md)
 
 ---
 
