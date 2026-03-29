@@ -565,6 +565,41 @@ moss/
 
 ---
 
+## 📊 Datasets
+
+Reproducibility datasets from MOSS experiments are available in the `datasets/` directory:
+
+### v5.2.0 72h Real-World Experiment Dataset
+
+**Location**: `datasets/v5.2.0_72h_realworld/`  
+**Download**: `datasets/v5.2.0_72h_realworld.tar.gz` (889KB)
+
+| Metric | Value |
+|--------|-------|
+| Total Actions | 33,359 |
+| Runtime | 72.06 hours |
+| Success Rate | 100% |
+| Format | JSONL |
+
+**Contents**:
+- `actions.jsonl`: Complete action logs
+- `status.json`: Final experiment status
+- `experiment_metadata.json`: Unified metadata for 6 experiments
+- `README.md`: Dataset documentation with schema and usage examples
+
+**Citation**:
+```bibtex
+@software{moss_v5.2.0,
+  author = {Cash and Fuxi},
+  title = {MOSS: Multi-Objective Self-Driven System},
+  version = {v5.2.0},
+  year = {2026},
+  url = {https://github.com/luokaishi/moss}
+}
+```
+
+---
+
 ## 🔄 Version History
 
 | Version | Date | Key Changes |
