@@ -2,15 +2,17 @@
 
 **Minimal Viable Evolutionary System**
 
-一个自驱力→持续演化→AGI 路径的实验平台
+一个独立的自驱力演化实验平台
 
 ---
 
-## 🎯 项目目标
+## 🎯 项目定位
 
-验证核心假设：
+MVES 是一个**独立的科学实验项目**，旨在探索：
 
 > 在没有外部任务输入的情况下，系统能否通过内部机制（资源约束 + 变异 + 选择）产生持续行为变化和结构演化？
+
+**注意：** MVES 是独立设计的实验系统，与其他项目（如 MOSS）无架构依赖或版本承接关系。
 
 ---
 
@@ -57,7 +59,8 @@ ls checkpoints/
 tail -f logs/evolution_v*.log
 
 # 分析数据
-python3 analyze.py
+cd analysis
+python3 compare_versions.py
 ```
 
 ---
@@ -65,7 +68,7 @@ python3 analyze.py
 ## 📁 项目结构
 
 ```
-MVES/
+mves/
 ├── README.md                 # 项目总览
 ├── EXPERIMENT_REPORT.md      # 实验报告
 ├── SCIENTIFIC_FRAMEWORK.md   # 科学评估框架
@@ -185,7 +188,7 @@ python3 plot_evolution.py
 
 ## 🤝 贡献
 
-这是一个研究项目，欢迎：
+这是一个独立的研究项目，欢迎：
 - 实验建议
 - 理论讨论
 - 代码改进
