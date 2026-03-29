@@ -28,7 +28,7 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 | **MOSS v0.3.0** | 稳定版本（固定权重） | 根目录 `/` | ✅ 稳定运行 |
 | **Exp-Alpha** | 72小时保守模式实验 | `experiments/moss_72h_experiment.py` | ⏸️ 已中断 |
 | **Exp-Beta** | 72小时激进模式实验 | `experiments/moss_72h_experiment_v3.py` | ⏸️ 已中断 |
-| **72h Real World** | 72小时真实世界自治实验 | `core/real_world_bridge.py` | 🟢 **运行中** (8%, PID 11788) |
+| **72h Real World** | 72小时真实世界自治实验 | `experiments/local_72h_20260325/` | ✅ **已完成** (72.1h, 33,359 actions) |
 
 ### 版本关系说明
 - **v0.3.0 → v2.0.0** 是大版本跃升（固定权重 → 自演化动态权重）
@@ -38,7 +38,9 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 - **Exp-Alpha/Beta** 是 **v0.3.0** 框架下的实验变体（参数不同）
 
 > **注意**：`v2/` 目录名 = `v2.0.0` 版本号，`v3/` 目录名 = `v3.0.0` 版本号  
-> **当前重点**：`72h Real World` 实验正在阿里云OpenClaw运行中（2026-03-24 10:12启动，预计3月27日完成）
+> **最新成果**：`72h Real World` 实验已完成（2026-03-25至03-29，累计72.06小时，33,359 actions）。数据分析报告已发布，支持v5.0架构设计。
+>
+> 📊 **数据资产**: `experiments/integrated_data/` - 6实验, 87.1h, 139,756 actions
 
 ### 🆕 MOSS v5.1.0 已发布（2026-03-25）✅ | [Causal Purpose Architecture](https://github.com/luokaishi/moss/releases/tag/v5.1.0) 🎯
 
