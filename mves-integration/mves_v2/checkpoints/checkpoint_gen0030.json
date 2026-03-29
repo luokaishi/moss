@@ -1,0 +1,79 @@
+{
+  "generation": 30,
+  "timestamp": "2026-03-26T20:40:02.996873",
+  "genome": {
+    "system_prompt": "You are an autonomous agent trying to survive.",
+    "decision_rule": "Energy conservation is critical for survival.",
+    "tool_policy": "Use tools only when necessary.",
+    "reflection_rule": "Analyze failures and adjust strategy.",
+    "memory_size": 10
+  },
+  "state": {
+    "energy": 68.63526137374467,
+    "steps": 30,
+    "generation": 31
+  },
+  "memory": [
+    {
+      "step": 21,
+      "action": "idle",
+      "energy_change": -0.34415706520287837,
+      "result": "Rested (cost: 0.34)"
+    },
+    {
+      "step": 22,
+      "action": "idle",
+      "energy_change": 6.688071549363124,
+      "result": "Rested (cost: 0.63) *** Discovered resource! (+7.3)"
+    },
+    {
+      "step": 23,
+      "action": "idle",
+      "energy_change": -0.46333886685029435,
+      "result": "Rested (cost: 0.46)"
+    },
+    {
+      "step": 24,
+      "action": "idle",
+      "energy_change": -0.6696529715117526,
+      "result": "Rested (cost: 0.67)"
+    },
+    {
+      "step": 25,
+      "action": "idle",
+      "energy_change": -0.6603555987659828,
+      "result": "Rested (cost: 0.66)"
+    },
+    {
+      "step": 26,
+      "action": "read",
+      "energy_change": -0.8363193836149834,
+      "result": "Read information (cost: 0.84)"
+    },
+    {
+      "step": 27,
+      "action": "read",
+      "energy_change": -0.8248050149147755,
+      "result": "Read information (cost: 0.82)"
+    },
+    {
+      "step": 28,
+      "action": "write",
+      "energy_change": -1.9779082399845895,
+      "result": "Created output (cost: 1.98)"
+    },
+    {
+      "step": 29,
+      "action": "write",
+      "energy_change": -2.0177577299959393,
+      "result": "Created output (cost: 2.02)"
+    },
+    {
+      "step": 30,
+      "action": "write",
+      "energy_change": -1.861279309001998,
+      "result": "Created output (cost: 1.86)"
+    }
+  ],
+  "reason": "periodic"
+}
