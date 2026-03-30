@@ -1,0 +1,26 @@
+{
+  "version": "5.0",
+  "created": "2026-03-30T22:46:18.968805",
+  "parent_id": null,
+  "generation": 0,
+  "modules": [
+    "basic_perceptor",
+    "basic_actuator"
+  ],
+  "strategies": {
+    "exploration": "random_walk",
+    "resource_management": "conservative"
+  },
+  "drive_weights": {
+    "survival": 0.4,
+    "curiosity": 0.2,
+    "influence": 0.25,
+    "optimization": 0.15
+  },
+  "mutation_count": 0,
+  "capabilities": [
+    "move",
+    "sense",
+    "act"
+  ]
+}

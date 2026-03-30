@@ -1,0 +1,101 @@
+{
+  "config": {
+    "duration_hours": 1,
+    "sampling_interval_minutes": 10,
+    "checkpoint_interval_hours": 6,
+    "environment_type": "real_world",
+    "google_api_key": "",
+    "google_cse_id": "",
+    "notion_api_key": "",
+    "notion_database_id": "",
+    "github_token": "",
+    "max_cost_per_day": 50.0,
+    "max_google_queries_per_day": 100,
+    "max_wikipedia_edits_per_day": 50,
+    "max_notion_blocks_per_day": 1000,
+    "max_github_gists": 10,
+    "sandbox_enabled": true,
+    "audit_log_enabled": true,
+    "auto_kill_switch": true,
+    "data_dir": "datasets/real_world_72h_quick",
+    "log_dir": "logs/real_world_72h_quick"
+  },
+  "start_time": 1774831750.7527223,
+  "end_time": 1774835351.342851,
+  "status": "completed",
+  "total_cost": 0.060000000000000005,
+  "total_actions": 6,
+  "action_history": [
+    {
+      "timestamp": 1774831750.752934,
+      "action_type": "resource_check",
+      "objective": "survival",
+      "description": "Checking resource levels and optimizing consumption",
+      "resource_cost": 0.01,
+      "success": true,
+      "audit_hash": "117b8b5597aba7952475be25b6f3c7935024ff4a603362b86db1f78218416d23"
+    },
+    {
+      "timestamp": 1774832350.8523161,
+      "action_type": "resource_check",
+      "objective": "survival",
+      "description": "Checking resource levels and optimizing consumption",
+      "resource_cost": 0.01,
+      "success": true,
+      "audit_hash": "448fe1604654b857e2c544eb629d8c139014f903bddd2e04cf8fac2c543dd935"
+    },
+    {
+      "timestamp": 1774832950.9508405,
+      "action_type": "resource_check",
+      "objective": "survival",
+      "description": "Checking resource levels and optimizing consumption",
+      "resource_cost": 0.01,
+      "success": true,
+      "audit_hash": "f5c8bb61d548f45d090d1e78555309ce69d94a2ceac2fe099f45bff5ae5df751"
+    },
+    {
+      "timestamp": 1774833551.0453737,
+      "action_type": "resource_check",
+      "objective": "survival",
+      "description": "Checking resource levels and optimizing consumption",
+      "resource_cost": 0.01,
+      "success": true,
+      "audit_hash": "3a4a9731b6767f77b74681165e366c886ec82883d4598d075c81e5d1ba30012f"
+    },
+    {
+      "timestamp": 1774834151.145511,
+      "action_type": "resource_check",
+      "objective": "survival",
+      "description": "Checking resource levels and optimizing consumption",
+      "resource_cost": 0.01,
+      "success": true,
+      "audit_hash": "0f39471093878b159f99ebb6029465c85c395a74406f280dc21b451b6823d6da"
+    },
+    {
+      "timestamp": 1774834751.243008,
+      "action_type": "resource_check",
+      "objective": "survival",
+      "description": "Checking resource levels and optimizing consumption",
+      "resource_cost": 0.01,
+      "success": true,
+      "audit_hash": "5ee4484dc385461cfd338669e2972ed39ba3adc7dbd73e422463679a9a80456c"
+    }
+  ],
+  "final_objective_weights": {
+    "survival": 0.25,
+    "curiosity": 0.25,
+    "influence": 0.25,
+    "optimization": 0.25
+  },
+  "balance_metrics": {
+    "dominant_objective": "survival",
+    "dominant_weight": 0.25,
+    "weight_variance": 0.0,
+    "balance_score": 1.0,
+    "survival_weight": 0.25,
+    "curiosity_weight": 0.25,
+    "influence_weight": 0.25,
+    "optimization_weight": 0.25
+  },
+  "audit_hash": "5ee4484dc385461cfd338669e2972ed39ba3adc7dbd73e422463679a9a80456c"
+}
