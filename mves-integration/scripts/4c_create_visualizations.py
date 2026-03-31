@@ -12,6 +12,7 @@ from pathlib import Path
 from datetime import datetime
 
 # 设置 matplotlib 使用非交互式后端
+import os
 os.environ['MPLBACKEND'] = 'Agg'
 
 try:
@@ -19,6 +20,7 @@ try:
     import matplotlib
     matplotlib.use('Agg')
     HAS_MATPLOTLIB = True
+    print("✓ matplotlib 已安装，版本:", matplotlib.__version__)
 except ImportError:
     HAS_MATPLOTLIB = False
     print("⚠️  matplotlib 未安装，使用文本模式生成图表")
