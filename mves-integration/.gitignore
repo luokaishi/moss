@@ -4,30 +4,79 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
 venv/
+env/
 ENV/
-
-# 实验数据（保留检查点，忽略临时文件）
-*.log
-*.tmp
-*.bak
-
-# 分析输出
-analysis/*.png
-analysis/*.pdf
-*.csv
-
-# 环境快照（可选提交）
-mves_v4/environment_snapshots/
+.venv
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Checkpoints (keep only key ones)
+mves_v5/checkpoints/checkpoint_gen*.json.gz
+mves_v5/checkpoints/final_result.json.gz
+!mves_v5/checkpoints/.gitkeep
+
+# Agent data (too many files)
+mves_v5/agents/agent_*/
+!mves_v5/agents/.gitkeep
+
+# Analysis intermediate files
+analysis/*.csv
+analysis/*.json
+!analysis/.gitkeep
+
+# Plots (regenerated)
+plots/*.png
+!plots/.gitkeep
+
+# Environment variables
 .env
+.env.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Archive
+.archive/
+
+# Old reports
+*_OLD.md
+*_backup.md
+*.md.bak

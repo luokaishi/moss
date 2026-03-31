@@ -1,161 +1,143 @@
-# MVES 快速开始指南
+# MVES v5 快速开始指南
 
-**5 分钟运行第一个实验**
+## 5 分钟快速体验
 
----
-
-## 🚀 前置要求
-
-- Python 3.8+
-- 无外部依赖（v1-v3）
-- 可选：matplotlib（分析用）
-
----
-
-## 📦 安装
+### 1. 安装依赖 (2 分钟)
 
 ```bash
-# 克隆或进入项目
-cd /home/admin/.openclaw/workspace/MVES
+cd /home/admin/.openclaw/workspace/projects/moss/mves-integration
 
-# 查看结构
-tree -L 2
+# 安装 Python 依赖
+pip install -r requirements.txt
 ```
 
----
-
-## 🧪 运行实验
-
-### v1 - 基础演化（推荐入门）
+### 2. 运行快速测试 (1 分钟)
 
 ```bash
-cd mves_v1
-python3 main.py
+# 快速测试模式 (1 小时实验，约 6 代)
+python3 mves_v5/main.py --quick
 ```
 
-**预期输出：**
+**预期输出**:
 ```
-Gen   1 | Energy:   98.0 | Steps:    1 | Fitness:   99.0
-Gen   2 | Energy:   96.0 | Steps:    2 | Fitness:   98.0
+======================================================================
+MVES v5 - Minimal Evolutionary AGI Prototype
+======================================================================
+Mode: Quick Test
+Duration: 1 hours
+Population: 5 agents
 ...
-📊 最终状态报告:
-  最终策略：explore
-  总步数：100
+✓ Checkpoint saved
 ```
 
-### v2 - 认知演化
+### 3. 查看结果 (1 分钟)
 
 ```bash
-cd mves_v2
-python3 main.py
+# 查看检查点
+ls -lh mves_v5/checkpoints/
+
+# 查看最终结果
+python3 -c "import json,gzip; d=json.load(gzip.open('mves_v5/checkpoints/final_result.json.gz','rt')); print('最终适应度:', d['history'][-1]['avg_fitness'])"
 ```
 
-### v3 - 代码演化
+### 4. 分析数据 (1 分钟)
 
 ```bash
-cd mves_v3
-python3 main.py
-```
+# 提取数据
+python3 scripts/4a_extract_data.py
 
-### v4 - 开放环境
+# 统计分析
+python3 scripts/4b_statistical_analysis.py
 
-```bash
-cd mves_v4
-python3 main.py
-```
-
-**预期输出：**
-```
-Gen   1 | Pop: 10 | Energy:  99.2 | Complexity: 1.0
-...
-💀 Agent 8 死亡
-🔬 科学评估:
-  ❌ 结构复杂度增长
-  ✅ 行为多样性
+# 生成可视化
+python3 scripts/4c_create_visualizations.py
 ```
 
 ---
 
-## 📊 查看结果
+## 标准实验流程
 
-### 检查点
-
-```bash
-ls checkpoints/
-cat checkpoints/checkpoint_gen0010.json
-```
-
-### 日志
+### 运行 24 小时实验
 
 ```bash
-tail -f logs/evolution.log
+python3 mves_v5/main.py --hours 24
 ```
 
-### 分析
+**参数说明**:
+- `--hours 24`: 运行 24 小时
+- `--quick`: 快速测试模式 (1 小时)
+- `--population 10`: 自定义种群大小
+
+### 完整分析流程
 
 ```bash
-cd analysis
-python3 compare_versions.py
+# 1. 数据提取
+python3 scripts/4a_extract_data.py
+
+# 2. 统计分析
+python3 scripts/4b_statistical_analysis.py
+
+# 3. 可视化生成
+python3 scripts/4c_create_visualizations.py
+
+# 4. 涌现分析
+python3 scripts/4d_emergence_analysis.py
+```
+
+### 查看结果
+
+```bash
+# 数据文件
+cat analysis/dataset_clean.csv | head
+
+# 统计报告
+cat analysis/statistical_analysis.md
+
+# 涌现报告
+cat analysis/emergence_analysis.md
+
+# 可视化图表
+ls -lh plots/
 ```
 
 ---
 
-## 📚 阅读文档
+## 常见问题
 
-### 入门顺序
+### Q: 内存不足怎么办？
 
-1. [项目总览](README.md) - 了解全貌
-2. [实验报告](EXPERIMENT_REPORT.md) - 详细结果
-3. [版本文档](mves_v1/README.md) - 深入细节
-4. [科学框架](SCIENTIFIC_FRAMEWORK.md) - 方法论
-
----
-
-## 🔧 常见问题
-
-### Q: 为什么 v4 都死了？
-
-A: 驱动失衡（curiosity 始终主导），这是预期内的"失败"，证明了驱动系统需要校准。
-
-### Q: 如何修改参数？
-
-A: 编辑 `main.py` 中的初始化参数，如：
-```python
-agents = init_population(size=20)  # 改群体大小
+A: 减少种群大小：
+```bash
+python3 mves_v5/main.py --hours 24 --population 5
 ```
 
-### Q: 如何保存数据？
+### Q: 如何查看实时进度？
 
-A: 检查点自动保存在 `checkpoints/`，每 10 代保存一次。
+A: 实验日志会实时输出：
+```bash
+# 查看日志
+tail -f mves_v5/../logs/*.log 2>/dev/null
 
----
+# 或查看最新检查点
+ls -lt mves_v5/checkpoints/ | head
+```
 
-## 🎯 下一步
+### Q: 如何复现论文结果？
 
-### 初学者路径
-
-1. ✅ 运行 v1，观察策略跃迁
-2. ✅ 运行 v2，看反思机制
-3. ✅ 运行 v3，看代码演化
-4. ✅ 阅读科学框架
-5. 🔬 设计自己的实验
-
-### 进阶路径
-
-1. 修复 v4 驱动权重
-2. 添加新工具类型
-3. 增加群体大小
-4. 运行对照实验
-5. 统计分析
+A: 使用固定随机种子：
+```bash
+# 修改 main.py，添加 random.seed(42)
+python3 mves_v5/main.py --hours 24
+```
 
 ---
 
-## 📞 需要帮助？
+## 下一步
 
-- 查看 [EXPERIMENT_REPORT.md](EXPERIMENT_REPORT.md)
-- 检查日志文件
-- 阅读版本文档
+- 📚 阅读 [DESIGN.md](DESIGN.md) 了解系统架构
+- 📊 查看 [EXPERIMENT_REPORT.md](EXPERIMENT_REPORT.md) 了解实验结果
+- 📄 参考 [papers/MVES_PAPER_DRAFT_v1.md](papers/MVES_PAPER_DRAFT_v1.md) 了解科学背景
 
 ---
 
-**祝实验顺利！🧬**
+*快速开始指南 - 2026-03-31*
