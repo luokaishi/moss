@@ -15,15 +15,14 @@ OEF 2.0 Emergence Engine
 
 import numpy as np
 from typing import Dict, List
-import sys
-sys.path.append('.')
 
-from unified_loss import UnifiedLossFunction
-from dynamic_weights import DynamicWeightUpdate
-from convergence_analyzer import ConvergenceAnalyzer
-from autonomous_drive_space import AutonomousDriveSpace
-from autonomous_action_space import AutonomousActionSpace
-from causal_validator import CausalIndependenceValidator
+# 相对导入（支持模块化使用）
+from .unified_loss import UnifiedLossFunction
+from .dynamic_weights import DynamicWeightUpdate
+from .convergence_analyzer import ConvergenceAnalyzer
+from .autonomous_drive_space import AutonomousDriveSpace
+from .autonomous_action_space import AutonomousActionSpace
+from .causal_validator import CausalIndependenceValidator
 
 
 class EmergenceEngineV2:

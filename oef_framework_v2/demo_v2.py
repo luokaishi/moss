@@ -10,14 +10,13 @@ OEF 2.0 Demo Script
 """
 
 import numpy as np
-import sys
-sys.path.append('.')
 
-from unified_loss import UnifiedLossFunction
-from dynamic_weights import DynamicWeightUpdate
-from convergence_analyzer import ConvergenceAnalyzer
-from causal_validator import CausalIndependenceValidator
-from emergence_engine_v2 import EmergenceEngineV2
+# 相对导入（支持模块化使用）
+from .unified_loss import UnifiedLossFunction
+from .dynamic_weights import DynamicWeightUpdate
+from .convergence_analyzer import ConvergenceAnalyzer
+from .causal_validator import CausalIndependenceValidator
+from .emergence_engine_v2 import EmergenceEngineV2
 
 
 def demo_all_modules():
