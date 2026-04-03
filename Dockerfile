@@ -1,5 +1,14 @@
-FROM python:3.10-slim
+# MVES Docker Configuration
+# Multi-Stage Build for Reproducibility
 
+FROM python:3.9-slim as base
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+
+# Set work directory
 WORKDIR /app
 
 # Install system dependencies
@@ -8,40 +17,31 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt /app/
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy MOSS code
-COPY . /app/
+# Development stage
+FROM base as development
 
-# Set Python path
-ENV PYTHONPATH=/app
-ENV MOSS_MODE=safe
-ENV MOSS_AGENT_ID=moss_docker
+# Install development dependencies
+COPY requirements-dev.txt .
+RUN pip install --no-cache-dir -r requirements-dev.txt
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python3 -c "print('healthy')" || exit 1
+# Copy source code
+COPY . .
 
-# Default command - run MOSS v2.0 in safe mode
-CMD ["python3", "-c", "
-import sys
-sys.path.insert(0, '/app')
-from agents.moss_agent_v2 import MOSSAgentV2
-import time
+# Run tests
+RUN python -m pytest tests/ -v
 
-agent = MOSSAgentV2(agent_id='moss_docker', mode='safe')
-print(f'MOSS v2.0 Agent started: {agent.agent_id}')
-print(f'Mode: {agent.mode}')
+# Production stage
+FROM base as production
 
-try:
-    while True:
-        result = agent.step()
-        report = agent.get_report()
-        print(f\"[$(date '+%H:%M:%S')] State: {report['safety']['runtime_hours']:.2f}h, Decisions: {report['stats']['total_decisions']}, Violations: {report['stats']['safety_violations']}\")
-        time.sleep(60)
-except KeyboardInterrupt:
-    print('Shutting down...')
-    report = agent.get_report()
-    print(f'Final: {report[\"stats\"][\"total_decisions\"]} decisions, {report[\"stats\"][\"safety_violations\"]} violations')
-"]
+# Copy source code
+COPY . .
+
+# Create non-root user
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Default command
+CMD ["python", "experiments/collab_100agents.py", "--agents", "100"]

@@ -1,42 +1,25 @@
 version: '3.8'
 
 services:
-  moss-openclaw:
-    image: moss-openclaw:latest
-    container_name: moss-openclaw
-    restart: unless-stopped
-    mem_limit: 4g
-    memswap_limit: 4g
-    pids_limit: 256
-    cpu_shares: 512
+  moss:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
     volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
-      - ./experiments:/app/experiments
+      - ./experiments/results:/app/experiments/results
     environment:
-      - OPENCLAW_HEADLESS=true
-      - OPENCLAW_RESOURCE_BLOCKING=true
-      - MOSS_PURPOSE_INTERVAL=2000
-    networks:
-      - moss-network
+      - PYTHONUNBUFFERED=1
+    command: python experiments/collab_100agents.py --agents 100 --iterations 100
 
-  moss-agent:
-    build: .
-    container_name: moss-agent
-    restart: unless-stopped
-    mem_limit: 2g
-    memswap_limit: 2g
-    depends_on:
-      - moss-openclaw
+  moss-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
     volumes:
-      - .:/workspace/projects/moss
-      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/app
+      - ./experiments/results:/app/experiments/results
     environment:
-      - MOSS_MODE=real_world
-      - MOSS_EXPERIMENT_DURATION=72h
-    networks:
-      - moss-network
-
-networks:
-  moss-network:
-    driver: bridge
+      - PYTHONUNBUFFERED=1
+    command: python -m pytest tests/ -v
