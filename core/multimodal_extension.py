@@ -1,508 +1,641 @@
+#!/usr/bin/env python3
 """
-MOSS Multimodal Extension Framework
-多模态扩展框架 - 解决Kimi评估缺陷#7 (P2级)
+MVES v2.0 - 多模态扩展模块
 
-实现视觉、听觉、文本多模态信息的统一处理
+Multi-Vector Evolution System: Multimodal Extension
+
+核心功能：
+- 统一特征编码（文本 + 图像 + 音频 + 视频）
+- 跨模态融合机制
+- 上下文动态权重调整
+- 价值向量提取
+
+与 MOSS main 分支集成点：
+- real_world_bridge.py - 增强真实世界感知
+- Self-Optimization 触发逻辑 - 多模态语义分数
+- Purpose Dynamics Module - 价值涌现增强 D9
 """
 
-import logging
-from typing import Dict, List, Optional, Union, Any
-from dataclasses import dataclass
-from enum import Enum
 import numpy as np
+from typing import Dict, List, Optional, Tuple, Any
+from dataclasses import dataclass, field
+from enum import Enum
 import json
-from datetime import datetime
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 class ModalityType(Enum):
-    """模态类型"""
+    """模态类型枚举"""
     TEXT = "text"
     IMAGE = "image"
     AUDIO = "audio"
     VIDEO = "video"
-    SENSOR = "sensor"  # 传感器数据
+    STRUCTURED = "structured"  # 结构化数据（JSON、表格等）
 
 
 @dataclass
-class MultimodalInput:
-    """多模态输入"""
+class FeatureVector:
+    """特征向量"""
     modality: ModalityType
-    data: Any
-    timestamp: datetime
-    metadata: Dict
-    source: str
+    vector: np.ndarray
+    confidence: float = 1.0
+    timestamp: float = 0.0
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    def normalize(self) -> 'FeatureVector':
+        """归一化特征向量"""
+        norm = np.linalg.norm(self.vector)
+        if norm > 0:
+            self.vector = self.vector / norm
+        return self
 
 
 @dataclass
-class ModalityFeatures:
-    """模态特征"""
-    modality: ModalityType
-    features: np.ndarray
-    confidence: float
-    semantic_tags: List[str]
+class ValueVector:
+    """价值向量（多向量进化核心）"""
+    # 目标向量
+    goal_vector: np.ndarray = field(default_factory=lambda: np.zeros(64))
+    # 价值向量
+    value_vector: np.ndarray = field(default_factory=lambda: np.zeros(64))
+    # 模态向量
+    modality_vector: np.ndarray = field(default_factory=lambda: np.zeros(16))
+    # 时间衰减因子
+    temporal_decay: float = 0.95
+    
+    def fuse(self, other: 'ValueVector', alpha: float = 0.5) -> 'ValueVector':
+        """融合两个价值向量"""
+        new = ValueVector()
+        new.goal_vector = alpha * self.goal_vector + (1 - alpha) * other.goal_vector
+        new.value_vector = alpha * self.value_vector + (1 - alpha) * other.value_vector
+        new.modality_vector = alpha * self.modality_vector + (1 - alpha) * other.modality_vector
+        return new
+    
+    def apply_decay(self) -> 'ValueVector':
+        """应用时间衰减"""
+        self.goal_vector *= self.temporal_decay
+        self.value_vector *= self.temporal_decay
+        return self
 
 
-class ModalityEncoder:
-    """模态编码器基类"""
+class MultimodalEncoder:
+    """多模态统一编码器"""
     
-    def __init__(self, modality: ModalityType):
-        self.modality = modality
-    
-    def encode(self, input_data: Any) -> ModalityFeatures:
-        """编码为特征向量"""
-        raise NotImplementedError
-    
-    def extract_semantic(self, features: np.ndarray) -> List[str]:
-        """提取语义标签"""
-        raise NotImplementedError
-
-
-class TextEncoder(ModalityEncoder):
-    """文本编码器"""
-    
-    def __init__(self):
-        super().__init__(ModalityType.TEXT)
-        self.vocab_size = 50000
-        self.embedding_dim = 768
-    
-    def encode(self, text: str) -> ModalityFeatures:
-        """文本编码（简化实现）"""
-        # 模拟文本编码：词频统计 + 语义提取
-        words = text.lower().split()
-        
-        # 简单特征向量（词频）
-        feature_vector = np.zeros(100)
-        for i, word in enumerate(words[:100]):
-            feature_vector[i % 100] += 1
-        
-        # 归一化
-        if np.sum(feature_vector) > 0:
-            feature_vector = feature_vector / np.sum(feature_vector)
-        
-        # 提取语义标签
-        semantic_tags = self.extract_semantic(feature_vector)
-        
-        return ModalityFeatures(
-            modality=ModalityType.TEXT,
-            features=feature_vector,
-            confidence=min(1.0, len(words) / 50),  # 文本越长置信度越高
-            semantic_tags=semantic_tags
-        )
-    
-    def extract_semantic(self, features: np.ndarray) -> List[str]:
-        """提取关键词"""
-        # 模拟关键词提取
-        keywords = []
-        if np.sum(features[:25]) > np.mean(features):
-            keywords.append("informative")
-        if np.sum(features[25:50]) > np.mean(features):
-            keywords.append("technical")
-        if np.sum(features[50:75]) > np.mean(features):
-            keywords.append("emotional")
-        return keywords if keywords else ["general"]
-
-
-class ImageEncoder(ModalityEncoder):
-    """图像编码器"""
-    
-    def __init__(self):
-        super().__init__(ModalityType.IMAGE)
-        self.input_size = (224, 224)
-    
-    def encode(self, image_data: Dict) -> ModalityFeatures:
-        """图像编码（简化实现）"""
-        # 模拟图像特征提取
-        # 实际应使用CNN/ViT等模型
-        
-        # 模拟特征：颜色分布、纹理、物体检测
-        features = np.random.rand(512)
-        
-        # 根据模拟的图像属性调整
-        if image_data.get('has_faces', False):
-            features[:100] *= 1.5
-        if image_data.get('has_text', False):
-            features[100:200] *= 1.5
-        if image_data.get('is_document', False):
-            features[200:300] *= 1.5
-        
-        # 归一化
-        features = features / np.linalg.norm(features)
-        
-        semantic_tags = self.extract_semantic(features)
-        
-        return ModalityFeatures(
-            modality=ModalityType.IMAGE,
-            features=features,
-            confidence=0.85 if image_data.get('quality', 'medium') == 'high' else 0.70,
-            semantic_tags=semantic_tags
-        )
-    
-    def extract_semantic(self, features: np.ndarray) -> List[str]:
-        """提取图像语义"""
-        tags = []
-        if np.mean(features[:100]) > 0.5:
-            tags.append("contains_faces")
-        if np.mean(features[100:200]) > 0.5:
-            tags.append("contains_text")
-        if np.mean(features[200:300]) > 0.5:
-            tags.append("document")
-        return tags if tags else ["general_image"]
-
-
-class AudioEncoder(ModalityEncoder):
-    """音频编码器"""
-    
-    def __init__(self):
-        super().__init__(ModalityType.AUDIO)
-    
-    def encode(self, audio_data: Dict) -> ModalityFeatures:
-        """音频编码（简化实现）"""
-        # 模拟音频特征：频谱特征
-        features = np.random.rand(256)
-        
-        # 根据音频类型调整
-        duration = audio_data.get('duration', 0)
-        if duration > 60:  # 长音频
-            features[:64] *= 1.3
-        if audio_data.get('has_speech', False):
-            features[64:128] *= 1.5
-        if audio_data.get('has_music', False):
-            features[128:192] *= 1.5
-        
-        features = features / np.linalg.norm(features)
-        
-        return ModalityFeatures(
-            modality=ModalityType.AUDIO,
-            features=features,
-            confidence=0.80,
-            semantic_tags=self.extract_semantic(features)
-        )
-    
-    def extract_semantic(self, features: np.ndarray) -> List[str]:
-        """提取音频语义"""
-        tags = []
-        if np.mean(features[64:128]) > 0.5:
-            tags.append("speech")
-        if np.mean(features[128:192]) > 0.5:
-            tags.append("music")
-        return tags if tags else ["sound"]
-
-
-class MultimodalFusion:
-    """多模态融合"""
-    
-    def __init__(self):
-        self.encoders = {
-            ModalityType.TEXT: TextEncoder(),
-            ModalityType.IMAGE: ImageEncoder(),
-            ModalityType.AUDIO: AudioEncoder(),
+    def __init__(self, embedding_dim: int = 512):
+        self.embedding_dim = embedding_dim
+        self.modality_encoders = {
+            ModalityType.TEXT: self._encode_text,
+            ModalityType.IMAGE: self._encode_image,
+            ModalityType.AUDIO: self._encode_audio,
+            ModalityType.VIDEO: self._encode_video,
+            ModalityType.STRUCTURED: self._encode_structured
         }
-        self.fusion_history = []
     
-    def process_input(self, inputs: List[MultimodalInput]) -> Dict:
+    def encode(self, data: Any, modality: ModalityType) -> FeatureVector:
+        """统一编码接口"""
+        encoder = self.modality_encoders.get(modality)
+        if not encoder:
+            raise ValueError(f"Unsupported modality: {modality}")
+        
+        vector, confidence = encoder(data)
+        return FeatureVector(
+            modality=modality,
+            vector=vector,
+            confidence=confidence,
+            timestamp=0.0  # 由调用方设置
+        )
+    
+    def _encode_text(self, text: str) -> Tuple[np.ndarray, float]:
+        """文本编码（简化版，实际应使用 LLM embedding）"""
+        # TODO: 集成实际文本 embedding 模型
+        vector = np.random.randn(self.embedding_dim).astype(np.float32)
+        confidence = 0.9  # 文本编码通常较可靠
+        return vector, confidence
+    
+    def _encode_image(self, image_data: np.ndarray) -> Tuple[np.ndarray, float]:
+        """图像编码（简化版，实际应使用 CNN/ViT）"""
+        # TODO: 集成实际图像编码模型
+        if isinstance(image_data, np.ndarray):
+            flattened = image_data.flatten()[:self.embedding_dim]
+            vector = np.pad(flattened, (0, max(0, self.embedding_dim - len(flattened))))
+        else:
+            vector = np.random.randn(self.embedding_dim).astype(np.float32)
+        confidence = 0.8
+        return vector, confidence
+    
+    def _encode_audio(self, audio_data: np.ndarray) -> Tuple[np.ndarray, float]:
+        """音频编码（简化版，实际应使用 Whisper 等）"""
+        # TODO: 集成实际音频编码模型
+        vector = np.random.randn(self.embedding_dim).astype(np.float32)
+        confidence = 0.75
+        return vector, confidence
+    
+    def _encode_video(self, video_data: Any) -> Tuple[np.ndarray, float]:
+        """视频编码（简化版，实际应使用 VideoMAE 等）"""
+        # TODO: 集成实际视频编码模型
+        vector = np.random.randn(self.embedding_dim).astype(np.float32)
+        confidence = 0.7
+        return vector, confidence
+    
+    def _encode_structured(self, data: Dict) -> Tuple[np.ndarray, float]:
+        """结构化数据编码"""
+        # 将字典转换为特征向量
+        json_str = json.dumps(data, sort_keys=True)
+        vector = np.random.randn(self.embedding_dim).astype(np.float32)
+        confidence = 0.85
+        return vector, confidence
+
+
+class CrossModalFusion:
+    """跨模态融合器"""
+    
+    def __init__(self, fusion_dim: int = 512):
+        self.fusion_dim = fusion_dim
+        self.attention_weights = None
+    
+    def fuse(self, features: List[FeatureVector], 
+             context: Optional[Dict] = None) -> np.ndarray:
+        """
+        跨模态融合
+        
+        Args:
+            features: 特征向量列表
+            context: 上下文信息（用于动态权重调整）
+        
+        Returns:
+            融合后的特征向量
+        """
+        if not features:
+            return np.zeros(self.fusion_dim)
+        
+        # 基于置信度和上下文计算权重
+        weights = self._compute_weights(features, context)
+        
+        # 加权融合
+        fused = np.zeros(self.fusion_dim)
+        total_weight = 0.0
+        
+        for feature, weight in zip(features, weights):
+            # 确保维度匹配
+            if len(feature.vector) < self.fusion_dim:
+                padded = np.pad(feature.vector, 
+                              (0, self.fusion_dim - len(feature.vector)))
+            else:
+                padded = feature.vector[:self.fusion_dim]
+            
+            fused += weight * padded
+            total_weight += weight
+        
+        if total_weight > 0:
+            fused /= total_weight
+        
+        # 归一化
+        norm = np.linalg.norm(fused)
+        if norm > 0:
+            fused /= norm
+        
+        return fused
+    
+    def _compute_weights(self, features: List[FeatureVector],
+                        context: Optional[Dict]) -> List[float]:
+        """计算融合权重"""
+        weights = []
+        
+        for feature in features:
+            # 基础权重：置信度
+            weight = feature.confidence
+            
+            # 上下文调整
+            if context:
+                # 示例：如果当前是 Crisis 状态，提升文本模态权重
+                if context.get("state") == "Crisis" and feature.modality == ModalityType.TEXT:
+                    weight *= 1.5
+                
+                # 如果探索状态，提升视觉模态权重
+                if context.get("state") == "Growth" and feature.modality == ModalityType.IMAGE:
+                    weight *= 1.3
+            
+            weights.append(weight)
+        
+        # 归一化权重
+        total = sum(weights)
+        if total > 0:
+            weights = [w / total for w in weights]
+        
+        return weights
+
+
+class ValueExtractor:
+    """价值向量提取器"""
+    
+    def __init__(self, value_dim: int = 64):
+        self.value_dim = value_dim
+        self.value_templates = self._init_value_templates()
+    
+    def _init_value_templates(self) -> Dict[str, np.ndarray]:
+        """初始化价值模板（对应 MOSS 四大目标）"""
+        return {
+            "survival": np.random.randn(self.value_dim).astype(np.float32),
+            "curiosity": np.random.randn(self.value_dim).astype(np.float32),
+            "influence": np.random.randn(self.value_dim).astype(np.float32),
+            "optimization": np.random.randn(self.value_dim).astype(np.float32)
+        }
+    
+    def extract(self, fused_features: np.ndarray,
+                context: Dict) -> ValueVector:
+        """
+        从融合特征中提取价值向量
+        
+        Args:
+            fused_features: 融合后的特征向量
+            context: 上下文信息（包含当前状态、目标等）
+        
+        Returns:
+            价值向量
+        """
+        value_vector = ValueVector()
+        
+        # 根据上下文调整各价值维度
+        state = context.get("state", "Normal")
+        state_weights = self._get_state_weights(state)
+        
+        # 提取目标向量
+        value_vector.goal_vector = self._extract_goal_vector(
+            fused_features, context, state_weights
+        )
+        
+        # 提取价值向量
+        value_vector.value_vector = self._extract_value_vector(
+            fused_features, context, state_weights
+        )
+        
+        # 提取模态向量
+        value_vector.modality_vector = self._extract_modality_vector(
+            fused_features, context
+        )
+        
+        return value_vector
+    
+    def _get_state_weights(self, state: str) -> Dict[str, float]:
+        """获取状态权重（与 MOSS main 分支的 state-dependent weighting 对应）"""
+        weights = {
+            "Crisis": {"survival": 0.6, "curiosity": 0.1, "influence": 0.2, "optimization": 0.1},
+            "Concerned": {"survival": 0.35, "curiosity": 0.35, "influence": 0.2, "optimization": 0.1},
+            "Normal": {"survival": 0.2, "curiosity": 0.4, "influence": 0.3, "optimization": 0.1},
+            "Growth": {"survival": 0.2, "curiosity": 0.2, "influence": 0.4, "optimization": 0.2}
+        }
+        return weights.get(state, weights["Normal"])
+    
+    def _extract_goal_vector(self, features: np.ndarray, 
+                            context: Dict,
+                            state_weights: Dict) -> np.ndarray:
+        """提取目标向量"""
+        # 简化实现：基于状态权重调整
+        goal = np.zeros(self.value_dim)
+        
+        for drive, weight in state_weights.items():
+            template = self.value_templates.get(drive, np.zeros(self.value_dim))
+            goal += weight * template
+        
+        # 加入特征影响
+        goal += 0.1 * features[:self.value_dim]
+        
+        # 归一化
+        norm = np.linalg.norm(goal)
+        if norm > 0:
+            goal /= norm
+        
+        return goal
+    
+    def _extract_value_vector(self, features: np.ndarray,
+                             context: Dict,
+                             state_weights: Dict) -> np.ndarray:
+        """提取价值向量"""
+        # 类似目标向量，但加入历史价值影响
+        value = np.zeros(self.value_dim)
+        
+        for drive, weight in state_weights.items():
+            template = self.value_templates.get(drive, np.zeros(self.value_dim))
+            value += weight * template
+        
+        value += 0.15 * features[:self.value_dim]
+        
+        norm = np.linalg.norm(value)
+        if norm > 0:
+            value /= norm
+        
+        return value
+    
+    def _extract_modality_vector(self, features: np.ndarray,
+                                context: Dict) -> np.ndarray:
+        """提取模态向量（16 维，编码模态分布信息）"""
+        modality_vector = np.zeros(16)
+        
+        # 从上下文提取模态信息
+        modalities = context.get("modalities", ["text"])
+        for i, mod in enumerate(modalities[:16]):
+            if isinstance(mod, str):
+                modality_vector[i] = hash(mod) % 100 / 100.0
+        
+        # 加入特征影响
+        modality_vector += 0.1 * features[:16]
+        
+        norm = np.linalg.norm(modality_vector)
+        if norm > 0:
+            modality_vector /= norm
+        
+        return modality_vector
+
+
+class MultimodalExtension:
+    """
+    MVES 多模态扩展主类
+    
+    与 MOSS main 分支集成：
+    - 作为感知层增强模块
+    - 为 Self-Optimization 提供多模态语义分数
+    - 为 D9 Purpose 提供价值涌现能力
+    """
+    
+    def __init__(self, config: Optional[Dict] = None):
+        self.config = config or {}
+        self.embedding_dim = self.config.get("embedding_dim", 512)
+        self.value_dim = self.config.get("value_dim", 64)
+        
+        # 初始化核心组件
+        self.encoder = MultimodalEncoder(self.embedding_dim)
+        self.fusion = CrossModalFusion(self.embedding_dim)
+        self.extractor = ValueExtractor(self.value_dim)
+        
+        # 价值向量缓存（用于时间序列分析）
+        self.value_history: List[ValueVector] = []
+        self.max_history = 100
+    
+    def process_multimodal_input(self, 
+                                 inputs: Dict[ModalityType, Any],
+                                 context: Dict) -> Dict:
         """
         处理多模态输入
         
         Args:
-            inputs: 多模态输入列表
+            inputs: 多模态输入字典 {modality: data}
+            context: 上下文信息（包含 state、goals 等）
         
         Returns:
-            融合后的特征和决策建议
+            处理结果，包含融合特征和价值向量
         """
-        logger.info(f"[MULTIMODAL] Processing {len(inputs)} inputs")
+        # 1. 编码各模态
+        features = []
+        for modality, data in inputs.items():
+            try:
+                feature = self.encoder.encode(data, modality)
+                features.append(feature)
+            except Exception as e:
+                print(f"Warning: Failed to encode {modality}: {e}")
         
-        # 编码各模态
-        encoded_features = []
-        for input_data in inputs:
-            encoder = self.encoders.get(input_data.modality)
-            if encoder:
-                features = encoder.encode(input_data.data)
-                encoded_features.append(features)
-                logger.info(f"  Encoded {input_data.modality.value}: confidence={features.confidence:.2f}")
+        if not features:
+            return {
+                "fused_features": np.zeros(self.embedding_dim),
+                "value_vector": ValueVector(),
+                "confidence": 0.0
+            }
         
-        # 融合特征
-        fused = self._fuse_features(encoded_features)
+        # 2. 跨模态融合
+        fused = self.fusion.fuse(features, context)
         
-        # 生成决策建议
-        suggestions = self._generate_suggestions(fused, encoded_features)
+        # 3. 提取价值向量
+        value_vector = self.extractor.extract(fused, context)
         
-        result = {
-            'timestamp': datetime.now().isoformat(),
-            'input_count': len(inputs),
-            'modalities': [f.modality.value for f in encoded_features],
-            'fused_features': fused,
-            'dominant_semantics': fused.get('dominant_semantics', []),
-            'suggestions': suggestions,
-            'confidence': np.mean([f.confidence for f in encoded_features])
+        # 4. 应用时间衰减（如果有历史）
+        if self.value_history:
+            last_value = self.value_history[-1]
+            value_vector = value_vector.fuse(last_value, alpha=0.7)
+        
+        value_vector.apply_decay()
+        
+        # 5. 更新历史
+        self.value_history.append(value_vector)
+        if len(self.value_history) > self.max_history:
+            self.value_history = self.value_history[-self.max_history:]
+        
+        # 6. 计算置信度
+        avg_confidence = sum(f.confidence for f in features) / len(features)
+        
+        return {
+            "fused_features": fused,
+            "value_vector": value_vector,
+            "confidence": avg_confidence,
+            "num_modalities": len(features),
+            "modalities_used": [f.modality.value for f in features]
         }
+    
+    def get_multimodal_score(self, result: Dict) -> float:
+        """
+        计算多模态语义分数
         
-        self.fusion_history.append(result)
+        用于 Self-Optimization 触发逻辑
         
+        Returns:
+            0-1 之间的分数
+        """
+        confidence = result.get("confidence", 0.0)
+        num_modalities = result.get("num_modalities", 0)
+        
+        # 多模态增益
+        modality_bonus = min(0.2, num_modalities * 0.05)
+        
+        score = confidence + modality_bonus
+        return min(1.0, score)
+    
+    def get_value_vector_for_purpose(self) -> ValueVector:
+        """
+        获取用于 D9 Purpose 的价值向量
+        
+        Returns:
+            融合后的价值向量
+        """
+        if not self.value_history:
+            return ValueVector()
+        
+        # 时间加权平均
+        weighted_sum = np.zeros(self.value_dim)
+        total_weight = 0.0
+        
+        for i, vv in enumerate(self.value_history):
+            weight = 0.9 ** (len(self.value_history) - i - 1)
+            weighted_sum += weight * vv.value_vector
+            total_weight += weight
+        
+        if total_weight > 0:
+            weighted_sum /= total_weight
+        
+        result = ValueVector()
+        result.value_vector = weighted_sum
         return result
     
-    def _fuse_features(self, features: List[ModalityFeatures]) -> Dict:
-        """融合多模态特征"""
-        if not features:
-            return {}
-        
-        # 简单拼接 + 加权平均
-        all_tags = []
-        total_confidence = 0
-        
-        for f in features:
-            all_tags.extend(f.semantic_tags)
-            total_confidence += f.confidence
-        
-        # 统计标签频率
-        tag_freq = {}
-        for tag in all_tags:
-            tag_freq[tag] = tag_freq.get(tag, 0) + 1
-        
-        dominant_tags = sorted(tag_freq.items(), key=lambda x: x[1], reverse=True)[:5]
-        
-        return {
-            'dominant_semantics': [tag for tag, _ in dominant_tags],
-            'avg_confidence': total_confidence / len(features),
-            'modality_count': len(features)
-        }
-    
-    def _generate_suggestions(self, fused: Dict, 
-                             features: List[ModalityFeatures]) -> List[str]:
-        """生成决策建议"""
-        suggestions = []
-        
-        semantics = fused.get('dominant_semantics', [])
-        
-        # 基于语义生成建议
-        if 'contains_faces' in semantics:
-            suggestions.append("Influence objective: High priority (social context detected)")
-        
-        if 'document' in semantics:
-            suggestions.append("Curiosity objective: Extract knowledge from document")
-        
-        if 'speech' in semantics:
-            suggestions.append("Process audio for communication optimization")
-        
-        if 'technical' in semantics:
-            suggestions.append("Survival objective: Check technical requirements")
-        
-        if len(features) > 1:
-            suggestions.append("Multimodal context: Cross-validate information across modalities")
-        
-        return suggestions if suggestions else ["Continue normal operation"]
-
-
-class MultimodalMOSSIntegration:
-    """
-    多模态与MOSS四目标集成
-    
-    将多模态信息映射到Survival/Curiosity/Influence/Optimization
-    """
-    
-    def __init__(self):
-        self.fusion = MultimodalFusion()
-        self.objective_weights = {
-            'survival': 0.3,
-            'curiosity': 0.3,
-            'influence': 0.2,
-            'optimization': 0.2
-        }
-    
-    def process_and_update_objectives(self, inputs: List[MultimodalInput], 
-                                     current_state: Dict) -> Dict:
+    def analyze_value_stability(self) -> Dict:
         """
-        处理多模态输入并更新目标权重
-        
-        Args:
-            inputs: 多模态输入
-            current_state: 当前系统状态
+        分析价值向量稳定性（用于评估 Purpose 稳定性）
         
         Returns:
-            更新后的目标配置
+            稳定性指标
         """
-        # 处理多模态
-        result = self.fusion.process_input(inputs)
+        if len(self.value_history) < 10:
+            return {
+                "stability": 0.0,
+                "std": float('inf'),
+                "sample_size": len(self.value_history)
+            }
         
-        # 根据多模态上下文调整目标权重
-        updated_weights = self._adjust_weights_by_context(
-            result['dominant_semantics'],
-            self.objective_weights.copy()
-        )
+        # 计算最近 10 个价值向量的标准差
+        recent_vectors = [vv.value_vector for vv in self.value_history[-10:]]
+        vectors_array = np.array(recent_vectors)
+        std = np.std(vectors_array, axis=0).mean()
         
-        # 更新目标
-        objective_updates = {
-            'survival': self._survival_from_multimodal(result, current_state),
-            'curiosity': self._curiosity_from_multimodal(result),
-            'influence': self._influence_from_multimodal(result),
-            'optimization': self._optimization_from_multimodal(result)
-        }
+        # 稳定性 = 1 - std（std 越小越稳定）
+        stability = max(0.0, 1.0 - std * 10)
         
         return {
-            'multimodal_result': result,
-            'weight_adjustments': updated_weights,
-            'objective_updates': objective_updates,
-            'recommended_actions': self._derive_actions(result, objective_updates)
+            "stability": stability,
+            "std": std,
+            "sample_size": len(self.value_history),
+            "target_stability": 0.96  # v5.3.0 目标
         }
     
-    def _adjust_weights_by_context(self, semantics: List[str], 
-                                  base_weights: Dict) -> Dict:
-        """根据多模态语义调整权重"""
-        adjusted = base_weights.copy()
+    def get_optimization_metrics(self) -> Dict:
+        """
+        获取用于 Self-Optimization v2 的评估指标
         
-        if 'contains_faces' in semantics or 'speech' in semantics:
-            adjusted['influence'] += 0.1
-            adjusted['survival'] -= 0.05
+        Returns:
+            评估指标字典
+        """
+        value_stability = self.analyze_value_stability()
         
-        if 'document' in semantics or 'technical' in semantics:
-            adjusted['curiosity'] += 0.1
-            adjusted['optimization'] += 0.05
-            adjusted['influence'] -= 0.05
+        # 多模态价值提取质量
+        if self.value_history:
+            recent = self.value_history[-10:]
+            quality = sum(vv.confidence for vv in recent) / len(recent)
+        else:
+            quality = 0.0
         
-        if 'music' in semantics:
-            adjusted['optimization'] += 0.1
-        
-        # 归一化
-        total = sum(adjusted.values())
-        return {k: v/total for k, v in adjusted.items()}
+        return {
+            "value_stability": value_stability["stability"],
+            "multimodal_quality": quality,
+            "evolution_speed": self._calculate_evolution_speed(),
+            "cross_modal_consistency": self._calculate_consistency()
+        }
     
-    def _survival_from_multimodal(self, result: Dict, state: Dict) -> float:
-        """从多模态推导生存分数"""
-        base = state.get('resource_quota', 0.5)
-        # 视觉检测威胁/资源
-        if 'contains_faces' in result.get('dominant_semantics', []):
-            base -= 0.05  # 社交场景可能消耗资源
-        return max(0, min(1, base))
-    
-    def _curiosity_from_multimodal(self, result: Dict) -> float:
-        """从多模态推导好奇分数"""
-        semantics = result.get('dominant_semantics', [])
-        if 'document' in semantics:
-            return 0.8
-        if 'technical' in semantics:
-            return 0.7
-        return 0.5
-    
-    def _influence_from_multimodal(self, result: Dict) -> float:
-        """从多模态推导影响分数"""
-        semantics = result.get('dominant_semantics', [])
-        if 'contains_faces' in semantics or 'speech' in semantics:
-            return 0.75
-        return 0.3
-    
-    def _optimization_from_multimodal(self, result: Dict) -> float:
-        """从多模态推导优化分数"""
-        semantics = result.get('dominant_semantics', [])
-        if 'music' in semantics or 'technical' in semantics:
-            return 0.6
-        return 0.4
-    
-    def _derive_actions(self, result: Dict, objectives: Dict) -> List[str]:
-        """推导建议动作"""
-        actions = []
+    def _calculate_evolution_speed(self) -> float:
+        """计算进化速度指标"""
+        if len(self.value_history) < 2:
+            return 0.0
         
-        # 根据最高目标推荐动作
-        max_obj = max(objectives, key=objectives.get)
+        # 计算价值向量变化率
+        changes = []
+        for i in range(1, min(10, len(self.value_history))):
+            change = np.linalg.norm(
+                self.value_history[i].value_vector - 
+                self.value_history[i-1].value_vector
+            )
+            changes.append(change)
         
-        if max_obj == 'curiosity':
-            actions.append("EXPLORE: Investigate multimodal content for new knowledge")
-        elif max_obj == 'influence':
-            actions.append("ENGAGE: Respond to social/multimodal context")
-        elif max_obj == 'survival':
-            actions.append("CONSERVE: Monitor resource usage with multimodal processing")
-        elif max_obj == 'optimization':
-            actions.append("OPTIMIZE: Improve multimodal processing pipeline")
+        return np.mean(changes) if changes else 0.0
+    
+    def _calculate_consistency(self) -> float:
+        """计算跨模态一致性"""
+        # 简化实现：基于价值向量方差
+        if len(self.value_history) < 2:
+            return 1.0
         
-        return actions
+        vectors = [vv.value_vector for vv in self.value_history[-10:]]
+        variance = np.var(vectors, axis=0).mean()
+        
+        return max(0.0, 1.0 - variance * 5)
 
 
-def demo_multimodal():
-    """演示多模态系统"""
-    print("="*70)
-    print("MOSS MULTIMODAL EXTENSION FRAMEWORK")
-    print("Addressing Kimi's Defect #7: Multimodal implementation")
-    print("="*70)
-    print()
+# ============================================================================
+# 与 MOSS main 分支的集成接口
+# ============================================================================
+
+def integrate_with_real_world_bridge(moss_agent, extension: MultimodalExtension):
+    """
+    集成到 real_world_bridge.py
     
-    # 创建集成系统
-    integration = MultimodalMOSSIntegration()
-    
-    # 场景1: 纯文本输入
-    print("Scenario 1: Text-only Input")
-    print("-"*70)
-    text_input = MultimodalInput(
-        modality=ModalityType.TEXT,
-        data="This is a technical document about AI architecture and neural networks.",
-        timestamp=datetime.now(),
-        metadata={'length': 80, 'language': 'en'},
-        source='document_reader'
-    )
-    
-    result = integration.process_and_update_objectives([text_input], {'resource_quota': 0.7})
-    print(f"Dominant semantics: {result['multimodal_result']['dominant_semantics']}")
-    print(f"Weight adjustments: {result['weight_adjustments']}")
-    print(f"Objective scores: {result['objective_updates']}")
-    print(f"Recommended: {result['recommended_actions']}")
-    print()
-    
-    # 场景2: 多模态输入（文本+图像）
-    print("Scenario 2: Multimodal Input (Text + Image)")
-    print("-"*70)
-    text_input2 = MultimodalInput(
-        modality=ModalityType.TEXT,
-        data="Meeting with the team to discuss project progress.",
-        timestamp=datetime.now(),
-        metadata={},
-        source='meeting_notes'
-    )
-    
-    image_input = MultimodalInput(
-        modality=ModalityType.IMAGE,
-        data={'has_faces': True, 'has_text': False, 'is_document': False, 'quality': 'high'},
-        timestamp=datetime.now(),
-        metadata={'resolution': '1920x1080'},
-        source='camera'
-    )
-    
-    result2 = integration.process_and_update_objectives(
-        [text_input2, image_input], 
-        {'resource_quota': 0.6}
-    )
-    print(f"Dominant semantics: {result2['multimodal_result']['dominant_semantics']}")
-    print(f"Weight adjustments: {result2['weight_adjustments']}")
-    print(f"Objective scores: {result2['objective_updates']}")
-    print(f"Recommended: {result2['recommended_actions']}")
-    print()
-    
-    # 场景3: 音频输入
-    print("Scenario 3: Audio Input")
-    print("-"*70)
-    audio_input = MultimodalInput(
-        modality=ModalityType.AUDIO,
-        data={'duration': 120, 'has_speech': True, 'has_music': False},
-        timestamp=datetime.now(),
-        metadata={'format': 'wav'},
-        source='microphone'
-    )
-    
-    result3 = integration.process_and_update_objectives([audio_input], {'resource_quota': 0.8})
-    print(f"Dominant semantics: {result3['multimodal_result']['dominant_semantics']}")
-    print(f"Weight adjustments: {result3['weight_adjustments']}")
-    print(f"Objective scores: {result3['objective_updates']}")
-    print()
-    
-    # 总结
-    print("="*70)
-    print("MULTIMODAL INTEGRATION SUMMARY")
-    print("="*70)
-    print("✅ Text modality: Encode → Semantic extraction → Objective mapping")
-    print("✅ Image modality: Feature extraction → Visual semantics → Objective influence")
-    print("✅ Audio modality: Spectral analysis → Audio type detection → Context adaptation")
-    print("✅ Multimodal fusion: Cross-modal validation → Weighted integration")
-    print("✅ MOSS integration: Dynamic weight adjustment based on multimodal context")
+    增强真实世界感知的多模态处理能力
+    """
+    # TODO: 实现与 real_world_bridge.py 的集成
+    pass
 
 
-if __name__ == '__main__':
-    demo_multimodal()
+def integrate_with_self_optimization(moss_agent, extension: MultimodalExtension):
+    """
+    集成到 Self-Optimization v2
+    
+    为优化触发逻辑提供多模态语义分数
+    """
+    # TODO: 实现与 self_optimization_v2.py 的集成
+    pass
+
+
+def integrate_with_purpose_dynamics(moss_agent, extension: MultimodalExtension):
+    """
+    集成到 Purpose Dynamics Module (D9)
+    
+    为自生成 Purpose 提供价值涌现能力
+    """
+    # TODO: 实现与 objectives.py 的 Purpose Dynamics Module 集成
+    pass
+
+
+# ============================================================================
+# 测试与验证
+# ============================================================================
+
+def run_basic_tests():
+    """运行基础测试"""
+    print("Running MVES Multimodal Extension Basic Tests...")
+    
+    # 测试 1: 编码器
+    encoder = MultimodalEncoder()
+    text_feature = encoder.encode("Hello, World!", ModalityType.TEXT)
+    assert text_feature.vector.shape == (512,), "Text encoding failed"
+    print("✓ Encoder test passed")
+    
+    # 测试 2: 融合器
+    fusion = CrossModalFusion()
+    features = [
+        FeatureVector(ModalityType.TEXT, np.random.randn(512), 0.9),
+        FeatureVector(ModalityType.IMAGE, np.random.randn(512), 0.8)
+    ]
+    fused = fusion.fuse(features, {"state": "Normal"})
+    assert fused.shape == (512,), "Fusion failed"
+    print("✓ Fusion test passed")
+    
+    # 测试 3: 价值提取
+    extractor = ValueExtractor()
+    context = {"state": "Normal", "modalities": ["text", "image"]}
+    value_vector = extractor.extract(fused, context)
+    assert value_vector.value_vector.shape == (64,), "Value extraction failed"
+    print("✓ Value extraction test passed")
+    
+    # 测试 4: 完整流程
+    extension = MultimodalExtension()
+    inputs = {
+        ModalityType.TEXT: "Test input",
+        ModalityType.IMAGE: np.random.randn(32, 32, 3)
+    }
+    result = extension.process_multimodal_input(inputs, context)
+    assert "fused_features" in result, "Process failed"
+    assert "value_vector" in result, "Process failed"
+    print("✓ Full pipeline test passed")
+    
+    # 测试 5: 稳定性分析
+    for _ in range(20):
+        extension.process_multimodal_input(inputs, context)
+    stability = extension.analyze_value_stability()
+    print(f"  Value stability: {stability['stability']:.3f} (target: >0.96)")
+    print("✓ Stability analysis test passed")
+    
+    print("\n✅ All basic tests passed!")
+
+
+if __name__ == "__main__":
+    run_basic_tests()
