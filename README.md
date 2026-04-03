@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v5.2.0-green.svg)](https://github.com/luokaishi/moss/releases)
+[![Version](https://img.shields.io/badge/version-v5.3.0-green.svg)](https://github.com/luokaishi/moss/releases)
 [![Paper](https://img.shields.io/badge/paper-NeurIPS%202026-red.svg)](https://github.com/luokaishi/moss/releases/tag/v2.0.0)
 [![v3 Paper](https://img.shields.io/badge/v3%20paper-In%20Preparation-orange.svg)](./paper/v3_extended/)
 [![Experiments](https://img.shields.io/badge/experiments-200%2B-9cf.svg)](./docs/)
@@ -71,7 +71,20 @@ MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows
 
 ---
 
-### 🆕 MOSS v5.2.0 已发布（2026-03-29）✅ | [Real-World Validation](https://github.com/luokaishi/moss/releases/tag/v5.2.0) 🌐
+### 🆕 MOSS v5.3.0 已发布（2026-04-03）✅ | [Social Pressure + Emergence](https://github.com/luokaishi/moss/releases/tag/v5.3.0) 🎭
+
+**多 Agent 社会压力 + 涌现行为量化**
+
+- 🎭 社会压力模块 - 群体规范压力计算，从众行为建模
+- 📊 涌现指标 - 群体协调性、行为多样性量化
+- 🎯 Purpose 适应性提升 5× (0.02→0.10)
+- 🔬 实验验证：涌现分数 0.747，Purpose 稳定性 0.712
+
+**使用**: `python experiments/run_v5.3_longterm_experiment.py --steps 1000 --agents 5`
+
+---
+
+### 📦 MOSS v5.2.0（2026-03-29）| [Real-World Validation](https://github.com/luokaishi/moss/releases/tag/v5.2.0) 🌐
 
 **72-Hour Real-World Autonomous Operation Complete + Full Data Integration**
 
