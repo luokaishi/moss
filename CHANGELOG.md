@@ -348,6 +348,21 @@ Three independent long-running experiments (2,880,000 steps each) validating Pur
 
 ## Version History
 
+- **v5.3.0** (2026-04-03) - 🎭 Social Pressure + Emergence Metrics + Purpose Dynamics v2
+  - Social pressure module for multi-agent simulation
+  - Emergence metrics (coordination, diversity, complexity)
+  - Purpose Dynamics v2 with 5× adaptability improvement
+  - Multimodal extension with ValueVector support
+  - Experimental validation: emergence score 0.747, stability 0.712
+  
+- **v5.2.0** (2026-03-29) - 🌐 72h Real-World Validation
+  - 72-hour autonomous operation (33,359 actions)
+  - Full data integration (6 experiments, 87.1h, 139,756 actions)
+  
+- **v5.1.0** (2026-03-25) - 🎯 Purpose Causality Validated
+  - 98-run large-N statistical study
+  - Purpose stability confirmed (94% retention rate)
+  
 - **v3.0.0** (2026-03-19) - 8-dimensional extension, social emergence
 - **v2.0.0** (2026-03-15) - 4-dimensional foundation, NeurIPS 2026 submission
 - **v0.3.0** (2026-03-06) - Fixed weight baseline, initial experiments
