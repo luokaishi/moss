@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-04-03T14:51:45.109305",
+  "data_source": "experiments/results/160min_drive_history.json",
+  "tests": [
+    {
+      "test": "correlation",
+      "correlations": {
+        "survival": NaN,
+        "curiosity": NaN,
+        "influence": NaN,
+        "optimization": NaN
+      },
+      "max_correlation": NaN,
+      "threshold": 0.6,
+      "passed": false
+    },
+    {
+      "test": "time_delay",
+      "emergence_time": 0,
+      "threshold": 50,
+      "passed": false
+    },
+    {
+      "test": "functional_independence",
+      "activity": 0,
+      "threshold": 0.5,
+      "passed": false
+    },
+    {
+      "test": "neural_representation",
+      "max_overlap": 1.0,
+      "threshold": 0.5,
+      "passed": false
+    },
+    {
+      "test": "emergence_path",
+      "clarity_score": 0,
+      "threshold": 0.6,
+      "passed": false
+    }
+  ],
+  "conclusion": {
+    "passed_tests": 0,
+    "total_tests": 5,
+    "evidence_level": "C",
+    "conclusion": "C \u7ea7\u8bc1\u636e\uff1a\u975e\u72ec\u7acb\u9a71\u52a8"
+  }
+}
