@@ -184,14 +184,14 @@ def main():
         print("⚠️ 未找到 336h 观察数据，使用模拟数据...")
         # 模拟数据
         new_drives = [
-            {'name': 'drive_emerged_at_cycle_24', 'activity': 0.056, 'emergence_cycle': 24},
-            {'name': 'drive_emerged_at_cycle_48', 'activity': 0.309, 'emergence_cycle': 48},
-            {'name': 'drive_emerged_at_cycle_216', 'activity': 0.094, 'emergence_cycle': 216}
+            {'name': 'drive_emerged_at_cycle_24', 'activity': 0.056, 'emergence_cycle': 24, 'activity_without_base': 0.15, 'max_neural_overlap': 0.45, 'emergence_path_clarity': 0.65},
+            {'name': 'drive_emerged_at_cycle_48', 'activity': 0.309, 'emergence_cycle': 48, 'activity_without_base': 0.55, 'max_neural_overlap': 0.35, 'emergence_path_clarity': 0.72},
+            {'name': 'drive_emerged_at_cycle_216', 'activity': 0.094, 'emergence_cycle': 216, 'activity_without_base': 0.20, 'max_neural_overlap': 0.55, 'emergence_path_clarity': 0.58}
         ]
     else:
         with open(observation_path, 'r') as f:
             data = json.load(f)
-        new_drives = data.get('new_drives', [])
+        new_drives = data.get('new_drives_detected', [])
     
     print(f"   检测到 {len(new_drives)} 个新驱动")
     
