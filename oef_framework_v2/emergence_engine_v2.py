@@ -137,6 +137,12 @@ class EmergenceEngineV2:
         )
         results['convergence_verified'] = convergence['converged']
         
+        # Lyapunov 稳定性分析（确保 lyapunov_history 被更新）
+        stability = self.convergence_analyzer.lyapunov_stability_analysis(
+            self.weight_updater.weight_history
+        )
+        results['lyapunov_stable'] = stability['stable']
+        
         return results
     
     def verify_mves_objectives(self) -> Dict:

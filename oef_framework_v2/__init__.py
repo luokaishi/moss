@@ -17,7 +17,7 @@ Agent 自主发明行为和目标
 - 完全证明 MVES 目标（自发性 + 独立性）
 """
 
-# 以下为核心组件导入（文件结构）
+# 以下为核心组件导入（实际存在的模块）
 from .autonomous_drive_space import AutonomousDriveSpace
 from .autonomous_action_space import AutonomousActionSpace
 from .unified_loss import UnifiedLossFunction
@@ -25,11 +25,11 @@ from .dynamic_weights import DynamicWeightUpdate
 from .convergence_analyzer import ConvergenceAnalyzer
 from .causal_validator import CausalIndependenceValidator
 from .emergence_engine_v2 import EmergenceEngineV2
-from .action_inventor import ActionInventor
-from .goal_discoverer import GoalDiscoverer
-from .causal_validator import CausalIndependenceValidator
-from .emergence_detector_v2 import EmergenceDetector2
-from .emergence_engine_v2 import EmergenceEngineV2
+
+# TODO: 待实现的模块
+# from .action_inventor import ActionInventor
+# from .goal_discoverer import GoalDiscoverer
+# from .emergence_detector_v2 import EmergenceDetector2
 
 __version__ = '2.0.0'
 __author__ = 'OEF Team'
