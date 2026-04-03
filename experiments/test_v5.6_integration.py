@@ -215,7 +215,22 @@ class V56IntegrationTest:
             'strategies': ['strategy_1']
         }
         
-        generation_data = self.cultural_transmission.generation_history[-2:] if len(self.cultural_transmission.generation_history) >= 2 else []
+        # 转换为正确的格式
+        generation_data = []
+        for gen_agents in self.cultural_transmission.generation_history[-2:]:
+            traits = []
+            for agent in gen_agents if isinstance(gen_agents, list) else []:
+                traits.extend([t.name for t in agent.traits])
+            generation_data.append({
+                'traits': list(set(traits)),
+                'values': {'cooperation': 0.7}
+            })
+        
+        if not generation_data:
+            generation_data = [
+                {'traits': ['A', 'B'], 'values': {'cooperation': 0.7}},
+                {'traits': ['A', 'C'], 'values': {'cooperation': 0.75}}
+            ]
         
         env_data = {
             'before': {'resource': 100},
