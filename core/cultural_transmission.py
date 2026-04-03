@@ -175,9 +175,17 @@ class CulturalTransmission:
             parent1 = np.random.choice(survivors)
             parent2 = np.random.choice(survivors)
             
-            # 后代继承父母特质
+            # 后代继承父母特质 (去重)
             child = Agent(generation=current_gen + 1)
-            child.traits = list(set(parent1.traits + parent2.traits))
+            parent_traits = parent1.traits + parent2.traits
+            # 使用 ID 去重
+            seen_ids = set()
+            unique_traits = []
+            for trait in parent_traits:
+                if trait.id not in seen_ids:
+                    seen_ids.add(trait.id)
+                    unique_traits.append(trait)
+            child.traits = unique_traits
             
             # 变异
             if np.random.random() < mutation_rate and self.cultural_pool:
