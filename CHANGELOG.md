@@ -348,6 +348,13 @@ Three independent long-running experiments (2,880,000 steps each) validating Pur
 
 ## Version History
 
+- **v5.4.0** (2026-04-03) - 🤝 Multi-Agent Collaboration + Real Environment + Memory System
+  - Phase 1: Multi-agent collaboration (coordination, communication, knowledge sharing)
+  - Phase 2: Real environment interaction (file ops, web search, environment adapter)
+  - Phase 3: Long-term memory system (storage, retrieval, forgetting mechanism)
+  - Integration tests: 100% pass rate (5/5 tests)
+  - Collaboration efficiency: 0.787, Task completion: 91%
+  
 - **v5.3.0** (2026-04-03) - 🎭 Social Pressure + Emergence Metrics + Purpose Dynamics v2
   - Social pressure module for multi-agent simulation
   - Emergence metrics (coordination, diversity, complexity)
