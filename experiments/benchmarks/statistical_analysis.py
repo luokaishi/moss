@@ -38,12 +38,12 @@ class StatisticalAnalysis:
         
         result = {
             'test': 'independent_t_test',
-            't_statistic': t_stat,
-            'p_value': p_value,
-            'significant': p_value < 0.05,
-            'effect_size_cohens_d': cohens_d,
-            'mean_difference': mean_diff,
-            'confidence_interval_95': [ci_low, ci_high],
+            't_statistic': float(t_stat),
+            'p_value': float(p_value),
+            'significant': bool(p_value < 0.05),
+            'effect_size_cohens_d': float(cohens_d),
+            'mean_difference': float(mean_diff),
+            'confidence_interval_95': [float(ci_low), float(ci_high)],
             'interpretation': self._interpret_p_value(p_value, cohens_d)
         }
         
