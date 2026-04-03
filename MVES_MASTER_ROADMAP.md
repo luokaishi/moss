@@ -1,7 +1,7 @@
 # MVES 总体路线图
 
-**更新时间**: 2026-04-03 09:30 GMT+8  
-**状态**: v5.3.0-v5.6.0 已完成，v6.0.0 规划中
+**更新时间**: 2026-04-03 09:53 GMT+8  
+**状态**: v5.3.0-v6.0.0 已完成，v6.1.0 规划中
 
 ---
 
@@ -13,7 +13,8 @@
 | **v5.4.0** | 多 Agent 协作 + 真实环境 | ✅ 完成 | 100% | [链接](https://github.com/luokaishi/moss/releases/tag/v5.4.0) |
 | **v5.5.0** | 性能优化 + 大规模实验 | ✅ 完成 | 100% | [链接](https://github.com/luokaishi/moss/releases/tag/v5.5.0) |
 | **v5.6.0** | 开放目标 + 文化传递 + AGI 评估 | ✅ 完成 | 100% | [链接](https://github.com/luokaishi/moss/releases/tag/v5.6.0) |
-| **v6.0.0** | 开放环境 + 自主意识 | 📋 规划中 | 0% | ⏳ 待发布 |
+| **v6.0.0** | 开放环境 + 自主意识 + AGI 评估 | ✅ 完成 | 100% | [链接](https://github.com/luokaishi/moss/releases/tag/v6.0.0) |
+| **v6.1.0** | 性能优化 + 大规模验证 | 📋 规划中 | 0% | ⏳ 待发布 |
 
 ---
 
