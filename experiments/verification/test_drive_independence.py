@@ -90,9 +90,9 @@ class DriveIndependenceTest:
         
         result = {
             'test': 'functional_independence',
-            'efficiency_activity': efficiency_activity_without_base,
+            'efficiency_activity': float(efficiency_activity_without_base),
             'threshold': 0.5,
-            'passed': passed,
+            'passed': bool(passed),
             'interpretation': '功能独立支持' if passed else '依赖四目标'
         }
         
@@ -114,7 +114,7 @@ class DriveIndependenceTest:
             # 计算增长连续性
             diffs = np.diff(weights)
             positive_ratio = np.sum(diffs > 0) / len(diffs)
-            clarity_score = positive_ratio
+            clarity_score = float(positive_ratio)
         
         passed = clarity_score > 0.6
         
@@ -122,7 +122,7 @@ class DriveIndependenceTest:
             'test': 'emergence_path_analysis',
             'clarity_score': clarity_score,
             'threshold': 0.6,
-            'passed': passed,
+            'passed': bool(passed),
             'interpretation': '演化路径清晰' if passed else '演化路径模糊'
         }
         
