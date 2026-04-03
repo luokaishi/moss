@@ -39,10 +39,10 @@ class DriveIndependenceTest:
         
         result = {
             'test': 'correlation_analysis',
-            'correlations': correlations,
-            'max_correlation': max_corr,
+            'correlations': {k: float(v) for k, v in correlations.items()},
+            'max_correlation': float(max_corr),
             'threshold': 0.6,
-            'passed': passed,
+            'passed': bool(passed),
             'interpretation': '独立性支持' if passed else '可能为组合驱动'
         }
         
@@ -69,11 +69,11 @@ class DriveIndependenceTest:
         
         result = {
             'test': 'time_delay_analysis',
-            'base_drives_avg_time': base_drives_time,
-            'efficiency_emergence_time': efficiency_time,
-            'time_delay': time_delay,
+            'base_drives_avg_time': float(base_drives_time),
+            'efficiency_emergence_time': float(efficiency_time),
+            'time_delay': float(time_delay),
             'threshold': 50,
-            'passed': passed,
+            'passed': bool(passed),
             'interpretation': '时间延迟支持' if passed else '可能为预设驱动'
         }
         
@@ -145,8 +145,8 @@ class DriveIndependenceTest:
             conclusion = '独立性不成立 (C 级证据)'
         
         assessment = {
-            'passed_tests': passed_tests,
-            'total_tests': total_tests,
+            'passed_tests': int(passed_tests),
+            'total_tests': int(total_tests),
             'evidence_level': level,
             'conclusion': conclusion
         }
