@@ -24,8 +24,9 @@ from .unified_loss import UnifiedLossFunction
 from .dynamic_weights import DynamicWeightUpdate
 from .convergence_analyzer import ConvergenceAnalyzer
 from .causal_validator import CausalIndependenceValidator
+from .complete_independence_validator import CompleteIndependenceValidator  # 🌟 新增：完整四维度验证器
 from .emergence_engine_v2 import EmergenceEngineV2
-from .goal_discoverer import GoalDiscoverer  # 🌟 新增：目标发现器
+from .goal_discoverer import GoalDiscoverer  # 🌟 新增：目标发现器（修正版：新颖生成）
 
 # TODO: 待实现的模块
 # from .action_inventor import ActionInventor

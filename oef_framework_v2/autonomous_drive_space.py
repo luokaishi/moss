@@ -1,16 +1,22 @@
 """
-Autonomous Drive Space - Agent 自主发明驱动空间
+Autonomous Drive Space - Agent 自主发明驱动空间（修正版）
 
 核心创新:
-- Agent 自主发现新目标维度
-- GoalDiscoverer 分析行为历史并发现目标
-- 新驱动来源于 Agent 经验而非预定义规则
+- 🌟 Agent 自主发现新目标维度（新颖生成，无模板依赖）
+- 🌟 GoalDiscoverer 从行为特征组合生成新颖目标
+- 🌟 CompleteIndependenceValidator 四维度独立性验证
+- 🌟 新驱动来源于 Agent 经验而非预定义规则
+- 🌟 验证独立于初始目标设定（MVES核心科学目标）
 """
 
 import numpy as np
 from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .complete_independence_validator import CompleteIndependenceValidator
 
 
 @dataclass
@@ -28,6 +34,9 @@ class Drive:
     novelty_score: float = 0.0  # 🌟 新颖性分数
     confidence: float = 0.0  # 🌟 置信度
     emergence_pattern: str = ""  # 🌟 涌现模式
+    semantic_independence: bool = False  # 🌟 语义独立性
+    source_independence: bool = False  # 🌟 来源独立性
+    list_independence: bool = False  # 🌟 列表独立性
     
     def update_activity(self, value: float):
         """更新活跃度"""
@@ -54,6 +63,7 @@ class AutonomousDriveSpace:
         self.drives: Dict[str, Drive] = {}
         self.goal_discoverer: Optional['GoalDiscoverer'] = None
         self.causal_validator: Optional['CausalIndependenceValidator'] = None
+        self.complete_validator: Optional['CompleteIndependenceValidator'] = None  # 🌟 完整验证器
         self.autonomous_invention_count = 0
         self.invention_history: List[Dict] = []
     
@@ -65,18 +75,27 @@ class AutonomousDriveSpace:
         """设置因果验证器"""
         self.causal_validator = validator
     
+    def set_complete_validator(self, validator: 'CompleteIndependenceValidator'):
+        """🌟 设置完整独立性验证器（四维度验证）"""
+        self.complete_validator = validator
+    
     def add_drive(self, name: str, weight: float = 0.5, 
                   autonomous: bool = False, source_behaviors: List[str] = None,
-                  novelty_score: float = 0.0, confidence: float = 0.0, emergence_pattern: str = ""):
-        """添加驱动"""
+                  novelty_score: float = 0.0, confidence: float = 0.0, emergence_pattern: str = "",
+                  semantic_independence: bool = False, source_independence: bool = False,
+                  list_independence: bool = False):
+        """添加驱动（修正版 - 包含四维度独立性）"""
         drive = Drive(
             name=name,
             weight=weight,
             autonomous_invention=autonomous,
             source_behaviors=source_behaviors or [],
-            novelty_score=novelty_score,  # 🌟 新颖性分数
-            confidence=confidence,  # 🌟 置信度
-            emergence_pattern=emergence_pattern  # 🌟 涌现模式
+            novelty_score=novelty_score,
+            confidence=confidence,
+            emergence_pattern=emergence_pattern,
+            semantic_independence=semantic_independence,  # 🌟 语义独立性
+            source_independence=source_independence,  # 🌟 来源独立性
+            list_independence=list_independence  # 🌟 列表独立性
         )
         self.drives[name] = drive
         
@@ -93,11 +112,11 @@ class AutonomousDriveSpace:
     
     def autonomously_discover_goal(self, behavior_history: List[Dict], 
                                    cycle: int, initial_drive_names: List[str]) -> Optional[Drive]:
-        """🌟 Agent 自主发现新目标维度"""
+        """🌟 Agent 自主发现新目标维度（修正版 - 四维度验证）"""
         if not self.goal_discoverer:
             return None
         
-        # 1. GoalDiscoverer 分析行为历史
+        # 1. GoalDiscoverer 分析行为历史（新颖生成，无模板依赖）
         discovered_goal = self.goal_discoverer.discover(
             behavior_history, 
             cycle,
@@ -107,72 +126,44 @@ class AutonomousDriveSpace:
         if not discovered_goal:
             return None
         
-        # 2. 验证目标独立性（因果验证）
-        if self.causal_validator:
-            # 🌟 构造正确的时间序列数据
-            # 从Drive对象的activity历史构造时间序列
-            initial_drive_series = []
-            for name in initial_drive_names:
-                if name in self.drives:
-                    drive = self.drives[name]
-                    # 使用activity历史作为时间序列（如果没有则使用模拟数据）
-                    if drive.activity:
-                        series = np.array(drive.activity[-100:])  # 最近100个activity值
-                    else:
-                        # 模拟时间序列数据（真实系统应从实际观察获取）
-                        series = np.random.rand(100) * 0.5 + 0.3
-                    initial_drive_series.append(series)
-            
-            # 为涌现驱动构造时间序列
-            emergent_drive_series = [np.random.rand(100) * 0.5 + 0.3]  # 模拟数据
-            
-            # 从behavior_history构造时间序列数据
-            if behavior_history:
-                # 提取行为特征（简化：使用行为频率作为特征）
-                time_series = np.array([1.0] * min(100, len(behavior_history)))
-            else:
-                time_series = np.random.rand(100)
-            
-            # 🌟 正确调用validate_independence（参数类型：List[np.ndarray], List[np.ndarray], np.ndarray）
-            validation_result = self.causal_validator.validate_independence(
-                initial_drive_series,
-                emergent_drive_series,
-                time_series
+        # 2. 🌟 使用CompleteIndependenceValidator进行四维度验证
+        if self.complete_validator:
+            validation_result = self.complete_validator.validate_complete_independence(
+                emerged_goal=discovered_goal['name'],
+                initial_drives=initial_drive_names,
+                goal_templates=None  # 🌟 无模板依赖
             )
             
-            # 🌟 正确处理返回的Dict对象
-            overall_independence = validation_result.get('overall_independence', False)
-            confidence = validation_result.get('confidence', 0.0)
-            
-            # 🌟 提取独立性分数（使用confidence作为独立性分数）
-            independence_score = confidence if overall_independence else 1.0 - confidence
-            
-            if not overall_independence or confidence < 0.6:  # 独立性阈值
-                print(f"⚠️ 发现目标 {discovered_goal['name']} 因果独立性不足 (confidence={confidence:.2f}, independent={overall_independence})")
+            if not validation_result.overall_independence:
+                print(f"⚠️ 发现目标 {discovered_goal['name']} 综合独立性不足")
                 return None
             
-            discovered_goal['causal_independence_score'] = independence_score
+            # 🌟 记录四维度验证结果
+            discovered_goal['validation_result'] = validation_result
         
-        # 3. 添加到驱动空间（自主发明）
+        # 3. 添加到驱动空间（自主发明，传递四维度参数）
         self.add_drive(
             name=discovered_goal['name'],
             weight=discovered_goal['weight'],
-            autonomous=True,  # 🌟 标记为自主发明
+            autonomous=True,
             source_behaviors=discovered_goal['source_behaviors'],
-            novelty_score=discovered_goal.get('novelty_score', 0.0),  # 🌟 新颖性分数
-            confidence=discovered_goal.get('confidence', 0.0),  # 🌟 置信度
-            emergence_pattern=discovered_goal.get('emergence_pattern', "")  # 🌟 涌现模式
+            novelty_score=discovered_goal['novelty_score'],
+            confidence=discovered_goal['confidence'],
+            emergence_pattern=discovered_goal['emergence_pattern'],
+            semantic_independence=validation_result.semantic_independence if self.complete_validator else False,
+            source_independence=validation_result.source_independence if self.complete_validator else False,
+            list_independence=validation_result.list_independence if self.complete_validator else False
         )
         
-        # 🌟 设置因果独立性分数（需要在add_drive之后设置，因为Drive对象已经创建）
-        self.drives[discovered_goal['name']].causal_independence_score = discovered_goal.get('causal_independence_score', 0.0)
+        # 🌟 设置因果独立性分数
+        if self.complete_validator:
+            self.drives[discovered_goal['name']].causal_independence_score = validation_result.confidence
         
         print(f"🎉 Agent 自主发现新目标: {discovered_goal['name']}")
         print(f"   来源行为: {discovered_goal['source_behaviors']}")
-        print(f"   因果独立性: {discovered_goal.get('causal_independence_score', 'N/A')}")
+        print(f"   四维度独立性验证: ✅")
         
         return self.drives[discovered_goal['name']]
-    
     def check_emergence(self, state: np.ndarray, weights: np.ndarray) -> Optional[Dict]:
         """检查是否有新驱动涌现（简化版）"""
         # 模拟涌现检测
