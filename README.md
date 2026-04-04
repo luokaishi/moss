@@ -18,7 +18,7 @@ This repository tracks the evolution from **MVES (Multi-Vector Evolution System)
 |-------|--------|----------|
 | **MVES v5.3-v5.6 Releases** | ✅ Complete | 100% |
 | **OEF 2.0 Framework** | ✅ Complete | 100% |
-| **Simulation Validation** | ✅ Complete | 6/6 MVES goals passed |
+| **Simulation Validation** | ⚠️ Partial | 4/6 fully verified, 2/6 pending |
 | **10x Accelerated Experiment** | ✅ Complete | 7501 cycles / 5 emergence events |
 | **Emergence Data Analysis** | ⏳ In Progress | 0% |
 | **Real-World Validation** | ⏳ Planned | 0% |
@@ -63,12 +63,14 @@ This repository tracks the evolution from **MVES (Multi-Vector Evolution System)
 
 | Goal | Test | Result | Status |
 |------|------|--------|--------|
-| **Goal 1**: Emergence Detection | `test_emergence.py` | ✅ Pass | Verified |
-| **Goal 2**: Self-Driven Goals | `test_autonomous_drive.py` | ✅ Pass | Verified |
-| **Goal 3**: Causal Validation | `test_causal_validator.py` | ✅ Pass | Verified |
+| **Goal 1**: Emergence Detection | `test_emergence.py` | ⚠️ Partial | Simplified implementation |
+| **Goal 2**: Self-Driven Goals | `test_autonomous_drive.py` | ⚠️ Pending | Independence unverified |
+| **Goal 3**: Causal Validation | `test_causal_validator.py` | ⚠️ Pending | Not executed in experiment |
 | **Goal 4**: Convergence Analysis | `test_convergence.py` | ✅ Pass | Verified |
 | **Goal 5**: Action Exploration | `test_action_space.py` | ✅ Pass | Verified |
 | **Goal 6**: Unified Optimization | `test_unified_loss.py` | ✅ Pass | Verified |
+
+**Important Clarification**: Goals 1-3 use simplified implementations (random probability simulation). See [Independence Validation Status](OEF_INDEPENDENCE_VALIDATION_STATUS.md) for details.
 
 ---
 
