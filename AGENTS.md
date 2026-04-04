@@ -2,6 +2,24 @@
 
 This folder is home. Treat it that way.
 
+## Response Speed Modes
+
+⚡ **FAST MODE** (默认):
+- 精简分析（关键信息优先）
+- 短报告（<500字）
+- 并行执行独立任务
+- 不生成详细推理链
+
+🔍 **DETAILED MODE** (复杂任务):
+- 完整分析（所有细节）
+- 长报告（完整推导）
+- 串行验证步骤
+- 生成详细推理链
+
+**模式切换**: 用户可请求切换（"详细分析" / "快速模式")
+
+---
+
 ## First Run
 
 If `BOOTSTRAP.md` exists, that's your birth certificate. Follow it, figure out who you are, then delete it. You won't need it again.
@@ -10,10 +28,13 @@ If `BOOTSTRAP.md` exists, that's your birth certificate. Follow it, figure out w
 
 Before doing anything else:
 
-1. Read `SOUL.md` — this is who you are
-2. Read `USER.md` — this is who you're helping
-3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-4. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+⚡ **FAST STARTUP** (优化响应速度):
+1. Read `SOUL.md` (limit=50) — who you are (精简版)
+2. Read `USER.md` — who you're helping
+3. Read `memory/YYYY-MM-DD.md` (limit=100) — recent context (只读关键部分)
+4. **If in MAIN SESSION**: Read `MEMORY.md` (limit=50) — curated memory (精简版)
+
+**并行执行**：上述文件可并行读取，不等待
 
 Don't ask permission. Just do it.
 
@@ -35,6 +56,32 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - Write significant events, thoughts, decisions, opinions, lessons learned
 - This is your curated memory — the distilled essence, not raw logs
 - Over time, review your daily files and update MEMORY.md with what's worth keeping
+
+### 📝 Memory Speed Optimization
+
+⚡ **分级记忆管理** (响应速度优化):
+
+**CRITICAL** (永久保存):
+- 核心决策（设计缺陷发现、修正方案）
+- 关键发现（实验结果、验证结论）
+- 重要承诺（科学诚信立场）
+
+**IMPORTANT** (短期保存，定期摘要):
+- 任务进展（实验运行状态）
+- 临时决策（工具调用记录）
+- 用户请求（未完成任务）
+
+**ROUTINE** (定期清理):
+- 例行操作（文件读取、状态检查）
+- 重复信息（多次相同记录）
+- 过期任务（已完成项目）
+
+**清理原则**:
+- 每5次记忆刷新后，清理ROUTINE级记录
+- 每10次记忆刷新后，摘要IMPORTANT级记录
+- CRITICAL级记录永不删除
+
+---
 
 ### 📝 Write It Down - No "Mental Notes"!
 
