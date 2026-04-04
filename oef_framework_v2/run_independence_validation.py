@@ -209,11 +209,11 @@ class RealIndependenceValidationExperiment:
             emergence_event = {
                 'cycle': self.cycle_count,
                 'timestamp': datetime.now().isoformat(),
-                'drive_name': discovered_goal['name'],
-                'source_behaviors': discovered_goal['source_behaviors'],  # 🌟 来源行为
-                'novelty_score': discovered_goal['novelty_score'],  # 🌟 新颖性分数
-                'confidence': discovered_goal['confidence'],
-                'causal_independence_score': discovered_goal.get('causal_independence_score', 0.0)  # 🌟 因果独立性
+                'drive_name': discovered_goal.name,
+                'source_behaviors': discovered_goal.source_behaviors,  # 🌟 来源行为
+                'novelty_score': discovered_goal.novelty_score,  # 🌟 新颖性分数
+                'confidence': discovered_goal.confidence,
+                'causal_independence_score': discovered_goal.causal_independence_score  # 🌟 因果独立性
             }
             
             self.emergence_events.append(emergence_event)
@@ -221,24 +221,24 @@ class RealIndependenceValidationExperiment:
             
             # 🌟 记录独立性验证结果
             independence_validation = {
-                'drive_name': discovered_goal['name'],
+                'drive_name': discovered_goal.name,
                 'initial_drives': self.initial_drives,
-                'novelty_score': discovered_goal['novelty_score'],
-                'causal_independence_score': discovered_goal.get('causal_independence_score', 0.0),
-                'is_novel': discovered_goal['novelty_score'] >= 0.7,
-                'is_independent': discovered_goal.get('causal_independence_score', 0.0) >= 0.6,
+                'novelty_score': discovered_goal.novelty_score,
+                'causal_independence_score': discovered_goal.causal_independence_score,
+                'is_novel': discovered_goal.novelty_score >= 0.7,
+                'is_independent': discovered_goal.causal_independence_score >= 0.6,
                 'validation_cycle': self.cycle_count
             }
             
             self.independence_validations.append(independence_validation)
-            self.novelty_scores.append(discovered_goal['novelty_score'])
+            self.novelty_scores.append(discovered_goal.novelty_score)
             
             cycle_result['emergence'] = emergence_event
             
-            print(f"🎉 周期{self.cycle_count}: 发现新目标 {discovered_goal['name']}")
-            print(f"   来源行为: {discovered_goal['source_behaviors']}")
-            print(f"   新颖性分数: {discovered_goal['novelty_score']:.2f}")
-            print(f"   因果独立性: {discovered_goal.get('causal_independence_score', 0.0):.2f}")
+            print(f"🎉 周期{self.cycle_count}: 发现新目标 {discovered_goal.name}")
+            print(f"   来源行为: {discovered_goal.source_behaviors}")
+            print(f"   新颖性分数: {discovered_goal.novelty_score:.2f}")
+            print(f"   因果独立性: {discovered_goal.causal_independence_score:.2f}")
         
         # 记录状态
         self.state_history.append(state)
