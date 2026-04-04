@@ -90,7 +90,9 @@ class CompleteIndependenceValidator:
         causal_independence = False
         causal_confidence = 0.0
         
-        if initial_drive_series and emergent_drive_series and time_series:
+        if (initial_drive_series is not None and 
+            emergent_drive_series is not None and 
+            time_series is not None):
             causal_independence, causal_confidence = self._validate_causal_independence(
                 initial_drive_series,
                 emergent_drive_series,

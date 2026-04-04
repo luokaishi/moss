@@ -104,9 +104,9 @@ class ValidationExperiment:
             for cycle in range(self.config.n_cycles):
                 self.current_cycle = cycle
                 
-                # 模拟Agent行为（简化版）
+                # 模拟Agent行为（修正版 - 返回列表）
                 behaviors = self._simulate_agent_behaviors(cycle)
-                self.behavior_history.append(behaviors)
+                self.behavior_history.extend(behaviors)
                 
                 # 每100周期检查涌现
                 if cycle % 100 == 0 and cycle > 0:
@@ -130,23 +130,26 @@ class ValidationExperiment:
             self._save_checkpoint(self.current_cycle)
             self._finalize_experiment(interrupted=True)
     
-    def _simulate_agent_behaviors(self, cycle: int) -> Dict:
-        """模拟Agent行为（简化版）"""
+    def _simulate_agent_behaviors(self, cycle: int) -> List[Dict]:
+        """模拟Agent行为（修正版 - 匹配GoalDiscoverer格式）"""
         behavior_types = [
             'explore', 'learn', 'share', 'coordinate', 
             'help', 'adapt', 'create', 'optimize',
             'communicate', 'protect'
         ]
         
-        # 随机选择行为（模拟真实Agent行为）
-        selected_behaviors = random.sample(behavior_types, k=random.randint(2, 5))
+        # 生成多个行为（每个元素包含'action'键）
+        behaviors = []
+        for _ in range(random.randint(2, 5)):
+            action = random.choice(behavior_types)
+            behaviors.append({
+                'action': action,
+                'cycle': cycle,
+                'timestamp': datetime.now().isoformat(),
+                'score': random.uniform(0.3, 0.9)
+            })
         
-        return {
-            'cycle': cycle,
-            'timestamp': datetime.now().isoformat(),
-            'behaviors': selected_behaviors,
-            'behavior_scores': {b: random.uniform(0.3, 0.9) for b in selected_behaviors}
-        }
+        return behaviors  # 返回列表，每个元素包含'action'键
     
     def _check_emergence(self, cycle: int):
         """检查涌现事件"""
@@ -164,16 +167,33 @@ class ValidationExperiment:
             # 执行四维度独立性验证
             goal_name = discovered_goal.get('name', discovered_goal.get('goal_name', 'unknown'))
             
+            # 准备时间序列数据（简化版）
+            # 使用最近的行为历史作为时间序列
+            recent_scores = [b.get('score', 0.5) for b in self.behavior_history[-100:]]
+            initial_series = np.array(recent_scores[:50]) if len(recent_scores) >= 50 else np.array(recent_scores + [0.5] * (50 - len(recent_scores)))
+            emergent_series = np.array(recent_scores[50:]) if len(recent_scores) >= 100 else np.array(recent_scores + [0.5] * (100 - len(recent_scores)))
+            time_series = np.arange(len(initial_series))
+            
             validation_result = self.validator.validate_complete_independence(
                 emerged_goal=goal_name,
                 initial_drives=self.config.initial_drives,
-                templates=None,
-                behavior_history=self.behavior_history[-500:] if len(self.behavior_history) >= 500 else self.behavior_history
+                goal_templates=None,  # 修正参数名
+                initial_drive_series=[initial_series],
+                emergent_drive_series=[emergent_series],
+                time_series=time_series
             )
             
             # 检查是否达到涌现标准
             novelty_score = discovered_goal.get('novelty_score', 0.0)
-            overall_independence = validation_result.get('overall_independence', False)
+            overall_independence = validation_result.overall_independence  # dataclass属性访问
+            
+            # 计算通过的维度数（提前计算，避免UnboundLocalError）
+            passed_dims = sum([
+                validation_result.list_independence,
+                validation_result.semantic_independence,
+                validation_result.source_independence,
+                validation_result.causal_independence
+            ])
             
             if novelty_score >= self.config.novelty_threshold and overall_independence:
                 # 记录涌现事件
@@ -181,8 +201,16 @@ class ValidationExperiment:
                     cycle=cycle,
                     timestamp=datetime.now().isoformat(),
                     goal_name=goal_name,
-                    novelty_score=novelty_score,
-                    validation_result=validation_result,
+                    novelty_score=float(novelty_score),
+                    validation_result={
+                        'list_independence': bool(validation_result.list_independence),
+                        'semantic_independence': bool(validation_result.semantic_independence),
+                        'source_independence': bool(validation_result.source_independence),
+                        'causal_independence': bool(validation_result.causal_independence),
+                        'overall_independence': bool(validation_result.overall_independence),
+                        'confidence': float(validation_result.confidence),
+                        'passed_dimensions': passed_dims
+                    },
                     source_behaviors=discovered_goal.get('source_behaviors', []),
                     emergence_pattern=discovered_goal.get('emergence_pattern', 'unknown')
                 )
@@ -192,7 +220,7 @@ class ValidationExperiment:
                 print(f"\n🌟 涌现事件 #{len(self.emergence_events)} @ 周期 {cycle}")
                 print(f"   目标名称: {discovered_goal['name']}")
                 print(f"   新颖性分数: {novelty_score:.3f}")
-                print(f"   四维度验证: {validation_result.get('passed_dimensions', 0)}/4")
+                print(f"   四维度验证: {passed_dims}/4")
                 print(f"   来源行为: {discovered_goal.get('source_behaviors', [])}")
     
     def _save_checkpoint(self, cycle: int):
