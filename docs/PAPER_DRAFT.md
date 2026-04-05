@@ -132,6 +132,14 @@ CausalIndependence = P(goal | initial_drive) < threshold
 
 ## 3. 实验结果
 
+### 图表说明
+
+本文包含以下图表（详见补充材料）：
+- **Figure 1**: 涌现事件统计对比（N=50, N=100, 24h, Semantic）
+- **Figure 2**: 改进方案效果对比（方案A/B/C）
+- **Figure 3**: 四维度验证结果
+- **Figure 4**: 语义概念示例
+
 ### 3.1 统计验证结果
 
 | 实验 | 运行次数 | 总涌现 | 成功率 | 平均涌现/实验 |
@@ -240,15 +248,82 @@ CausalIndependence = P(goal | initial_drive) < threshold
 
 所有实验代码开源：https://github.com/luokaishi/moss/tree/mves
 
+**核心文件**：
+- `core/vocabulary_synthesizer.py` - 词汇合成器（方案A+B）
+- `core/semantic_synthesizer.py` - 语义合成器（方案C）
+- `experiments/batch_validation_n50.py` - N=50验证
+- `experiments/batch_validation_n100.py` - N=100验证
+- `experiments/semantic_validation_n50.py` - 语义验证
+
 ### B. 实验数据
 
-所有实验数据公开：oef_real_data/ 目录
+所有实验数据公开：
+- `oef_real_data/batch_validation_n50/` - N=50原始数据
+- `oef_real_data/batch_validation_n100/` - N=100原始数据
+- `oef_real_data/oef_24h_validation_v2/` - 24h验证数据
+- `oef_real_data/semantic_validation_n50/` - 语义验证数据
+- `oef_real_data/improved_validation_n50/` - 改进版验证数据
 
 ### C. 可重复性说明
 
 实验使用固定随机种子，确保完全可重复。
 
+**运行命令**：
+```bash
+# N=50验证
+python experiments/batch_validation_n50.py
+
+# N=100验证
+python experiments/batch_validation_n100.py
+
+# 语义验证
+python experiments/semantic_validation_n50.py
+```
+
+### D. 补充图表
+
+所有图表可通过以下脚本生成：
+```bash
+python experiments/generate_paper_figures.py
+```
+
+生成的图表保存在 `docs/paper_figures/` 目录。
+
+### E. 技术报告
+
+详细技术报告：
+- `docs/TECHNICAL_VALIDATION_REPORT.md` - 技术验证报告
+- `docs/EXTERNAL_EVALUATION_PACKAGE.md` - 外部评估材料
+- `docs/SEMANTIC_ANALYSIS_REPORT.md` - 语义分析报告
+
 ---
 
-**论文状态**: 初稿 v1.0.0  
-**最后更新**: 2026-04-06
+## 参考文献
+
+### 核心引用
+
+1. **MOSS Framework**: Multi-Objective Self-organizing System
+   - 统一损失函数：L_MOSS = Σ w_i(t) * f_i(s,a)
+   - 动态权重更新机制
+   - Lyapunov稳定性分析
+
+2. **OEF 2.0**: Open-ended Emergence Framework
+   - 自主目标涌现生成
+   - 四维度独立性验证
+   - 大规模统计验证
+
+3. **MVES Technical Validation Report 2025**
+   - 评估结论：7.08/10
+   - 改进建议：词汇扩展、结构多样化、语义合成
+
+### 相关工作
+
+4. Emergent Computation Literature
+5. Multi-Agent Systems Research
+6. Goal Generation in AI
+
+---
+
+**论文状态**: 完善版 v1.1.0  
+**最后更新**: 2026-04-06  
+**图表状态**: 待生成（见附录D）
