@@ -120,33 +120,54 @@ class EnhancedGoalDiscoverer:
         self.base_behaviors = self.vocab_synthesizer.base_behaviors
     
     def discover_goal(self, context_behaviors: List[str]) -> Dict:
-        """发现新目标"""
-        n_select = min(random.randint(2, 3), len(context_behaviors))
+        """发现新目标（支持4+词组合）"""
+        # 选择2-5个行为（扩展为4+词组合）
+        max_select = min(5, len(context_behaviors))
+        n_select = random.randint(2, max_select)
         selected = random.sample(context_behaviors, n_select)
         
         if n_select == 2:
             goal_name = self.vocab_synthesizer.synthesize(selected[0], selected[1])
             if not goal_name:
                 goal_name = f"{selected[0]}_{selected[1]}"
-        else:
+        elif n_select == 3:
             first_two = self.vocab_synthesizer.synthesize(selected[0], selected[1])
             if not first_two:
                 first_two = f"{selected[0]}_{selected[1]}"
             goal_name = f"{first_two}_{selected[2]}"
+        elif n_select == 4:
+            first_two = self.vocab_synthesizer.synthesize(selected[0], selected[1])
+            if not first_two:
+                first_two = f"{selected[0]}_{selected[1]}"
+            last_two = self.vocab_synthesizer.synthesize(selected[2], selected[3])
+            if not last_two:
+                last_two = f"{selected[2]}_{selected[3]}"
+            goal_name = f"{first_two}_{last_two}"
+        else:
+            first_two = self.vocab_synthesizer.synthesize(selected[0], selected[1])
+            if not first_two:
+                first_two = f"{selected[0]}_{selected[1]}"
+            mid_two = self.vocab_synthesizer.synthesize(selected[2], selected[3])
+            if not mid_two:
+                mid_two = f"{selected[2]}_{selected[3]}"
+            goal_name = f"{first_two}_{mid_two}_{selected[4]}"
         
         return {
             'name': goal_name,
             'source_behaviors': selected,
-            'is_synthesized': self.vocab_synthesizer.is_synthesized(goal_name),
-            'vocabulary_count': len(self.vocab_synthesizer.get_all_vocabularies())
+            'is_synthesized': self.vocab_synthesizer.is_synthesized(goal_name.split('_')[0]),
+            'vocabulary_count': len(self.vocab_synthesizer.get_all_vocabularies()),
+            'word_count': n_select
         }
 
 
 if __name__ == "__main__":
-    print("=== 词汇合成器测试 ===\n")
+    print("=== 词汇合成器测试（方案A+B）===\n")
     
     synthesizer = VocabularySynthesizer()
     print(f"基础词汇: {len(synthesizer.base_behaviors)}个")
+    print(f"总词汇量: {len(synthesizer.get_all_vocabularies())}个")
+    print(f"扩展倍数: {len(synthesizer.get_all_vocabularies())/len(synthesizer.base_behaviors):.1f}x\n")
     
     # 测试合成
     test_pairs = [
@@ -161,4 +182,21 @@ if __name__ == "__main__":
     
     all_vocab = synthesizer.get_all_vocabularies()
     print(f"\n总词汇量: {len(all_vocab)}个")
-    print(f"扩展倍数: {len(all_vocab)/len(synthesizer.base_behaviors):.1f}x")
+    print(f"扩展倍数: {len(all_vocab)/len(synthesizer.base_behaviors):.1f}x\n")
+    
+    # 测试4+词组合（方案B）
+    print("=== 方案B：4+词组合测试 ===")
+    discoverer = EnhancedGoalDiscoverer()
+    context = ['adapt', 'communicate', 'coordinate', 'create', 'explore', 
+               'help', 'learn', 'optimize', 'protect', 'share']
+    
+    word_counts = {2: 0, 3: 0, 4: 0, 5: 0}
+    for i in range(20):
+        goal = discoverer.discover_goal(context)
+        wc = goal['word_count']
+        word_counts[wc] = word_counts.get(wc, 0) + 1
+        if i < 5:  # 只显示前5个
+            print(f"目标 {i+1} ({wc}词): {goal['name']}")
+    
+    print(f"\n词数分布: 2词={word_counts[2]} 3词={word_counts[3]} 4词={word_counts[4]} 5词={word_counts[5]}")
+    print(f"4+词占比: {(word_counts[4]+word_counts[5])/20*100:.0f}%")
