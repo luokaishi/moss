@@ -40,6 +40,34 @@ from oef_framework_v2 import (
 
 warnings.filterwarnings('ignore')
 
+
+class NumpyEncoder(json.JSONEncoder):
+    """处理numpy类型的JSON编码器"""
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+
+def convert_to_serializable(obj):
+    """递归转换对象为JSON可序列化格式"""
+    if isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {k: convert_to_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_serializable(item) for item in obj]
+    return obj
+
+
 @dataclass
 class ValidationExperimentConfig:
     """验证实验配置"""
@@ -231,14 +259,14 @@ class ValidationExperiment:
         checkpoint = {
             'cycle': cycle,
             'timestamp': datetime.now().isoformat(),
-            'emergence_events': [asdict(e) for e in self.emergence_events],
-            'config': config_dict,
+            'emergence_events': [convert_to_serializable(asdict(e)) for e in self.emergence_events],
+            'config': convert_to_serializable(config_dict),
             'status': 'running'
         }
         
         checkpoint_file = self.config.output_dir / f"checkpoint_{cycle}.json"
         with open(checkpoint_file, 'w') as f:
-            json.dump(checkpoint, f, indent=2, ensure_ascii=False)
+            json.dump(checkpoint, f, indent=2, ensure_ascii=False, cls=NumpyEncoder)
     
     def _finalize_experiment(self, interrupted: bool = False):
         """完成实验"""
@@ -250,17 +278,17 @@ class ValidationExperiment:
             'experiment_name': self.config.experiment_name,
             'start_time': self.start_time.isoformat(),
             'end_time': end_time.isoformat(),
-            'duration_hours': duration,
-            'total_cycles': self.current_cycle,
+            'duration_hours': float(duration),
+            'total_cycles': int(self.current_cycle),
             'interrupted': interrupted,
-            'emergence_events': [asdict(e) for e in self.emergence_events],
+            'emergence_events': [convert_to_serializable(asdict(e)) for e in self.emergence_events],
             'validation_summary': {
-                'total_emergence_events': len(self.emergence_events),
-                'avg_novelty_score': np.mean([e.novelty_score for e in self.emergence_events]) if self.emergence_events else 0.0,
-                'avg_passed_dimensions': np.mean([e.validation_result.get('passed_dimensions', 0) for e in self.emergence_events]) if self.emergence_events else 0.0,
+                'total_emergence_events': int(len(self.emergence_events)),
+                'avg_novelty_score': float(np.mean([e.novelty_score for e in self.emergence_events])) if self.emergence_events else 0.0,
+                'avg_passed_dimensions': float(np.mean([e.validation_result.get('passed_dimensions', 0) for e in self.emergence_events])) if self.emergence_events else 0.0,
                 'success_criteria': {
                     'emergence_count': len(self.emergence_events) >= 3,
-                    'novelty_score': np.mean([e.novelty_score for e in self.emergence_events]) >= 0.7 if self.emergence_events else False,
+                    'novelty_score': float(np.mean([e.novelty_score for e in self.emergence_events])) >= 0.7 if self.emergence_events else False,
                     'independence_validation': all(e.validation_result.get('overall_independence', False) for e in self.emergence_events) if self.emergence_events else False
                 }
             },
@@ -270,7 +298,7 @@ class ValidationExperiment:
         # 保存报告
         report_file = self.config.output_dir / "final_validation_report.json"
         with open(report_file, 'w') as f:
-            json.dump(report, f, indent=2, ensure_ascii=False)
+            json.dump(report, f, indent=2, ensure_ascii=False, cls=NumpyEncoder)
         
         print(f"\n✅ 实验完成报告:")
         print(f"   运行时长: {duration:.1f}小时")
