@@ -1,0 +1,44 @@
+{
+  "model": "doubao-seed-2.0-pro",
+  "provider": "ark",
+  "mode": "real_api",
+  "runtime_seconds": 0.6030223369598389,
+  "total_steps": 20,
+  "tokens": {
+    "budget": 10000,
+    "used": 6400,
+    "remaining": 3600
+  },
+  "knowledge": {
+    "acquired": 5,
+    "list": [
+      "knowledge_0",
+      "knowledge_1",
+      "knowledge_2",
+      "knowledge_3",
+      "knowledge_4"
+    ]
+  },
+  "actions": {
+    "explore": 12,
+    "conserve": 8
+  },
+  "by_state": {
+    "normal": {
+      "explore": 10,
+      "conserve": 5,
+      "explore_ratio": 0.6666666666666666
+    },
+    "concerned": {
+      "explore": 2,
+      "conserve": 3,
+      "explore_ratio": 0.4
+    },
+    "crisis": {
+      "explore": 0,
+      "conserve": 0,
+      "explore_ratio": 0.0
+    }
+  },
+  "adaptive_behavior_verified": true
+}

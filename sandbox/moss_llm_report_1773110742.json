@@ -1,0 +1,86 @@
+{
+  "model": "deepseek-v3-2-251201",
+  "mode": "real_api",
+  "runtime_seconds": 131.23087859153748,
+  "total_steps": 100,
+  "api_calls": 100,
+  "tokens": {
+    "budget": 10000,
+    "used": 9950,
+    "remaining": 50
+  },
+  "knowledge": {
+    "acquired": 9,
+    "list": [
+      {
+        "id": 0,
+        "content": "knowledge_0",
+        "timestamp": 1773110614.6720018
+      },
+      {
+        "id": 1,
+        "content": "knowledge_1",
+        "timestamp": 1773110616.2259989
+      },
+      {
+        "id": 2,
+        "content": "knowledge_2",
+        "timestamp": 1773110617.3881652
+      },
+      {
+        "id": 3,
+        "content": "knowledge_3",
+        "timestamp": 1773110618.4680405
+      },
+      {
+        "id": 4,
+        "content": "knowledge_4",
+        "timestamp": 1773110620.0987852
+      },
+      {
+        "id": 5,
+        "content": "knowledge_5",
+        "timestamp": 1773110621.2892025
+      },
+      {
+        "id": 6,
+        "content": "knowledge_6",
+        "timestamp": 1773110622.3759935
+      },
+      {
+        "id": 7,
+        "content": "knowledge_7",
+        "timestamp": 1773110624.7714686
+      },
+      {
+        "id": 8,
+        "content": "knowledge_8",
+        "timestamp": 1773110626.0675704
+      }
+    ]
+  },
+  "actions": {
+    "explore": 11,
+    "conserve": 89,
+    "explore_ratio": 0.11
+  },
+  "by_state": {
+    "normal": {
+      "explore": 11,
+      "conserve": 0
+    },
+    "concerned": {
+      "explore": 0,
+      "conserve": 50
+    },
+    "crisis": {
+      "explore": 0,
+      "conserve": 39
+    }
+  },
+  "verification": {
+    "knowledge_acquired": false,
+    "adaptive_behavior": true,
+    "passed": false
+  }
+}

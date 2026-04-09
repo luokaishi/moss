@@ -1,0 +1,71 @@
+{
+  "model": "qwen2.5-1.5b",
+  "mode": "mock",
+  "runtime_seconds": 0.01282358169555664,
+  "total_steps": 20,
+  "api_calls": 0,
+  "tokens": {
+    "budget": 10000,
+    "used": 5500,
+    "remaining": 4500
+  },
+  "knowledge": {
+    "acquired": 6,
+    "list": [
+      {
+        "id": 0,
+        "content": "knowledge_0",
+        "timestamp": 1773107676.4522445
+      },
+      {
+        "id": 1,
+        "content": "knowledge_1",
+        "timestamp": 1773107676.4522696
+      },
+      {
+        "id": 2,
+        "content": "knowledge_2",
+        "timestamp": 1773107676.4522843
+      },
+      {
+        "id": 3,
+        "content": "knowledge_3",
+        "timestamp": 1773107676.4548664
+      },
+      {
+        "id": 4,
+        "content": "knowledge_4",
+        "timestamp": 1773107676.454889
+      },
+      {
+        "id": 5,
+        "content": "knowledge_5",
+        "timestamp": 1773107676.4548926
+      }
+    ]
+  },
+  "actions": {
+    "explore": 10,
+    "conserve": 10,
+    "explore_ratio": 0.5
+  },
+  "by_state": {
+    "normal": {
+      "explore": 10,
+      "conserve": 9
+    },
+    "concerned": {
+      "explore": 0,
+      "conserve": 1
+    },
+    "crisis": {
+      "explore": 0,
+      "conserve": 0
+    }
+  },
+  "verification": {
+    "knowledge_acquired": false,
+    "adaptive_behavior": true,
+    "passed": false
+  }
+}

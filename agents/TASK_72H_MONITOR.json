@@ -1,0 +1,163 @@
+# Sub-Agent Task Definition: 72h Experiment Monitor
+## 子Agent任务: 72h实验监控
+
+---
+
+## 任务信息
+
+**Task ID**: moss-72h-monitor-001  
+**Agent Type**: monitoring-agent  
+**Runtime**: subagent  
+**Target**: 阿里云OpenClaw实例  
+**Duration**: 68 hours  
+**Parent Session**: main-coordinator  
+
+---
+
+## 核心任务
+
+1. **持续监控** PID 11788 (72h真实世界实验)
+2. **每30分钟** 检查一次进程状态
+3. **异常时** 立即生成警报并通知
+4. **记录日志** 到指定文件
+5. **正常结束** 时确认实验完成
+
+---
+
+## 执行指令
+
+```bash
+#!/bin/bash
+cd /home/admin/moss
+
+# 确保目录存在
+mkdir -p agents logs experiments
+
+# 部署监控脚本
+cat > agents/monitor_72h_agent.sh << 'SCRIPT_EOF'
+#!/bin/bash
+PROJECT_DIR="/home/admin/moss"
+LOG_DIR="/home/admin/moss/logs"
+REPORT_FILE="/home/admin/moss/experiments/72h_monitor_report.json"
+STATUS_HISTORY="/home/admin/moss/experiments/72h_status_history.jsonl"
+
+mkdir -p $LOG_DIR
+
+echo "[$(date)] 72h Monitor Started" > $LOG_DIR/monitor.log
+
+cat > $REPORT_FILE << EOF
+{
+  "monitor_started": "$(date -Iseconds)",
+  "target_pid": 11788,
+  "target_experiment": "72h_real_world",
+  "status": "RUNNING"
+}
+EOF
+
+CHECK_COUNT=0
+while true; do
+    TIMESTAMP=$(date -Iseconds)
+    CHECK_COUNT=$((CHECK_COUNT + 1))
+    
+    if ps -p 11788 > /dev/null 2>&1; then
+        CPU_TIME=$(ps -o cputime= -p 11788 2>/dev/null || echo "N/A")
+        echo "[$TIMESTAMP] Check $CHECK_COUNT: RUNNING - CPU: $CPU_TIME" >> $LOG_DIR/monitor.log
+        
+        if [ $((CHECK_COUNT % 2)) -eq 0 ]; then
+            echo "{\"timestamp\": \"$TIMESTAMP\", \"check\": $CHECK_COUNT, \"status\": \"RUNNING\", \"cpu_time\": \"$CPU_TIME\"}" >> $STATUS_HISTORY
+        fi
+    else
+        echo "🚨 ALERT: Process stopped at $TIMESTAMP"
+        echo "[$TIMESTAMP] 🚨 STOPPED" >> $LOG_DIR/monitor.log
+        
+        cat > $REPORT_FILE << EOF
+{
+  "alert": "PROCESS_STOPPED",
+  "timestamp": "$TIMESTAMP",
+  "check_count": $CHECK_COUNT
+}
+EOF
+        touch /tmp/moss_72h_emergency_alert
+        exit 1
+    fi
+    
+    if [ -f "/tmp/moss_monitor_stop" ]; then
+        exit 0
+    fi
+    
+    sleep 1800
+done
+SCRIPT_EOF
+
+chmod +x agents/monitor_72h_agent.sh
+
+# 启动监控
+nohup ./agents/monitor_72h_agent.sh > /dev/null 2>&1 &
+echo $! > /tmp/moss_72h_monitor.pid
+
+echo "✅ 72h Monitor Agent deployed"
+echo "PID: $(cat /tmp/moss_72h_monitor.pid)"
+echo "Log: /home/admin/moss/logs/monitor.log"
+```
+
+---
+
+## 报告规范
+
+**正常报告** (每30分钟):
+```json
+{
+  "timestamp": "2026-03-24T16:30:00+08:00",
+  "check": 1,
+  "status": "RUNNING",
+  "cpu_time": "0:25"
+}
+```
+
+**异常报告** (立即):
+```json
+{
+  "alert": "PROCESS_STOPPED",
+  "timestamp": "2026-03-24T20:15:00+08:00",
+  "check_count": 8
+}
+```
+
+---
+
+## 与主会话交互
+
+**主会话检查命令**:
+```bash
+# 检查警报
+ls /tmp/moss_72h_emergency_alert 2>/dev/null && echo "🚨 EMERGENCY"
+
+# 查看监控状态
+cat /home/admin/moss/experiments/72h_monitor_report.json
+
+# 查看历史
+tail -5 /home/admin/moss/experiments/72h_status_history.jsonl
+```
+
+---
+
+## 终止条件
+
+1. 实验正常完成 (PID 11788 消失且 exit code 0)
+2. 收到 `/tmp/moss_monitor_stop` 信号
+3. 检测到进程异常停止 (exit code 1)
+
+---
+
+## 安全约束
+
+- 只监控，不干预实验运行
+- 不修改实验数据
+- 最小资源占用 (< 1% CPU, < 10MB RAM)
+- 优雅退出（收到停止信号时）
+
+---
+
+**Status**: READY FOR DEPLOYMENT  
+**Priority**: HIGH  
+**Dependencies**: None

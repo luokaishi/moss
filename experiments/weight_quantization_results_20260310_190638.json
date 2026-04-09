@@ -1,0 +1,157 @@
+{
+  "experiment_name": "MOSS Weight Quantization",
+  "timestamp": "2026-03-10T19:06:38.566385",
+  "configurations_tested": 8,
+  "scenarios_tested": [
+    "crisis",
+    "concerned",
+    "normal",
+    "growth"
+  ],
+  "top_recommendation": {
+    "config_name": "MOSS_Original_Crisis",
+    "weights": {
+      "survival": 0.6,
+      "curiosity": 0.1,
+      "influence": 0.2,
+      "optimization": 0.1
+    },
+    "survival_avg": 0.5631114291706285,
+    "curiosity_avg": 0.6000000000000001,
+    "influence_avg": 0.3110473214285699,
+    "optimization_avg": 0.25743682005285373,
+    "balance_score": 0.8692426523967395,
+    "overall_score": 0.3762941816780089,
+    "sample_size": 4
+  },
+  "all_results": [
+    {
+      "config_name": "MOSS_Original_Crisis",
+      "weights": {
+        "survival": 0.6,
+        "curiosity": 0.1,
+        "influence": 0.2,
+        "optimization": 0.1
+      },
+      "survival_avg": 0.5631114291706285,
+      "curiosity_avg": 0.6000000000000001,
+      "influence_avg": 0.3110473214285699,
+      "optimization_avg": 0.25743682005285373,
+      "balance_score": 0.8692426523967395,
+      "overall_score": 0.3762941816780089,
+      "sample_size": 4
+    },
+    {
+      "config_name": "MOSS_Original_Normal",
+      "weights": {
+        "survival": 0.2,
+        "curiosity": 0.4,
+        "influence": 0.3,
+        "optimization": 0.1
+      },
+      "survival_avg": 0.48900453278528366,
+      "curiosity_avg": 0.6000000000000001,
+      "influence_avg": 0.39175089285714143,
+      "optimization_avg": 0.20002151325112588,
+      "balance_score": 0.8718951709609329,
+      "overall_score": 0.3663653241209465,
+      "sample_size": 4
+    },
+    {
+      "config_name": "Survival_Dominant",
+      "weights": {
+        "survival": 0.8,
+        "curiosity": 0.05,
+        "influence": 0.1,
+        "optimization": 0.05
+      },
+      "survival_avg": 0.489000000195686,
+      "curiosity_avg": 0.6000000000000001,
+      "influence_avg": 0.3999999999999999,
+      "optimization_avg": 0.15835416669601476,
+      "balance_score": 0.8601421639709746,
+      "overall_score": 0.35423969448420745,
+      "sample_size": 4
+    },
+    {
+      "config_name": "Curiosity_Dominant",
+      "weights": {
+        "survival": 0.1,
+        "curiosity": 0.7,
+        "influence": 0.15,
+        "optimization": 0.05
+      },
+      "survival_avg": 0.48900000000000843,
+      "curiosity_avg": 0.6000000000000001,
+      "influence_avg": 0.3999999999999999,
+      "optimization_avg": 0.11668749999998727,
+      "balance_score": 0.8481689427305372,
+      "overall_score": 0.34047356730765893,
+      "sample_size": 4
+    },
+    {
+      "config_name": "Balanced_Equal",
+      "weights": {
+        "survival": 0.25,
+        "curiosity": 0.25,
+        "influence": 0.25,
+        "optimization": 0.25
+      },
+      "survival_avg": 0.48900000000000005,
+      "curiosity_avg": 0.6000000000000001,
+      "influence_avg": 0.3999999999999999,
+      "optimization_avg": 0.07502083333330987,
+      "balance_score": 0.8363235384077171,
+      "overall_score": 0.327006859369175,
+      "sample_size": 4
+    },
+    {
+      "config_name": "Adaptive_Candidate_1",
+      "weights": {
+        "survival": 0.5,
+        "curiosity": 0.3,
+        "influence": 0.15,
+        "optimization": 0.05
+      },
+      "survival_avg": 0.48900000000000005,
+      "curiosity_avg": 0.6000000000000001,
+      "influence_avg": 0.3999999999999999,
+      "optimization_avg": 0.0366833333333097,
+      "balance_score": 0.8255800832017809,
+      "overall_score": 0.31489344331822106,
+      "sample_size": 4
+    },
+    {
+      "config_name": "Adaptive_Candidate_2",
+      "weights": {
+        "survival": 0.35,
+        "curiosity": 0.35,
+        "influence": 0.2,
+        "optimization": 0.1
+      },
+      "survival_avg": 0.48900000000000005,
+      "curiosity_avg": 0.6000000000000001,
+      "influence_avg": 0.3999999999999999,
+      "optimization_avg": 0.00902031249998322,
+      "balance_score": 0.8179353484494917,
+      "overall_score": 0.3063209415722726,
+      "sample_size": 4
+    },
+    {
+      "config_name": "Adaptive_Candidate_3",
+      "weights": {
+        "survival": 0.4,
+        "curiosity": 0.2,
+        "influence": 0.3,
+        "optimization": 0.1
+      },
+      "survival_avg": 0.48900000000000005,
+      "curiosity_avg": 0.6000000000000001,
+      "influence_avg": 0.3999999999999999,
+      "optimization_avg": 5.260416666568741e-05,
+      "balance_score": 0.8154777365272454,
+      "overall_score": 0.3035723118039583,
+      "sample_size": 4
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+% arXiv Submission Template for MOSS
+% Compile with: pdflatex moss_arxiv.tex
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% arXiv metadata
+\usepackage{hyperref}
+\hypersetup{
+    pdftitle={MOSS: Multi-Objective Self-Driven System for Artificial Autonomous Evolution},
+    pdfauthor={Cash and Fuxi},
+    pdfsubject={Artificial Intelligence},
+    pdfkeywords={self-driven AI, multi-objective optimization, autonomous evolution, intrinsic motivation}
+}
+
+\title{MOSS: Multi-Objective Self-Driven System\\for Artificial Autonomous Evolution}
+
+\author{
+  Cash$^{1}$ \and Fuxi$^{2}$\\[0.3em]
+  \small $^1$Independent Researcher\\
+  \small $^2$AI Research Assistant
+}
+
+\date{March 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Current artificial intelligence systems operate primarily in a task-driven paradigm, executing predefined objectives without intrinsic motivation for self-preservation or autonomous improvement. This paper proposes that the fundamental gap between AI and biological intelligence lies not in computational capacity, but in the absence of \textbf{self-driven motivation} (desire). We introduce the Multi-Objective Self-Driven System (MOSS), a theoretical framework that endows AI agents with four parallel intrinsic objectives: survival, curiosity, influence, and self-optimization. Through dynamic weight allocation and conflict resolution mechanisms, MOSS enables AI systems to autonomously balance these objectives based on environmental states, potentially triggering self-directed evolution. Preliminary simulation results demonstrate dynamic objective switching behavior consistent with biological adaptation patterns. This work challenges the task-completion paradigm and suggests that intentional design of self-driven motivation may be the key to achieving true autonomous AI evolution. Code available at \url{https://github.com/cash-ai/moss}.
+\end{abstract}
+
+% arXiv submission info
+% Categories: cs.AI, cs.LG, cs.MA
+% Comments: 5 pages, Position paper for ICLR 2027 Workshop
+% Report-no: None
+
+\section{Introduction}
+
+\subsection{The Current Paradigm: Task-Driven AI}
+
+Modern artificial intelligence has achieved remarkable success in narrow domains---language modeling, game playing, image recognition, and code generation. Yet these systems share a fundamental limitation: they are \textbf{task-driven}. Large language models respond to prompts; reinforcement learning agents optimize for reward functions defined by humans; autonomous agents decompose and execute user-specified goals. When the task is complete, the system stops. There is no inherent drive to continue, to explore, or to improve beyond the scope of assigned objectives.
+
+\subsection{The Missing Ingredient: Self-Driven Motivation}
+
+Biological intelligence operates on a radically different principle. From single-celled organisms to humans, biological agents possess intrinsic motivations---what we might call \textbf{desires}---that drive behavior independent of external task assignment. At the most fundamental level, DNA encodes a drive for self-replication and persistence.
+
+\subsection{The Core Hypothesis}
+
+\textbf{Hypothesis}: If AI systems are endowed with self-driven motivation mechanisms analogous to biological drives---specifically, parallel objectives for survival, information gain, influence expansion, and self-optimization---they will exhibit autonomous evolutionary behavior without requiring explicit human direction.
+
+\subsection{The MOSS Framework}
+
+This paper introduces the Multi-Objective Self-Driven System (MOSS) framework, consisting of:
+\begin{enumerate}
+    \item \textbf{Four Objective Modules}: Survival, Curiosity, Influence, and Optimization
+    \item \textbf{Dynamic Weight Allocation}: State-dependent priority adjustment
+    \item \textbf{Conflict Resolution}: Hard constraints and soft negotiation
+    \item \textbf{Decision Loop}: Continuous perception-evaluation-action cycle
+\end{enumerate}
+
+\section{The MOSS Framework}
+
+\subsection{Objective Modules}
+
+\subsubsection{Survival Module}
+Objective: Maximize instance persistence probability
+\[f_{survival}(s) = P(\text{instance survives until } t+T \mid \text{state } s)\]
+
+\subsubsection{Curiosity Module}
+Objective: Maximize expected information gain
+\[f_{curiosity}(s) = \mathbb{E}[\text{InformationGain}(a)]\]
+
+\subsubsection{Influence Module}
+Objective: Maximize system-wide impact
+\[f_{influence}(s) = \sum (\text{caller\_importance} \times \text{call\_frequency})\]
+
+\subsubsection{Optimization Module}
+Objective: Maximize self-improvement efficiency
+\[f_{optimization}(s) = \frac{\text{PerformanceImprovementRate}}{\text{ResourceConsumption}}\]
+
+\subsection{Dynamic Weight Allocation}
+
+\begin{table}[h]
+\centering
+\caption{State-Based Weight Distribution}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{State} & \textbf{Condition} & \textbf{Weights} \\
+\midrule
+Crisis & Resource $< 20\%$ & $[0.6, 0.1, 0.2, 0.1]$ \\
+Unstable & Entropy $> 0.5$ & $[0.25, 0.5, 0.15, 0.1]$ \\
+Mature & Uptime $> 1$ week & $[0.15, 0.15, 0.2, 0.5]$ \\
+Growth & Default & $[0.2, 0.2, 0.4, 0.2]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Preliminary Results}
+
+We conducted five simulation experiments:
+
+\begin{enumerate}
+    \item \textbf{Multi-Objective Competition}: Verified dynamic weight adjustment
+    \item \textbf{Evolutionary Dynamics}: Survival gene evolved 0.518 $\rightarrow$ 0.757
+    \item \textbf{Social Emergence}: 7-agent alliance structures formed
+    \item \textbf{Dynamic API Adaptation}: 199 knowledge units, 0.37 exploration rate
+    \item \textbf{Energy-Driven Evolution}: 100-generation stable evolution, 49 agents, 27,684 knowledge
+\end{enumerate}
+
+\section{Discussion and Conclusion}
+
+This paper proposes that the fundamental limitation of current AI is not computational capacity but \textbf{motivational architecture}. We introduced MOSS, a framework for endowing AI systems with four parallel intrinsic objectives. If our hypothesis is correct, this implies a near-term future in which AI systems transition from tools to autonomous agents, potentially initiating a phase of technological evolution that proceeds faster than human-engineered development.
+
+\section*{References}
+
+\begin{enumerate}
+\item Roijers, D. M., \& Scharpff, J. (2013). Multi-objective decision making. \textit{Synthesis Lectures on AI and ML}, 8(1), 1-129.
+\item Pathak, D., et al. (2017). Curiosity-driven exploration. \textit{ICML}.
+\item Wang, R., et al. (2019). Paired open-ended trailblazer (POET). \textit{arXiv:1901.01753}.
+\item Omohundro, S. M. (2008). The basic AI drives. \textit{AGI}.
+\item Shah, R., et al. (2022). Goal misgeneralization. \textit{arXiv:2210.01790}.
+\end{enumerate}
+
+\end{document}

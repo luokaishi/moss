@@ -1,0 +1,17 @@
+{
+  "browser": {
+    "headless": true,
+    "noSandbox": true,
+    "executablePath": "/usr/bin/chromium-browser",
+    "performance": {
+      "resource_blocking": true,
+      "max_memory_per_tab": 512,
+      "connection_pooling": true,
+      "dns_cache_ttl": 3600,
+      "multi_tab_max": 3
+    }
+  },
+  "automation": {
+    "headless": true
+  }
+}

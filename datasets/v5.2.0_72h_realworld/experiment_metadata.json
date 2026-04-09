@@ -1,0 +1,99 @@
+{
+  "run_4_1": {
+    "id": "run_4_1",
+    "name": "Run 4.1 Phase Adaptation Baseline",
+    "status": "completed",
+    "start_date": "2026-03-22",
+    "end_date": "2026-03-22",
+    "duration_hours": 3.5,
+    "final_step": 1090000,
+    "total_actions": 33240,
+    "initial_purpose": "Survival",
+    "final_purpose": "Influence",
+    "purpose_convergence": true,
+    "environment": "simulated_phase",
+    "key_finding": "Phase\u611f\u77e5\u57fa\u7ebf\u5efa\u7acb"
+  },
+  "run_4_2": {
+    "id": "run_4_2",
+    "name": "Run 4.2 Purpose Evolution (Primary)",
+    "status": "completed",
+    "start_date": "2026-03-22",
+    "end_date": "2026-03-23",
+    "duration_hours": 4.9,
+    "final_step": 4320000,
+    "total_actions": 44159,
+    "initial_purpose": "Survival",
+    "final_purpose": "Influence",
+    "purpose_convergence": true,
+    "environment": "simulated_phase",
+    "key_finding": "Purpose\u9002\u914d\u9a8c\u8bc1\u901a\u8fc7 (D5 Coherence=0.97)"
+  },
+  "run_4_3": {
+    "id": "run_4_3",
+    "name": "Run 4.3 Curiosity Initial Condition",
+    "status": "completed",
+    "start_date": "2026-03-23",
+    "end_date": "2026-03-24",
+    "duration_hours": 3.3,
+    "final_step": 2880000,
+    "total_actions": 14449,
+    "initial_purpose": "Curiosity",
+    "final_purpose": "Influence",
+    "purpose_convergence": true,
+    "environment": "simulated_phase",
+    "key_finding": "\u521d\u59cbPurpose\u4e0d\u5f71\u54cd\u6700\u7ec8\u6536\u655b"
+  },
+  "run_4_4": {
+    "id": "run_4_4",
+    "name": "Run 4.4 High Exploration Rate",
+    "status": "completed",
+    "start_date": "2026-03-23",
+    "end_date": "2026-03-24",
+    "duration_hours": 3.3,
+    "final_step": 2880000,
+    "total_actions": 14549,
+    "initial_purpose": "Survival",
+    "final_purpose": "Influence",
+    "purpose_convergence": true,
+    "environment": "simulated_phase",
+    "exploration_rate": 0.2,
+    "key_finding": "\u63a2\u7d22\u738720%\u4ecd\u6536\u655b\u81f3Influence"
+  },
+  "ablation": {
+    "id": "ablation",
+    "name": "Ablation Study (v5.0 Causal)",
+    "status": "completed",
+    "start_date": "2026-03-25",
+    "end_date": "2026-03-25",
+    "conditions": [
+      "No Purpose",
+      "Static Purpose",
+      "Random Purpose",
+      "Old Purpose",
+      "Causal Purpose"
+    ],
+    "tests_passed": "4/4",
+    "key_finding": "Causal Purpose\u663e\u8457\u4f18\u4e8e\u5bf9\u7167\u7ec4 (+40%)"
+  },
+  "72h_real_world": {
+    "id": "local_72h_20260325",
+    "name": "72h Real World Experiment",
+    "status": "completed",
+    "start_date": "2026-03-25",
+    "end_date": "2026-03-29",
+    "duration_hours": 72.06,
+    "final_step": 2594231,
+    "total_actions": 33359,
+    "initial_purpose": "Balanced (0.25 each)",
+    "final_purpose": "Curiosity (100%)",
+    "purpose_convergence": true,
+    "environment": "real_world",
+    "tools_used": [
+      "shell",
+      "github",
+      "filesystem"
+    ],
+    "key_finding": "72\u5c0f\u65f6\u7a33\u5b9a\u8fd0\u884c\uff0cCuriosity\u4e3b\u5bfc"
+  }
+}

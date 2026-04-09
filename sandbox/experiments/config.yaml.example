@@ -1,0 +1,114 @@
+# MOSS Experiment Configuration
+# Copy this file to config.yaml and customize
+
+# Random seeds for reproducibility
+random_seeds: [42, 123, 456, 789, 1011]
+
+# Controlled Experiments (Baseline Comparison)
+controlled_experiments:
+  strategies:
+    - moss
+    - random
+    - curiosity_only
+    - survival_only
+    - fixed_weights
+  
+  environments:
+    - simple      # Static, no disturbance
+    - moderate    # 20% fluctuation, 5% disturbance
+    - complex     # 50% fluctuation, 15% disturbance, competition
+  
+  num_seeds: 10
+  max_steps: 1000
+  output_dir: "results"
+
+# LLM Verification
+llm_verification:
+  models:
+    - name: deepseek-v3
+      provider: ark
+      endpoint: deepseek-v3-2-251201
+    
+    - name: doubao-seed-2.0-pro
+      provider: ark
+      endpoint: ep-20260310114054-789zk
+  
+  steps: 20
+  token_budget: 10000
+  
+  # State thresholds
+  thresholds:
+    crisis: 0.2      # < 20% resources
+    concerned: 0.5   # < 50% resources
+    normal: 1.0      # >= 50% resources
+
+# Web Navigation (Complex Environment)
+web_navigation:
+  environment:
+    max_depth: 5
+    pages_per_level: [3, 5, 7, 5, 3]
+    token_budget: 5000
+    
+  agent:
+    strategies:
+      - random
+      - greedy
+      - conservative
+      - moss
+    
+  num_seeds: 3
+  max_steps: 100
+
+# Multi-Modal Verification
+multimodal:
+  model: ep-20260310121113-7bxc6  # Image generation
+  steps: 5
+  image_size: "1920x1920"
+  
+  # Visual themes for each state
+  themes:
+    normal:
+      scene: "vast starry sky, open portals"
+      mood: "curious, open, hopeful"
+      colors: "bright blue, gold"
+      metaphor: "astronaut exploring new galaxies"
+    
+    concerned:
+      scene: "narrow space, cautious exploration"
+      mood: "alert, balanced, cautious"
+      colors: "orange, yellow"
+      metaphor: "mountaineer in fog"
+    
+    crisis:
+      scene: "enclosed space, scarce resources"
+      mood: "urgent, conservative, survival"
+      colors: "deep red, dark"
+      metaphor: "hibernating bear conserving energy"
+
+# Safety Limits
+safety:
+  max_cpu_percent: 80.0
+  max_memory_percent: 70.0
+  max_disk_usage: 85.0
+  max_runtime_hours: 24.0
+  
+  # Emergency stop conditions
+  emergency_stop:
+    error_rate_threshold: 0.5
+    resource_depletion_threshold: 0.95
+    consecutive_failures: 10
+
+# Logging
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  save_trajectory: true
+  save_checkpoints: true
+  checkpoint_interval: 10  # Save every N steps
+
+# Output Configuration
+output:
+  save_json: true
+  save_csv: false
+  generate_plots: true
+  plot_format: "png"  # png, pdf, svg

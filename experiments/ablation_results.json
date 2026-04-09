@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-03-25 14:44:05.690968",
+  "results": {
+    "No Purpose": {
+      "avg_total_reward": 108.35840558507724,
+      "std_total_reward": 4.527101128627959,
+      "avg_success_rate": 0.9028,
+      "std_success_rate": 0.016326665305566854,
+      "avg_reward": 0.2167168111701545,
+      "std_reward": 0.009054202257255914,
+      "raw_results": []
+    },
+    "Static Purpose": {
+      "avg_total_reward": 110.37998052727838,
+      "std_total_reward": 1.5477702718557236,
+      "avg_success_rate": 0.8936,
+      "std_success_rate": 0.0036660605559646754,
+      "avg_reward": 0.22075996105455675,
+      "std_reward": 0.00309554054371144,
+      "raw_results": []
+    },
+    "Random Purpose": {
+      "avg_total_reward": 108.8723730384547,
+      "std_total_reward": 2.9054669834774436,
+      "avg_success_rate": 0.9,
+      "std_success_rate": 0.008671793355471528,
+      "avg_reward": 0.21774474607690938,
+      "std_reward": 0.005810933966954889,
+      "raw_results": []
+    },
+    "Old Purpose (v5.0)": {
+      "avg_total_reward": 107.26429183068822,
+      "std_total_reward": 2.3936266730766893,
+      "avg_success_rate": 0.9019999999999999,
+      "std_success_rate": 0.007266360849833987,
+      "avg_reward": 0.21452858366137645,
+      "std_reward": 0.004787253346153374,
+      "raw_results": []
+    },
+    "Causal Purpose (v5.1)": {
+      "avg_total_reward": 154.96000000000043,
+      "std_total_reward": 5.480729878401268,
+      "avg_success_rate": 0.6832,
+      "std_success_rate": 0.01826909959467075,
+      "avg_reward": 0.30992000000000086,
+      "std_reward": 0.010961459756802539,
+      "raw_results": []
+    }
+  },
+  "analysis": {
+    "necessity": {
+      "causal_reward": 0.30992000000000086,
+      "no_purpose_reward": 0.2167168111701545,
+      "improvement": 0.4280936705296693,
+      "passed": true
+    },
+    "dynamic_value": {
+      "causal_reward": 0.30992000000000086,
+      "static_reward": 0.22075996105455675,
+      "improvement": 0.4020565232851444,
+      "passed": true
+    },
+    "non_random": {
+      "causal_reward": 0.30992000000000086,
+      "random_reward": 0.21774474607690938,
+      "improvement": 0.4213827101048781,
+      "passed": true
+    },
+    "not_worse": {
+      "causal_reward": 0.30992000000000086,
+      "old_reward": 0.21452858366137645,
+      "relative": 0.44259287894962823,
+      "passed": true
+    },
+    "overall": {
+      "all_passed": true,
+      "tests_passed": "4",
+      "total_tests": 4
+    }
+  }
+}

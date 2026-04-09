@@ -1,0 +1,178 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref,url,booktabs}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+
+\title{Supplementary Materials: From Society to Self\\Self-Generated Purpose in Autonomous Systems}
+\author{Cash \and Fuxi}
+\date{March 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+
+This document provides supplementary materials for the paper "From Society to Self: Self-Generated Purpose in Autonomous Systems." All code, data, and additional experiments are available at \url{https://github.com/luokaishi/moss}.
+
+\section{Reproducibility Information}
+
+\subsection{System Requirements}
+\begin{itemize}
+    \item Python 3.8+
+    \item NumPy, Matplotlib, SciPy
+    \item 4GB RAM minimum (8GB recommended)
+\end{itemize}
+
+\subsection{Computational Resources}
+All experiments were conducted on a standard workstation:
+\begin{itemize}
+    \item CPU: Intel i7 or equivalent
+    \item Runtime: D9 validation $\sim$5min, 10k simulation $\sim$60min
+    \item Total compute for all experiments: $<$10 hours
+\end{itemize}
+
+\subsection{Random Seeds}
+Experiments use fixed random seeds for reproducibility:
+\begin{itemize}
+    \item D9 Validation: seed=42
+    \item Purpose Society: seed=123
+    \item Purpose Stability: seed=456
+    \item Purpose Fulfillment: seed=789
+\end{itemize}
+
+\section{Additional Experimental Details}
+
+\subsection{D9 Validation: Complete Results}
+
+Table \ref{tab:d9_full} shows the complete D9 validation results:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Baseline} & \textbf{D9 Agent} \\
+\midrule
+Initial M & [S, C, I, O] & [S, C, I, O] \\
+Final M & [S, C, I, O] & [S, O, Stab] \\
+M Changed & No & Yes (3 mutations) \\
+Phase 1 Reward & +1.500 & +1.500 \\
+Phase 2 Reward & -0.250 & +1.331 \\
+Adaptation & Collapsed & Thrived \\
+Counter-reward Actions & 0 & 1 \\
+\bottomrule
+\end{tabular}
+\caption{Complete D9 validation results. S=Survival, C=Curiosity, I=Influence, O=Optimization, Stab=Stability}
+\label{tab:d9_full}
+\end{table}
+
+\subsection{10,000-Step Simulation: Checkpoint Analysis}
+
+Table \ref{tab:10k_checkpoints} shows metrics at each checkpoint:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccc}
+\toprule
+\textbf{Step} & \textbf{Cooperation Rate} & \textbf{Mean Trust} \\
+\midrule
+1,000 & 1.000 & 1.000 \\
+2,000 & 1.000 & 1.000 \\
+3,000 & 1.000 & 1.000 \\
+4,000 & 1.000 & 1.000 \\
+5,000 & 1.000 & 1.000 \\
+6,000 & 1.000 & 1.000 \\
+7,000 & 1.000 & 1.000 \\
+8,000 & 1.000 & 1.000 \\
+9,000 & 1.000 & 1.000 \\
+10,000 & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\caption{10,000-step simulation checkpoint data (10 agents)}
+\label{tab:10k_checkpoints}
+\end{table}
+
+\section{Additional Figures}
+
+\subsection{Purpose Type Distribution}
+
+Figure \ref{fig:purpose_dist} shows the distribution of purpose types across multiple runs:
+
+% Note: Add \includegraphics when figure is ready
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\textwidth]{figures/purpose_distribution.png}
+% \caption{Purpose type distribution across 10 runs (60 agents total)}
+% \label{fig:purpose_dist}
+% \end{figure}
+
+\subsection{Stability Over Time}
+
+Purpose stability maintains 0.9977 score even with perturbations (Figure \ref{fig:stability_perturb}):
+
+% Note: Add \includegraphics when figure is ready
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.8\textwidth]{figures/stability_perturbation.png}
+% \caption{Purpose stability under random perturbations}
+% \label{fig:stability_perturb}
+% \end{figure}
+
+\section{Broader Impact}
+
+\subsection{Potential Positive Impacts}
+\begin{enumerate}
+    \item \textbf{AI Safety}: Self-generated Purpose provides a pathway to value alignment where agents develop values through interaction rather than hard-coding.
+    \item \textbf{Robustness}: Systems that can modify their own objectives may adapt better to novel situations.
+    \item \textbf{Understanding}: Empirical study of meaning emergence may inform theories of consciousness and cognition.
+\end{enumerate}
+
+\subsection{Potential Risks and Mitigations}
+\begin{enumerate}
+    \item \textbf{Autonomy}: Self-generating systems may develop unexpected behaviors.
+    \begin{itemize}
+        \item Mitigation: Gradient safety guard with 5-level response system
+        \item Mitigation: Purpose dialogue enables detection of misalignment
+    \end{itemize}
+    \item \textbf{Control}: As systems become more self-directed, human oversight may become more challenging.
+    \begin{itemize}
+        \item Mitigation: Transparent logging of all Purpose changes
+        \item Mitigation: Kill switches and resource limits remain in place
+    \end{itemize}
+    \item \textbf{Value Drift}: Long-term operation may lead to Purpose divergence from human values.
+    \begin{itemize}
+        \item Mitigation: Regular alignment checks via Purpose comparison
+        \item Mitigation: Norm dimensions (D8) provide social constraints
+    \end{itemize}
+\end{enumerate}
+
+\section{Limitations and Future Work}
+
+\subsection{Current Limitations}
+\begin{enumerate}
+    \item \textbf{Scale}: 6-12 agents; need 100+ for statistical power
+    \item \textbf{Environment}: Simple prisoner's dilemma; need complex domains
+    \item \textbf{Time}: 10,000 steps validated; need 100,000+ for evolutionary dynamics
+    \item \textbf{H3}: Single faction observed; need stronger differentiation mechanisms
+\end{enumerate}
+
+\subsection{Planned Extensions}
+\begin{enumerate}
+    \item Scale to 100+ agent societies
+    \item Test in continuous action spaces
+    \item Integration with large language models
+    \item Real-world robotic applications
+    \item Cross-cultural Purpose emergence studies
+\end{enumerate}
+
+\section*{Data Availability}
+
+All code, data, and experimental results are available at:
+\begin{center}
+\url{https://github.com/luokaishi/moss}
+\end{center}
+
+Release: v3.1.0
+
+\end{document}

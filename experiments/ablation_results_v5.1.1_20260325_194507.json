@@ -1,0 +1,153 @@
+{
+  "timestamp": "2026-03-25 19:45:16.713488",
+  "results": {
+    "No Purpose": {
+      "avg_total_reward": 107.35313844779867,
+      "std_total_reward": 3.743815726698785,
+      "avg_success_rate": 0.9016,
+      "std_success_rate": 0.013670405992508055,
+      "avg_reward": 0.21470627689559735,
+      "std_reward": 0.0074876314533975676,
+      "raw_results": []
+    },
+    "Static Purpose": {
+      "avg_total_reward": 107.44108829269778,
+      "std_total_reward": 3.6914348084728537,
+      "avg_success_rate": 0.89936,
+      "std_success_rate": 0.01577562677043294,
+      "avg_reward": 0.2148821765853956,
+      "std_reward": 0.007382869616945706,
+      "raw_results": []
+    },
+    "Random Purpose": {
+      "avg_total_reward": 107.77867999183972,
+      "std_total_reward": 4.71122839129109,
+      "avg_success_rate": 0.9027999999999998,
+      "std_success_rate": 0.012762444906835065,
+      "avg_reward": 0.21555735998367942,
+      "std_reward": 0.00942245678258218,
+      "raw_results": []
+    },
+    "Old Purpose (v5.0)": {
+      "avg_total_reward": 108.26310086848169,
+      "std_total_reward": 3.627766460197268,
+      "avg_success_rate": 0.9026400000000001,
+      "std_success_rate": 0.014076590496281419,
+      "avg_reward": 0.21652620173696338,
+      "std_reward": 0.007255532920394539,
+      "raw_results": []
+    },
+    "Causal Purpose (v5.1)": {
+      "avg_total_reward": 160.31200000000047,
+      "std_total_reward": 6.28969442818965,
+      "avg_success_rate": 0.7010400000000001,
+      "std_success_rate": 0.020965648093965502,
+      "avg_reward": 0.3206240000000009,
+      "std_reward": 0.012579388856379296,
+      "raw_results": []
+    }
+  },
+  "analysis": {
+    "necessity": {
+      "causal_reward": 0.3206240000000009,
+      "no_purpose_reward": 0.21470627689559735,
+      "improvement": 0.4910275427713591,
+      "n_a": 50,
+      "n_b": 50,
+      "mean_a": 0.3206240000000009,
+      "mean_b": 0.21470627689559735,
+      "std_a": 0.01270710166218327,
+      "std_b": 0.007563649965318721,
+      "ci_a": [
+        0.3171017711202147,
+        0.3241462288797871
+      ],
+      "ci_b": [
+        0.21260974008864603,
+        0.21680281370254867
+      ],
+      "cohens_d": 10.129300313983933,
+      "t_stat": 50.64654758331303,
+      "p_value": 1.0,
+      "significant": false,
+      "passed": false
+    },
+    "dynamic_value": {
+      "causal_reward": 0.3206240000000009,
+      "static_reward": 0.2148821765853956,
+      "improvement": 0.4898126611799166,
+      "n_a": 50,
+      "n_b": 50,
+      "mean_a": 0.3206240000000009,
+      "mean_b": 0.2148821765853956,
+      "std_a": 0.01270710166218327,
+      "std_b": 0.007457824529654909,
+      "ci_a": [
+        0.3171017711202147,
+        0.3241462288797871
+      ],
+      "ci_b": [
+        0.2128149730926508,
+        0.2169493800781404
+      ],
+      "cohens_d": 10.149435489823158,
+      "t_stat": 50.74722372247045,
+      "p_value": 1.0,
+      "significant": false,
+      "passed": false
+    },
+    "non_random": {
+      "causal_reward": 0.3206240000000009,
+      "random_reward": 0.21555735998367942,
+      "improvement": 0.48516771733936775,
+      "n_a": 50,
+      "n_b": 50,
+      "mean_a": 0.3206240000000009,
+      "mean_b": 0.21555735998367942,
+      "std_a": 0.01270710166218327,
+      "std_b": 0.009518118694858626,
+      "ci_a": [
+        0.3171017711202147,
+        0.3241462288797871
+      ],
+      "ci_b": [
+        0.2129190720845564,
+        0.21819564788280243
+      ],
+      "cohens_d": 9.35886467557513,
+      "t_stat": 46.7943629760778,
+      "p_value": 1.0,
+      "significant": false,
+      "passed": false
+    },
+    "not_worse": {
+      "causal_reward": 0.3206240000000009,
+      "old_reward": 0.21652620173696338,
+      "relative": 0.4785529165305542,
+      "n_a": 50,
+      "n_b": 50,
+      "mean_a": 0.3206240000000009,
+      "mean_b": 0.21652620173696338,
+      "std_a": 0.01270710166218327,
+      "std_b": 0.007329195041618876,
+      "ci_a": [
+        0.3171017711202147,
+        0.3241462288797871
+      ],
+      "ci_b": [
+        0.2144946525192529,
+        0.21855775095467386
+      ],
+      "cohens_d": 10.035697685850906,
+      "t_stat": 50.178534385824136,
+      "p_value": 1.0,
+      "significant": false,
+      "passed": true
+    },
+    "overall": {
+      "all_passed": false,
+      "tests_passed": "1",
+      "total_tests": 4
+    }
+  }
+}

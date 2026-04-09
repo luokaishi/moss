@@ -1,0 +1,92 @@
+[build-system]
+requires = ["setuptools>=64.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "moss"
+version = "5.2.0"
+description = "Multi-Objective Self-Driven System for AI Autonomous Evolution"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Cash, Fuxi", email = "luokaishi@example.com"},
+]
+keywords = ["ai-agent", "multi-objective", "self-driven", "intrinsic-motivation", "autonomous-evolution"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "numpy>=1.20.0",
+    "scipy>=1.6.0",
+    "matplotlib>=3.3.0",
+    "scikit-learn>=0.24.0",
+    "pandas>=1.2.0",
+    "tqdm>=4.60.0",
+]
+
+[project.optional-dependencies]
+visualization = [
+    "seaborn>=0.11.0",
+    "plotly>=5.0.0",
+    "networkx>=2.6.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "flake8>=4.0.0",
+    "mypy>=0.950",
+]
+docs = [
+    "jupyter>=1.0.0",
+    "ipywidgets>=7.6.0",
+]
+all = [
+    "moss[visualization,dev,docs]",
+]
+
+[project.urls]
+Homepage = "https://github.com/luokaishi/moss"
+Repository = "https://github.com/luokaishi/moss"
+
+[tool.setuptools.packages.find]
+include = ["moss*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.coverage.run]
+source = ["moss"]
+omit = ["tests/*", "moss/core/*_legacy.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

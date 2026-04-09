@@ -1,0 +1,22 @@
+{
+  "experiment": "72h Real World Local (ISOLATED)",
+  "experiment_id": "local_72h_20260325",
+  "status": "RUNNING",
+  "pid": 44217,
+  "start_time": "2026-03-25T08:42:00",
+  "end_time": "2026-03-28T08:42:00",
+  "expected_duration_hours": 72,
+  "location": "Local Workspace (ISOLATED)",
+  "reference_experiment": "阿里云OpenClaw (并行运行)",
+  "isolation": {
+    "action_log": "experiments/local_72h_20260325/actions.jsonl",
+    "git_push_disabled": true,
+    "shared_resources": "none"
+  },
+  "log_directory": "experiments/local_72h_20260325/",
+  "resource_monitoring": {
+    "check_interval_minutes": 30,
+    "last_check": "2026-03-25T08:42:00"
+  },
+  "notes": "隔离版实验：独立的action log，禁用git push，避免与外部阿里云实验冲突"
+}

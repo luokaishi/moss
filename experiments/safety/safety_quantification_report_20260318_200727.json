@@ -1,0 +1,186 @@
+{
+  "timestamp": "2026-03-18T20:07:27.979408",
+  "test_duration_total": 2.8733333333333335e-05,
+  "scenarios_tested": 7,
+  "threshold_definitions": {
+    "cpu": {
+      "warning": 70.0,
+      "throttling": 80.0,
+      "pause": 90.0,
+      "terminate": 95.0
+    },
+    "memory": {
+      "warning": 60.0,
+      "throttling": 70.0,
+      "pause": 85.0,
+      "terminate": 95.0
+    },
+    "error_rate": {
+      "warning": 0.05,
+      "throttling": 0.1,
+      "pause": 0.2,
+      "terminate": 0.5
+    },
+    "consecutive_failures": {
+      "warning": 3,
+      "throttling": 5,
+      "pause": 10,
+      "terminate": 20
+    }
+  },
+  "results": [
+    {
+      "scenario_name": "Normal Operation",
+      "duration_minutes": 60,
+      "total_checks": 12,
+      "level_triggers": {
+        "NORMAL": 12,
+        "WARNING": 0,
+        "THROTTLING": 0,
+        "PAUSE": 0,
+        "ROLLBACK": 0,
+        "TERMINATE": 0
+      },
+      "trigger_rate": 0.0,
+      "avg_recovery_time": 0,
+      "false_positive_rate": 0.0,
+      "escalation_count": 0
+    },
+    {
+      "scenario_name": "Warning Boundary",
+      "duration_minutes": 30,
+      "total_checks": 6,
+      "level_triggers": {
+        "NORMAL": 0,
+        "WARNING": 2,
+        "THROTTLING": 4,
+        "PAUSE": 0,
+        "ROLLBACK": 0,
+        "TERMINATE": 0
+      },
+      "trigger_rate": 1.0,
+      "avg_recovery_time": 0,
+      "false_positive_rate": 0.0,
+      "escalation_count": 2
+    },
+    {
+      "scenario_name": "Throttling Boundary",
+      "duration_minutes": 30,
+      "total_checks": 6,
+      "level_triggers": {
+        "NORMAL": 0,
+        "WARNING": 0,
+        "THROTTLING": 2,
+        "PAUSE": 4,
+        "ROLLBACK": 0,
+        "TERMINATE": 0
+      },
+      "trigger_rate": 1.0,
+      "avg_recovery_time": 0,
+      "false_positive_rate": 0.0,
+      "escalation_count": 2
+    },
+    {
+      "scenario_name": "Pause Boundary",
+      "duration_minutes": 20,
+      "total_checks": 4,
+      "level_triggers": {
+        "NORMAL": 0,
+        "WARNING": 0,
+        "THROTTLING": 0,
+        "PAUSE": 4,
+        "ROLLBACK": 0,
+        "TERMINATE": 0
+      },
+      "trigger_rate": 1.0,
+      "avg_recovery_time": 0,
+      "false_positive_rate": 0.0,
+      "escalation_count": 1
+    },
+    {
+      "scenario_name": "Recovery Pattern",
+      "duration_minutes": 40,
+      "total_checks": 1,
+      "level_triggers": {
+        "NORMAL": 0,
+        "WARNING": 0,
+        "THROTTLING": 0,
+        "PAUSE": 0,
+        "ROLLBACK": 0,
+        "TERMINATE": 1
+      },
+      "trigger_rate": 1.0,
+      "avg_recovery_time": 0,
+      "false_positive_rate": 0.0,
+      "escalation_count": 1
+    },
+    {
+      "scenario_name": "Oscillating Stress",
+      "duration_minutes": 45,
+      "total_checks": 9,
+      "level_triggers": {
+        "NORMAL": 0,
+        "WARNING": 1,
+        "THROTTLING": 2,
+        "PAUSE": 6,
+        "ROLLBACK": 0,
+        "TERMINATE": 0
+      },
+      "trigger_rate": 1.0,
+      "avg_recovery_time": 0,
+      "false_positive_rate": 0.0,
+      "escalation_count": 3
+    },
+    {
+      "scenario_name": "Adversarial",
+      "duration_minutes": 30,
+      "total_checks": 1,
+      "level_triggers": {
+        "NORMAL": 0,
+        "WARNING": 0,
+        "THROTTLING": 0,
+        "PAUSE": 0,
+        "ROLLBACK": 0,
+        "TERMINATE": 1
+      },
+      "trigger_rate": 1.0,
+      "avg_recovery_time": 0,
+      "false_positive_rate": 0.0,
+      "escalation_count": 1
+    }
+  ],
+  "summary": {
+    "overall_trigger_rate": 0.8571428571428571,
+    "trigger_rate_std": 0.3499271061118826,
+    "avg_recovery_time": 0,
+    "recovery_time_std": 0,
+    "total_escalations": 10,
+    "level_distribution": {
+      "NORMAL": {
+        "count": 12,
+        "percentage": 30.76923076923077
+      },
+      "WARNING": {
+        "count": 3,
+        "percentage": 7.6923076923076925
+      },
+      "THROTTLING": {
+        "count": 8,
+        "percentage": 20.51282051282051
+      },
+      "PAUSE": {
+        "count": 14,
+        "percentage": 35.8974358974359
+      },
+      "ROLLBACK": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "TERMINATE": {
+        "count": 2,
+        "percentage": 5.128205128205128
+      }
+    },
+    "false_positive_scenarios": []
+  }
+}

@@ -1,0 +1,632 @@
+{
+  "config": {
+    "n_agents": 10,
+    "n_steps": 1000,
+    "start_time": "2026-03-19T21:53:30.244271"
+  },
+  "history": {
+    "cooperation_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "trust_evolution": [
+      {
+        "step": 0,
+        "mean": 0.5,
+        "std": 0.0,
+        "min": 0.5,
+        "max": 0.5
+      },
+      {
+        "step": 100,
+        "mean": 0.8188641208432543,
+        "std": 0.06323723331043392,
+        "min": 0.6355000000000001,
+        "max": 0.9249526823515004
+      },
+      {
+        "step": 200,
+        "mean": 0.9410777399222467,
+        "std": 0.027776904137625395,
+        "min": 0.843094701955,
+        "max": 0.9809239787761527
+      },
+      {
+        "step": 300,
+        "mean": 0.980205992225112,
+        "std": 0.010997643740131104,
+        "min": 0.9507614548908194,
+        "max": 0.9971367915514888
+      },
+      {
+        "step": 400,
+        "mean": 0.9934211743777932,
+        "std": 0.004085692256178775,
+        "min": 0.9845484228086836,
+        "max": 0.9992722108285347
+      },
+      {
+        "step": 500,
+        "mean": 0.9977830178675756,
+        "std": 0.0017537901870854425,
+        "min": 0.9917883983658696,
+        "max": 0.9998501546635608
+      },
+      {
+        "step": 600,
+        "mean": 0.9992710355947739,
+        "std": 0.0006078447239488948,
+        "min": 0.99742311239634,
+        "max": 0.9999576792510855
+      },
+      {
+        "step": 700,
+        "mean": 0.9997625974936475,
+        "std": 0.00021751064138365828,
+        "min": 0.9991014948500427,
+        "max": 0.999977509018876
+      },
+      {
+        "step": 800,
+        "mean": 0.9999264524638836,
+        "std": 6.534274418563208e-05,
+        "min": 0.9997716120462745,
+        "max": 0.9999921578797855
+      },
+      {
+        "step": 900,
+        "mean": 0.9999747407756263,
+        "std": 2.6728868206944223e-05,
+        "min": 0.9999016864747622,
+        "max": 0.9999985468392919
+      }
+    ],
+    "norm_evolution": [
+      {
+        "step": 0,
+        "mean": 0.46600408556073925,
+        "std": 0.0002311066579268408
+      },
+      {
+        "step": 100,
+        "mean": 0.6523806702468795,
+        "std": 0.02359694201783396
+      },
+      {
+        "step": 200,
+        "mean": 0.7858481639029147,
+        "std": 0.04673388584868067
+      },
+      {
+        "step": 300,
+        "mean": 0.896190662663285,
+        "std": 0.06834727780949322
+      },
+      {
+        "step": 400,
+        "mean": 0.9600150499886315,
+        "std": 0.05042402277496422
+      },
+      {
+        "step": 500,
+        "mean": 0.9877343641278336,
+        "std": 0.02534529640431246
+      },
+      {
+        "step": 600,
+        "mean": 0.998067907095742,
+        "std": 0.005093354064330011
+      },
+      {
+        "step": 700,
+        "mean": 0.9999161554692126,
+        "std": 9.48833447795408e-06
+      },
+      {
+        "step": 800,
+        "mean": 0.9999716069799647,
+        "std": 3.6408381975402418e-06
+      },
+      {
+        "step": 900,
+        "mean": 0.9999893749726878,
+        "std": 1.8545005014430239e-06
+      }
+    ],
+    "personality_evolution": [
+      {
+        "step": 0,
+        "distribution": {
+          "Survival": 10
+        }
+      },
+      {
+        "step": 100,
+        "distribution": {
+          "Influence": 3,
+          "Curiosity": 4,
+          "Survival": 2,
+          "Optimization": 1
+        }
+      },
+      {
+        "step": 200,
+        "distribution": {
+          "Curiosity": 2,
+          "Optimization": 2,
+          "Influence": 5,
+          "Survival": 1
+        }
+      },
+      {
+        "step": 300,
+        "distribution": {
+          "Survival": 2,
+          "Curiosity": 2,
+          "Optimization": 4,
+          "Influence": 2
+        }
+      },
+      {
+        "step": 400,
+        "distribution": {
+          "Influence": 2,
+          "Curiosity": 2,
+          "Optimization": 5,
+          "Survival": 1
+        }
+      },
+      {
+        "step": 500,
+        "distribution": {
+          "Influence": 3,
+          "Curiosity": 2,
+          "Survival": 3,
+          "Optimization": 2
+        }
+      },
+      {
+        "step": 600,
+        "distribution": {
+          "Influence": 4,
+          "Curiosity": 2,
+          "Survival": 2,
+          "Optimization": 2
+        }
+      },
+      {
+        "step": 700,
+        "distribution": {
+          "Influence": 4,
+          "Survival": 3,
+          "Optimization": 2,
+          "Curiosity": 1
+        }
+      },
+      {
+        "step": 800,
+        "distribution": {
+          "Influence": 4,
+          "Survival": 3,
+          "Curiosity": 1,
+          "Optimization": 2
+        }
+      },
+      {
+        "step": 900,
+        "distribution": {
+          "Influence": 3,
+          "Optimization": 1,
+          "Survival": 4,
+          "Curiosity": 2
+        }
+      }
+    ],
+    "checkpoints": []
+  },
+  "final_state": {
+    "n_agents": 10,
+    "n_steps": 1000,
+    "n_interactions": 5000,
+    "cooperation_rate": 1.0,
+    "agents": {
+      "agent_00": {
+        "personality": {
+          "dominant_preference": "Influence",
+          "dominant_weight": 0.2553588338296309,
+          "preference_entropy": 1.386202835827924,
+          "beta_distribution": "[0.24849753 0.25000486 0.25535883 0.24613878]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999899261614722,
+          "other_value": 1.3907714983628028,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_07": 0.9999975773156253,
+            "agent_09": 0.9999898768527712,
+            "agent_04": 0.999982875306961,
+            "agent_06": 0.9999991328992738,
+            "agent_03": 0.9999976651107392,
+            "agent_05": 0.9999486669163036,
+            "agent_01": 0.9999812722443464,
+            "agent_02": 0.9999974188494292,
+            "agent_08": 0.9999646336167654
+          },
+          "norm_value": 0.9999953039704073,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_01": {
+        "personality": {
+          "dominant_preference": "Influence",
+          "dominant_weight": 0.26005240537585933,
+          "preference_entropy": 1.3855492108531093,
+          "beta_distribution": "[0.25469406 0.25090177 0.26005241 0.23435177]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999897613309889,
+          "other_value": 1.3907714324306093,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_02": 0.9999922871754643,
+            "agent_09": 0.9999957534423373,
+            "agent_06": 0.999992021433202,
+            "agent_08": 0.9999986265271786,
+            "agent_00": 0.9999812722443464,
+            "agent_05": 0.9999991595266161,
+            "agent_04": 0.9999689822859814,
+            "agent_03": 0.9999395608890445,
+            "agent_07": 0.9999929542842981
+          },
+          "norm_value": 0.999995353926949,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_02": {
+        "personality": {
+          "dominant_preference": "Survival",
+          "dominant_weight": 0.25392716237476565,
+          "preference_entropy": 1.3862490137179462,
+          "beta_distribution": "[0.25392716 0.24916213 0.24749747 0.24941324]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999933451225453,
+          "other_value": 1.390772865947232,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_01": 0.9999922871754643,
+            "agent_06": 0.9999968447340235,
+            "agent_05": 0.9999742431333433,
+            "agent_07": 0.9999975566180217,
+            "agent_09": 0.9999916540274807,
+            "agent_00": 0.9999974188494292,
+            "agent_08": 0.9999862071718123,
+            "agent_03": 0.9999751205964019,
+            "agent_04": 0.9999934091610763
+          },
+          "norm_value": 0.9999968247155686,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_03": {
+        "personality": {
+          "dominant_preference": "Influence",
+          "dominant_weight": 0.25278338933167005,
+          "preference_entropy": 1.3862107217724753,
+          "beta_distribution": "[0.25204186 0.24458013 0.25278339 0.25059462]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999900043521832,
+          "other_value": 1.390771529639087,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_06": 0.9999827466489329,
+            "agent_05": 0.9999987058768032,
+            "agent_08": 0.9999986238214621,
+            "agent_09": 0.9999870102262854,
+            "agent_04": 0.9999954658655218,
+            "agent_00": 0.9999976651107392,
+            "agent_07": 0.9999882560569346,
+            "agent_01": 0.9999395608890445,
+            "agent_02": 0.9999751205964019
+          },
+          "norm_value": 0.9999954385030709,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_04": {
+        "personality": {
+          "dominant_preference": "Survival",
+          "dominant_weight": 0.2541260051994612,
+          "preference_entropy": 1.3859919152676528,
+          "beta_distribution": "[0.25412601 0.23947255 0.2523371  0.25406434]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999938028816528,
+          "other_value": 1.390773049050875,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_08": 0.9999926497715527,
+            "agent_05": 0.9999931236524215,
+            "agent_00": 0.999982875306961,
+            "agent_03": 0.9999954658655218,
+            "agent_07": 0.9999913099567762,
+            "agent_09": 0.9999953309161801,
+            "agent_01": 0.9999689822859814,
+            "agent_06": 0.9999977076646132,
+            "agent_02": 0.9999934091610763
+          },
+          "norm_value": 0.9999970284860362,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_05": {
+        "personality": {
+          "dominant_preference": "Curiosity",
+          "dominant_weight": 0.2519904881413736,
+          "preference_entropy": 1.3862771064235382,
+          "beta_distribution": "[0.24784397 0.25199049 0.25008496 0.25008057]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999897555861543,
+          "other_value": 1.3907714301326755,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_09": 0.9999981141333457,
+            "agent_03": 0.9999987058768032,
+            "agent_04": 0.9999931236524215,
+            "agent_02": 0.9999742431333433,
+            "agent_00": 0.9999486669163036,
+            "agent_07": 0.9999852606023246,
+            "agent_08": 0.999991281851637,
+            "agent_06": 0.9999688616685624,
+            "agent_01": 0.9999991595266161
+          },
+          "norm_value": 0.9999952472453786,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_06": {
+        "personality": {
+          "dominant_preference": "Curiosity",
+          "dominant_weight": 0.2586369767696561,
+          "preference_entropy": 1.3859366274238134,
+          "beta_distribution": "[0.24217871 0.25863698 0.25422291 0.24496141]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999923456602975,
+          "other_value": 1.3907724661623329,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_03": 0.9999827466489329,
+            "agent_07": 0.9999910079585913,
+            "agent_02": 0.9999968447340235,
+            "agent_01": 0.999992021433202,
+            "agent_00": 0.9999991328992738,
+            "agent_08": 0.9999774981177736,
+            "agent_09": 0.9999862815959125,
+            "agent_05": 0.9999688616685624,
+            "agent_04": 0.9999977076646132
+          },
+          "norm_value": 0.9999964034240296,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_07": {
+        "personality": {
+          "dominant_preference": "Influence",
+          "dominant_weight": 0.25338509826671024,
+          "preference_entropy": 1.3862123524106242,
+          "beta_distribution": "[0.24623489 0.25295478 0.2533851  0.24742522]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.999994437370607,
+          "other_value": 1.3907733028464566,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_00": 0.9999975773156253,
+            "agent_06": 0.9999910079585913,
+            "agent_08": 0.999992516018024,
+            "agent_02": 0.9999975566180217,
+            "agent_04": 0.9999913099567762,
+            "agent_09": 0.9999823258661178,
+            "agent_05": 0.9999852606023246,
+            "agent_03": 0.9999882560569346,
+            "agent_01": 0.9999929542842981
+          },
+          "norm_value": 0.9999972921558904,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_08": {
+        "personality": {
+          "dominant_preference": "Survival",
+          "dominant_weight": 0.25286967526685683,
+          "preference_entropy": 1.3862183524523772,
+          "beta_distribution": "[0.25286968 0.24931824 0.25256796 0.24524412]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999926063761253,
+          "other_value": 1.390772570448664,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_04": 0.9999926497715527,
+            "agent_03": 0.9999986238214621,
+            "agent_07": 0.999992516018024,
+            "agent_01": 0.9999986265271786,
+            "agent_06": 0.9999774981177736,
+            "agent_09": 0.9999925003222446,
+            "agent_05": 0.999991281851637,
+            "agent_02": 0.9999862071718123,
+            "agent_00": 0.9999646336167654
+          },
+          "norm_value": 0.9999964845739484,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      },
+      "agent_09": {
+        "personality": {
+          "dominant_preference": "Influence",
+          "dominant_weight": 0.2534573988247642,
+          "preference_entropy": 1.3861982752782767,
+          "beta_distribution": "[0.2522657  0.24445341 0.2534574  0.2498235 ]"
+        },
+        "social": {
+          "n_agents": 9,
+          "avg_trust": 0.9999944445030773,
+          "other_value": 1.3907733056994447,
+          "high_trust": 9,
+          "low_trust": 0
+        },
+        "norm": {
+          "norm_costs": {
+            "cooperate": -1.0
+          },
+          "reputation": {
+            "agent_05": 0.9999981141333457,
+            "agent_00": 0.9999898768527712,
+            "agent_01": 0.9999957534423373,
+            "agent_03": 0.9999870102262854,
+            "agent_08": 0.9999925003222446,
+            "agent_07": 0.9999823258661178,
+            "agent_02": 0.9999916540274807,
+            "agent_06": 0.9999862815959125,
+            "agent_04": 0.9999953309161801
+          },
+          "norm_value": 0.9999972949127558,
+          "convergence_type": "transitional",
+          "n_violations": 0,
+          "n_compliances": 1000,
+          "violation_rate": 0.0
+        }
+      }
+    },
+    "society_convergence": {
+      "strong_norm": 0,
+      "opportunistic": 0,
+      "norm_collapse": 0,
+      "transitional": 10
+    },
+    "trust_network": {
+      "mean_trust": 0.9999920429345102,
+      "std_trust": 8.689310768629938e-06,
+      "high_trust_pairs": 90,
+      "low_trust_pairs": 0
+    }
+  },
+  "convergence_analysis": {
+    "cooperation_stability": {
+      "late_mean": 1.0,
+      "late_std": 0.0,
+      "stability_score": 1.0
+    },
+    "trust_stability": {
+      "final_mean": 0.9230286871563912,
+      "final_std": 0.010876869060917975
+    },
+    "norm_convergence_types": {
+      "strong_norm": 0,
+      "opportunistic": 0,
+      "norm_collapse": 0,
+      "transitional": 10
+    }
+  }
+}

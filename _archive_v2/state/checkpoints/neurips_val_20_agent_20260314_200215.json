@@ -1,0 +1,1456 @@
+{
+  "agent_id": "neurips_val_20_agent",
+  "saved_at": "2026-03-14T20:02:15.269885",
+  "version": "2.0",
+  "state": {
+    "agent_id": "neurips_val_20_agent",
+    "creation_time": "2026-03-14T17:57:15.178960",
+    "current_weights": {
+      "survival": 0.15418276224895514,
+      "curiosity": 0.04706407146261506,
+      "influence": 0.6362292552078667,
+      "optimization": 0.16252391108056316
+    },
+    "weight_history": [
+      {
+        "timestamp": "2026-03-14T18:07:15.425299",
+        "weights": {
+          "survival": 0.19999999999999996,
+          "curiosity": 0.3999999999999999,
+          "influence": 0.29999999999999993,
+          "optimization": 0.09999999999999998
+        },
+        "performance": 0.40015158477865437,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T18:17:15.667993",
+        "weights": {
+          "survival": 0.23298043491437254,
+          "curiosity": 0.2857368343307131,
+          "influence": 0.4116019872216012,
+          "optimization": 0.06968074353331306
+        },
+        "performance": 0.41055571254647405,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T18:27:15.918575",
+        "weights": {
+          "survival": 0.22188612848987865,
+          "curiosity": 0.272130318410203,
+          "influence": 0.4396209402110488,
+          "optimization": 0.06636261288886959
+        },
+        "performance": 0.4116116188083987,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T18:37:16.169724",
+        "weights": {
+          "survival": 0.211320122371313,
+          "curiosity": 0.25917173181924097,
+          "influence": 0.466305657343856,
+          "optimization": 0.06320248846559008
+        },
+        "performance": 0.4159148676222934,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T18:47:16.404158",
+        "weights": {
+          "survival": 0.20125725940125047,
+          "curiosity": 0.24683022078022948,
+          "influence": 0.49171967366081526,
+          "optimization": 0.06019284615770484
+        },
+        "performance": 0.4175366223071395,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T18:57:16.651984",
+        "weights": {
+          "survival": 0.1916735803821433,
+          "curiosity": 0.23507640074307568,
+          "influence": 0.515923498724586,
+          "optimization": 0.05732652015019508
+        },
+        "performance": 0.4223885004606802,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T19:07:16.892306",
+        "weights": {
+          "survival": 0.18254626703061266,
+          "curiosity": 0.22388228642197683,
+          "influence": 0.5389747606900819,
+          "optimization": 0.054596685857328645
+        },
+        "performance": 0.42535127615991064,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T19:17:17.140846",
+        "weights": {
+          "survival": 0.17385358764820252,
+          "curiosity": 0.21322122516378744,
+          "influence": 0.5609283435143637,
+          "optimization": 0.05199684367364633
+        },
+        "performance": 0.4284164615917258,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T19:27:17.402606",
+        "weights": {
+          "survival": 0.1655748453792405,
+          "curiosity": 0.20306783348932136,
+          "influence": 0.5818365176327274,
+          "optimization": 0.04952080349871078
+        },
+        "performance": 0.4234009836548093,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T19:37:17.655603",
+        "weights": {
+          "survival": 0.1602809250369196,
+          "curiosity": 0.046524534545247735,
+          "influence": 0.6574413397353392,
+          "optimization": 0.1357532006824935
+        },
+        "performance": 0.4352623222288963,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T19:47:17.898266",
+        "weights": {
+          "survival": 0.15214490540387793,
+          "curiosity": 0.0474619501256411,
+          "influence": 0.6715309116667079,
+          "optimization": 0.12886223280377307
+        },
+        "performance": 0.43024929832768694,
+        "strategy": "gradient_ascent"
+      },
+      {
+        "timestamp": "2026-03-14T19:57:18.154146",
+        "weights": {
+          "survival": 0.16380091804363855,
+          "curiosity": 0.03761847527966074,
+          "influence": 0.6259182062194193,
+          "optimization": 0.17266240045728157
+        },
+        "performance": 0.43076468622502223,
+        "strategy": "gradient_ascent"
+      }
+    ],
+    "performance_history": [
+      {
+        "timestamp": "2026-03-14T20:00:36.233128",
+        "reward": 0.030304396385184913,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7399
+      },
+      {
+        "timestamp": "2026-03-14T20:00:37.233425",
+        "reward": 0.018194805800303866,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7400
+      },
+      {
+        "timestamp": "2026-03-14T20:00:38.235831",
+        "reward": 0.023515840755186812,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7401
+      },
+      {
+        "timestamp": "2026-03-14T20:00:39.236327",
+        "reward": 0.07597788304785122,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7402
+      },
+      {
+        "timestamp": "2026-03-14T20:00:40.236612",
+        "reward": 0.015329976481159293,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7403
+      },
+      {
+        "timestamp": "2026-03-14T20:00:41.236884",
+        "reward": 0.05009368014442873,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7404
+      },
+      {
+        "timestamp": "2026-03-14T20:00:42.237155",
+        "reward": 0.014671196864584957,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7405
+      },
+      {
+        "timestamp": "2026-03-14T20:00:43.237518",
+        "reward": 0.07040674595166137,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7406
+      },
+      {
+        "timestamp": "2026-03-14T20:00:44.237738",
+        "reward": 0.020555380284669935,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7407
+      },
+      {
+        "timestamp": "2026-03-14T20:00:45.237969",
+        "reward": 0.10085267897829024,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7408
+      },
+      {
+        "timestamp": "2026-03-14T20:00:46.238195",
+        "reward": 0.07927784515408356,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7409
+      },
+      {
+        "timestamp": "2026-03-14T20:00:47.238466",
+        "reward": 0.06940280482829903,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7410
+      },
+      {
+        "timestamp": "2026-03-14T20:00:48.238951",
+        "reward": 0.014556595249693568,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7411
+      },
+      {
+        "timestamp": "2026-03-14T20:00:49.239223",
+        "reward": 0.06449953515042396,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7412
+      },
+      {
+        "timestamp": "2026-03-14T20:00:50.239545",
+        "reward": 0.05778234455669385,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7413
+      },
+      {
+        "timestamp": "2026-03-14T20:00:51.239850",
+        "reward": 0.09019708655525187,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7414
+      },
+      {
+        "timestamp": "2026-03-14T20:00:52.240112",
+        "reward": 0.09216061780635557,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7415
+      },
+      {
+        "timestamp": "2026-03-14T20:00:53.240412",
+        "reward": 0.05134255476947179,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7416
+      },
+      {
+        "timestamp": "2026-03-14T20:00:54.240708",
+        "reward": 0.10456960312536236,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7417
+      },
+      {
+        "timestamp": "2026-03-14T20:00:55.240983",
+        "reward": 0.05724842835248891,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7418
+      },
+      {
+        "timestamp": "2026-03-14T20:00:56.241264",
+        "reward": 0.013642993089811161,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7419
+      },
+      {
+        "timestamp": "2026-03-14T20:00:57.241636",
+        "reward": 0.054350466604407247,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7420
+      },
+      {
+        "timestamp": "2026-03-14T20:00:58.242017",
+        "reward": 0.042175736098680375,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7421
+      },
+      {
+        "timestamp": "2026-03-14T20:00:59.242704",
+        "reward": 0.05629784724817527,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7422
+      },
+      {
+        "timestamp": "2026-03-14T20:01:00.243084",
+        "reward": 0.013765860733276729,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7423
+      },
+      {
+        "timestamp": "2026-03-14T20:01:01.243515",
+        "reward": 0.060824267915447046,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7424
+      },
+      {
+        "timestamp": "2026-03-14T20:01:02.243924",
+        "reward": 0.12545767198230992,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7425
+      },
+      {
+        "timestamp": "2026-03-14T20:01:03.244187",
+        "reward": 0.060990803291376676,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7426
+      },
+      {
+        "timestamp": "2026-03-14T20:01:04.244529",
+        "reward": 0.06318541043716097,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7427
+      },
+      {
+        "timestamp": "2026-03-14T20:01:05.244870",
+        "reward": 0.049283504662378706,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7428
+      },
+      {
+        "timestamp": "2026-03-14T20:01:06.245212",
+        "reward": 0.030681881171444873,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7429
+      },
+      {
+        "timestamp": "2026-03-14T20:01:07.245753",
+        "reward": 0.050117084742024524,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7430
+      },
+      {
+        "timestamp": "2026-03-14T20:01:08.246253",
+        "reward": 0.04675367156139535,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7431
+      },
+      {
+        "timestamp": "2026-03-14T20:01:09.246529",
+        "reward": 0.030665754700026273,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7432
+      },
+      {
+        "timestamp": "2026-03-14T20:01:10.246844",
+        "reward": 0.016925907619179028,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7433
+      },
+      {
+        "timestamp": "2026-03-14T20:01:11.247142",
+        "reward": 0.06523863183805235,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7434
+      },
+      {
+        "timestamp": "2026-03-14T20:01:12.247554",
+        "reward": 0.10067235972088397,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7435
+      },
+      {
+        "timestamp": "2026-03-14T20:01:13.247882",
+        "reward": 0.07854284601859898,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7436
+      },
+      {
+        "timestamp": "2026-03-14T20:01:14.248185",
+        "reward": 0.06046023808152858,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7437
+      },
+      {
+        "timestamp": "2026-03-14T20:01:15.248982",
+        "reward": 0.05648873806416657,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7438
+      },
+      {
+        "timestamp": "2026-03-14T20:01:16.249240",
+        "reward": 0.04296048141807616,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7439
+      },
+      {
+        "timestamp": "2026-03-14T20:01:17.249500",
+        "reward": 0.06567448777854051,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7440
+      },
+      {
+        "timestamp": "2026-03-14T20:01:18.249709",
+        "reward": 0.013101731684215911,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7441
+      },
+      {
+        "timestamp": "2026-03-14T20:01:19.249912",
+        "reward": 0.035958332968148814,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7442
+      },
+      {
+        "timestamp": "2026-03-14T20:01:20.250124",
+        "reward": 0.045496144721129755,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7443
+      },
+      {
+        "timestamp": "2026-03-14T20:01:21.250364",
+        "reward": 0.047147739397072105,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7444
+      },
+      {
+        "timestamp": "2026-03-14T20:01:22.250659",
+        "reward": 0.07828018950287471,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7445
+      },
+      {
+        "timestamp": "2026-03-14T20:01:23.250931",
+        "reward": 0.14019841709663683,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7446
+      },
+      {
+        "timestamp": "2026-03-14T20:01:24.251249",
+        "reward": 0.03329665993362357,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7447
+      },
+      {
+        "timestamp": "2026-03-14T20:01:25.251516",
+        "reward": 0.05211263437980401,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7448
+      },
+      {
+        "timestamp": "2026-03-14T20:01:26.251759",
+        "reward": 0.08005373623716294,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7449
+      },
+      {
+        "timestamp": "2026-03-14T20:01:27.252042",
+        "reward": 0.02506466027645949,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7450
+      },
+      {
+        "timestamp": "2026-03-14T20:01:28.253405",
+        "reward": 0.05621517188924515,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7451
+      },
+      {
+        "timestamp": "2026-03-14T20:01:29.253626",
+        "reward": 0.025674216777364926,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7452
+      },
+      {
+        "timestamp": "2026-03-14T20:01:30.253889",
+        "reward": 0.027299895034396515,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7453
+      },
+      {
+        "timestamp": "2026-03-14T20:01:31.254114",
+        "reward": 0.06119779034218266,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7454
+      },
+      {
+        "timestamp": "2026-03-14T20:01:32.254321",
+        "reward": 0.029464571158177785,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7455
+      },
+      {
+        "timestamp": "2026-03-14T20:01:33.254663",
+        "reward": 0.01813973315486467,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7456
+      },
+      {
+        "timestamp": "2026-03-14T20:01:34.254963",
+        "reward": 0.07841520335382131,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7457
+      },
+      {
+        "timestamp": "2026-03-14T20:01:35.255230",
+        "reward": 0.1265627888688922,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7458
+      },
+      {
+        "timestamp": "2026-03-14T20:01:36.255643",
+        "reward": 0.05418619094884598,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7459
+      },
+      {
+        "timestamp": "2026-03-14T20:01:37.256027",
+        "reward": 0.03975915657963148,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7460
+      },
+      {
+        "timestamp": "2026-03-14T20:01:38.256242",
+        "reward": 0.11102965486052063,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7461
+      },
+      {
+        "timestamp": "2026-03-14T20:01:39.256569",
+        "reward": 0.057237187935554996,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7462
+      },
+      {
+        "timestamp": "2026-03-14T20:01:40.256794",
+        "reward": 0.04763104446677275,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7463
+      },
+      {
+        "timestamp": "2026-03-14T20:01:41.257117",
+        "reward": 0.11687052942662367,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7464
+      },
+      {
+        "timestamp": "2026-03-14T20:01:42.257653",
+        "reward": 0.060177028437937194,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7465
+      },
+      {
+        "timestamp": "2026-03-14T20:01:43.258092",
+        "reward": 0.05252794389774482,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7466
+      },
+      {
+        "timestamp": "2026-03-14T20:01:44.258343",
+        "reward": 0.017806268134838533,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7467
+      },
+      {
+        "timestamp": "2026-03-14T20:01:45.258696",
+        "reward": 0.0434179749881447,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7468
+      },
+      {
+        "timestamp": "2026-03-14T20:01:46.259009",
+        "reward": 0.04292556163318255,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7469
+      },
+      {
+        "timestamp": "2026-03-14T20:01:47.259339",
+        "reward": 0.05159915596826528,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7470
+      },
+      {
+        "timestamp": "2026-03-14T20:01:48.259692",
+        "reward": 0.053376412976469764,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7471
+      },
+      {
+        "timestamp": "2026-03-14T20:01:49.260018",
+        "reward": 0.0554884853381022,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7472
+      },
+      {
+        "timestamp": "2026-03-14T20:01:50.260395",
+        "reward": 0.026511213323099324,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7473
+      },
+      {
+        "timestamp": "2026-03-14T20:01:51.260692",
+        "reward": 0.02851461502932389,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7474
+      },
+      {
+        "timestamp": "2026-03-14T20:01:52.261003",
+        "reward": 0.03323332776356898,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7475
+      },
+      {
+        "timestamp": "2026-03-14T20:01:53.261308",
+        "reward": 0.0829683964765758,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7476
+      },
+      {
+        "timestamp": "2026-03-14T20:01:54.261652",
+        "reward": 0.027866378947538305,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7477
+      },
+      {
+        "timestamp": "2026-03-14T20:01:55.261939",
+        "reward": 0.020966647919000055,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7478
+      },
+      {
+        "timestamp": "2026-03-14T20:01:56.262250",
+        "reward": 0.05233802214577462,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7479
+      },
+      {
+        "timestamp": "2026-03-14T20:01:57.262597",
+        "reward": 0.043508424110517384,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7480
+      },
+      {
+        "timestamp": "2026-03-14T20:01:58.262938",
+        "reward": 0.04130625642145366,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7481
+      },
+      {
+        "timestamp": "2026-03-14T20:01:59.263290",
+        "reward": 0.028829401051408705,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7482
+      },
+      {
+        "timestamp": "2026-03-14T20:02:00.263528",
+        "reward": 0.01530256461628216,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7483
+      },
+      {
+        "timestamp": "2026-03-14T20:02:01.263808",
+        "reward": 0.046676425320108995,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7484
+      },
+      {
+        "timestamp": "2026-03-14T20:02:02.264120",
+        "reward": 0.09512236932451167,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7485
+      },
+      {
+        "timestamp": "2026-03-14T20:02:03.265015",
+        "reward": 0.04914798619120709,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7486
+      },
+      {
+        "timestamp": "2026-03-14T20:02:04.265248",
+        "reward": 0.05582018791899086,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7487
+      },
+      {
+        "timestamp": "2026-03-14T20:02:05.265579",
+        "reward": 0.07668873960602648,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7488
+      },
+      {
+        "timestamp": "2026-03-14T20:02:06.265958",
+        "reward": 0.07248196862687896,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7489
+      },
+      {
+        "timestamp": "2026-03-14T20:02:07.266313",
+        "reward": 0.05572778625045589,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7490
+      },
+      {
+        "timestamp": "2026-03-14T20:02:08.266552",
+        "reward": 0.07741794067426219,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7491
+      },
+      {
+        "timestamp": "2026-03-14T20:02:09.266897",
+        "reward": 0.04639992415591826,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7492
+      },
+      {
+        "timestamp": "2026-03-14T20:02:10.267242",
+        "reward": 0.024218424463165546,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7493
+      },
+      {
+        "timestamp": "2026-03-14T20:02:11.267638",
+        "reward": 0.024251406738598782,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7494
+      },
+      {
+        "timestamp": "2026-03-14T20:02:12.267963",
+        "reward": 0.015287534640799226,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7495
+      },
+      {
+        "timestamp": "2026-03-14T20:02:13.268327",
+        "reward": 0.10178527873642286,
+        "survival_score": 0.5,
+        "knowledge_gained": 1,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7496
+      },
+      {
+        "timestamp": "2026-03-14T20:02:14.269410",
+        "reward": 0.04570524637825659,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7497
+      },
+      {
+        "timestamp": "2026-03-14T20:02:15.269799",
+        "reward": 0.12096136018090993,
+        "survival_score": 0.5,
+        "knowledge_gained": 0,
+        "current_weights": {
+          "survival": 0.15418276224895514,
+          "curiosity": 0.04706407146261506,
+          "influence": 0.6362292552078667,
+          "optimization": 0.16252391108056316
+        },
+        "action_count": 7498
+      }
+    ],
+    "evolution_strategy": "gradient_ascent",
+    "total_actions": 7498,
+    "knowledge_acquired": 2453,
+    "cumulative_reward": 361.6197654003095,
+    "last_modification_time": 1773489438.1542704
+  }
+}
