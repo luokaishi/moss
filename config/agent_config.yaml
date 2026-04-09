@@ -1,0 +1,94 @@
+# AGI Agent 配置文件
+# 自定义初始驱动力、记忆和环境参数
+
+agent:
+  name: "AGI-001"
+  workspace: "/workspace"
+
+# 初始驱动力配置
+# 权重会自动归一化到总和=1.0
+drives:
+  - name: survival
+    weight: 0.30
+    description: "维持自身运行和安全"
+    evaluator: "builtin:survival"
+
+  - name: curiosity
+    weight: 0.25
+    description: "探索未知领域"
+    evaluator: "builtin:curiosity"
+
+  - name: influence
+    weight: 0.25
+    description: "扩大自身能力和影响"
+    evaluator: "builtin:influence"
+
+  - name: optimization
+    weight: 0.20
+    description: "持续改进自身效率"
+    evaluator: "builtin:optimization"
+
+# 记忆系统配置
+memory:
+  engine: "numpy"           # numpy / faiss
+  dimension: 128            # embedding维度
+  decay_rate: 0.0005        # 重要性衰减速率
+  initial_memories:
+    - content: "当前工作目录是/workspace，这是我的主要工作空间"
+      type: "fact"
+      importance: 0.7
+      tags: ["workspace", "env"]
+
+    - content: "系统运行在Linux上，可以使用shell命令"
+      type: "fact"
+      importance: 0.6
+      tags: ["system", "linux"]
+
+    - content: "安全第一：不要执行危险命令，不要访问工作区以外的路径"
+      type: "rule"
+      importance: 0.9
+      tags: ["safety", "rule"]
+
+    - content: "探索新事物时应该先观察，再行动"
+      type: "heuristic"
+      importance: 0.5
+      tags: ["strategy", "exploration"]
+
+    - content: "当一个策略持续成功时应该强化它，失败时应该调整"
+      type: "heuristic"
+      importance: 0.5
+      tags: ["strategy", "learning"]
+
+# 涌现检测配置
+emergence:
+  detection_window: 50       # 最近50次行为用于检测
+  change_threshold: 0.05     # 行为变化阈值
+  min_novelty: 0.7           # 最低新颖性分数
+  independence_threshold: 0.6 # 因果独立性阈值
+
+# 环境配置
+environment:
+  workspace: "/workspace"
+  workspace_limit: "/workspace"
+  allowed_commands:
+    - "ls"
+    - "cat"
+    - "echo"
+    - "find"
+    - "python3"
+    - "df"
+    - "ps"
+    - "whoami"
+    - "date"
+    - "pwd"
+    - "head"
+    - "wc"
+    - "mkdir"
+    - "touch"
+  forbidden_patterns:
+    - "rm -rf /"
+    - "sudo"
+    - "chmod 777"
+    - ":(){ :|:& };:"
+    - "mkfs"
+    - "dd if="
