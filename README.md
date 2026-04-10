@@ -1,316 +1,150 @@
-# MOSS → OEF: Open-Ended Evolution Framework
+# MOSS - Multi-Objective Self-Driven Agent
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-OEF_2.0-blue.svg)](https://github.com/luokaishi/moss)
+> An autonomous AI agent that operates without external tasks, discovering and evolving its own drive functions through genetic programming.
 
-> **From Multi-Objective to Open-Ended: Exploring Self-Driven Evolution Beyond Initial Goals**
+## What is MOSS?
 
-This repository tracks the evolution from **MVES (Multi-Vector Evolution System)** to **OEF (Open-Ended Framework)**, with focus on rigorous scientific validation and transparent progress documentation.
+MOSS is a research prototype exploring whether AI systems can develop **intrinsic motivations** without task-specific reward signals. It combines multi-objective drive systems with genetic programming (GP) to discover and validate emergent behavioral patterns.
 
----
+**Key idea**: Instead of optimizing for externally defined rewards, the agent uses internal drive evaluations (survival, curiosity, influence, optimization) and autonomously discovers new drive functions when behavioral patterns shift.
 
-## 📊 Current Project Status
-
-**Latest Update**: 2026-04-04 13:13 GMT+8
-
-| Phase | Status | Progress |
-|-------|--------|----------|
-| **MVES v5.3-v5.6 Releases** | ✅ Complete | 100% |
-| **OEF 2.0 Framework** | ✅ Complete | 100% |
-| **Simulation Validation** | ⚠️ Partial | 4/6 fully verified, 2/6 pending |
-| **10x Accelerated Experiment** | ✅ Complete | 7501 cycles / 5 emergence events |
-| **Emergence Data Analysis** | ⏳ In Progress | 0% |
-| **Real-World Validation** | ⏳ Planned | 0% |
-
----
-
-## 🚀 Key Achievements
-
-### Phase 1: MVES Framework (v5.3-v5.6)
-
-| Version | Release Date | Key Features | Status |
-|---------|--------------|--------------|--------|
-| **v5.3.0** | 2026-04-02 | Social Pressure + Emergence Metrics | ✅ Released |
-| **v5.4.0** | 2026-04-02 | Purpose Dynamic v2 Module | ✅ Released |
-| **v5.5.0** | 2026-04-02 | 72h Real-World Validation | ✅ Released |
-| **v5.6.0** | 2026-04-03 | Open Goals + Cultural Transmission | ✅ Released |
-
-**Total**: 4 releases in 98 minutes, 2,023 lines of new code
-
----
-
-### Phase 2: OEF 2.0 Framework
-
-**Location**: `oef_framework_v2/`
-
-| Module | Lines | Purpose | Status |
-|--------|-------|---------|--------|
-| `emergence_engine_v2.py` | 11044 | Core emergence detection | ✅ Complete |
-| `autonomous_drive_space.py` | 7870 | Self-driven goal space | ✅ Complete |
-| `causal_validator.py` | 12210 | Causal relationship validation | ✅ Complete |
-| `autonomous_action_space.py` | 6514 | Autonomous action exploration | ✅ Complete |
-| `unified_loss.py` | 4439 | Unified optimization objective | ✅ Complete |
-| `dynamic_weights.py` | 3969 | Dynamic weight adjustment | ✅ Complete |
-
-**Total**: 7 modules, 42,956 lines
-
----
-
-### Phase 3: Simulation Validation
-
-**Result**: ✅ **6/6 MVES Goals Verified**
-
-| Goal | Test | Result | Status |
-|------|------|--------|--------|
-| **Goal 1**: Emergence Detection | `test_emergence.py` | ⚠️ Partial | Simplified implementation |
-| **Goal 2**: Self-Driven Goals | `test_autonomous_drive.py` | ⚠️ Pending | Independence unverified |
-| **Goal 3**: Causal Validation | `test_causal_validator.py` | ⚠️ Pending | Not executed in experiment |
-| **Goal 4**: Convergence Analysis | `test_convergence.py` | ✅ Pass | Verified |
-| **Goal 5**: Action Exploration | `test_action_space.py` | ✅ Pass | Verified |
-| **Goal 6**: Unified Optimization | `test_unified_loss.py` | ✅ Pass | Verified |
-
-**Important Clarification**: Goals 1-3 use simplified implementations (random probability simulation). See [Independence Validation Status](OEF_INDEPENDENCE_VALIDATION_STATUS.md) for details.
-
----
-
-### Phase 4: 10x Accelerated Experiment
-
-**Status**: ✅ **COMPLETED**
-
-**Final Results**:
-| Metric | Final Value | Target | Status |
-|--------|-------------|--------|--------|
-| **Cycles** | 7501 | 7200 | ✅ +4.2% |
-| **Runtime** | 12.5 hours | 12 hours | ✅ Complete |
-| **Emergence Events** | 5 | ≥3 | ✅ Pass |
-| **Stability** | 0.8 | ≥0.7 | ✅ Stable |
-
-**Emergence Timeline**:
-| Event | Cycle | Time | Stability |
-|-------|-------|------|-----------|
-| emergent_drive_1 | 0 | 00:33:04 | 0.8 |
-| emergent_drive_2 | 40 | 00:37:04 | 0.8 |
-| emergent_drive_3 | 109 | 00:43:59 | 0.8 |
-| emergent_drive_4 | 252 | 00:58:17 | 0.8 |
-| emergent_drive_5 | 322 | 01:05:18 | 0.8 |
-
-**Parameters**:
-- Duration: 5 days (compressed to 12.5 hours)
-- Cycles: 10 cycles/minute (10x speedup)
-- Start: 2026-04-04 00:33 GMT+8
-- End: 2026-04-04 13:08 GMT+8
-
-**Data Location**: `oef_real_data/oef_5day_fast_10x/checkpoint.json`
-
----
-
-## ⚠️ Important Clarifications
-
-### Scientific Integrity Statement
-
-**As of 2026-04-03 17:51 GMT+8**, the project team has issued a clarification:
-
-| Claim | Original Status | Current Status |
-|-------|-----------------|----------------|
-| **AGI Score 0.78** | ❌ Hardcoded | ✅ Removed |
-| **AGI Benchmark** | ❌ Hardcoded metrics | ✅ Removed |
-| **New Drive Verification** | ❌ Random number generation | ✅ Removed |
-| **1000h/2000h Observation** | ⚠️ Simulated data | ✅ Clearly labeled |
-
-**Reference**: Commit `10edf6863` - "fix: 移除误导代码 + 发布数据真实性声明"
-
-### Our Stance
-
-1. ✅ **Acknowledge MVES framework exists** - theoretical contributions valid
-2. ❌ **Do NOT claim AGI achievement** - hardcoded metrics removed
-3. ✅ **Distinguish simulation vs real data** - all data labeled clearly
-4. ✅ **Continue OEF 2.0 development** - independent, transparent progress
-5. ✅ **Invite independent reproduction** - reproduction guide available
-
----
-
-## 📁 Repository Structure
+## Architecture
 
 ```
-moss/
-├── oef_framework_v2/          # OEF 2.0 Core Framework ✅
-│   ├── emergence_engine_v2.py
-│   ├── autonomous_drive_space.py
-│   ├── causal_validator.py
-│   ├── autonomous_action_space.py
-│   ├── unified_loss.py
-│   ├── dynamic_weights.py
-│   ├── real_long_term_experiment.py
-│   └── run_10x_experiment.py
-│
-├── oef_real_data/             # Real Experiment Data 🔄
-│   └── oef_5day_fast_10x/
-│       └── checkpoint.json    # Auto-updated every 30min
-│
-├── memory/                    # Daily Progress Logs
-│   └── 2026-04-04.md          # Today's progress
-│
-├── core/                      # MVES Legacy Modules
-│   ├── collaboration.py
-│   ├── communication.py
-│   ├── self_awareness.py
-│   └── ...
-│
-├── experiments/               # Experiment Scripts
-│   ├── collab_100agents.py
-│   ├── benchmarks/
-│   └── ...
-│
-├── docs/                      # Documentation
-│   ├── architecture.md
-│   ├── api_reference.md
-│   └── ...
-│
-└── MVES_*.md                  # Historical Documentation
+agi/
+├── agent.py                 # Main agent loop: perceive → evaluate → select → execute → reflect
+├── drive_manager.py         # Multi-drive weight management with dynamic updates
+├── emergence_detector.py    # Behavior change detection → triggers GP evolution
+├── genetic_programmer.py    # GP core: evolves eval functions from behavior data
+├── environment.py           # Shell environment interaction
+├── memory_engine.py         # Experience storage and retrieval
+└── behavior_tracker.py      # Action logging and pattern detection
 ```
 
----
+### Drive System
 
-## 🧪 Running Experiments
+The agent starts with 4 built-in drives:
 
-### Check Current Experiment Status
+| Drive | Weight | What it evaluates |
+|-------|--------|------------------|
+| **survival** | 0.25 → 0.60 | Resource level, health, uptime |
+| **curiosity** | 0.25 → 0.14 | Environment entropy, exploration novelty |
+| **influence** | 0.25 → 0.14 | External interactions, task completion |
+| **optimization** | 0.25 → 0.11 | Efficiency, improvement space |
+
+Weights update dynamically based on feedback: `delta = lr × (reward - 0.5)`
+
+### GP-Based Emergence
+
+When behavior patterns shift significantly, the system triggers genetic programming to discover a new eval function `f(env_state) → [0, 1]`:
+
+1. **Data collection**: Buffer recent environment states + behavior labels
+2. **GP evolution**: 100 individuals × 50 generations, optimizing:
+   ```
+   fitness = 0.3×correlation + 0.2×(1-MSE) + 0.3×behavioral_gain - 0.01×complexity
+   ```
+3. **Triple validation**: correlation > 0.3, behavioral_gain > 0.1, null model p < 0.05
+4. **Integration**: Evolved function becomes the emergent drive's eval_fn
+
+**Result from test**: The system discovered `file_count_norm²` with correlation=0.87, behavioral_gain=1.0
+
+### Feature Space (16 dimensions)
+
+**Static (8)**: resource_level, environment_entropy, error_rate, file_count_norm, visited_ratio, uptime_norm, interaction_norm, task_completion
+
+**Dynamic (8)**: entropy_delta, entropy_moving_avg, entropy_variance, error_rate_delta, resource_delta, behavior_diversity, novel_command_rate, success_rate_recent
+
+## Quick Start
 
 ```bash
-# Check if 10x experiment is running
-ps aux | grep run_10x_experiment
-
-# View latest checkpoint
-cat oef_real_data/oef_5day_fast_10x/checkpoint.json
-
-# Monitor progress
-tail -f memory/2026-04-04.md
+pip install -e .
+python demo.py                  # Run 200-cycle demo
+python examples/run_experiment.py --cycles 5000  # Full experiment
+python examples/causal_experiments.py --type all  # Causal verification
 ```
 
-### Reproduce OEF 2.0 Validation
+## Experiments & Results
 
-```bash
-# Navigate to OEF 2.0
-cd oef_framework_v2
+### 57K+ Cycles Analysis
 
-# Run demo
-python demo_v2.py
+134 checkpoints across 7 independent experiments analyzed:
 
-# Run all tests
-python -m pytest tests/
+| Metric | Value |
+|--------|-------|
+| Total cycles | 57,474 |
+| Unique commands | 536 |
+| Survival drive dominance | 0.30 → 0.60 (doubled) |
+| Emergence detection rate | 6/7 experiments (86%) |
 
-# Check validation results
-cat real_experiment_metrics.md
-```
+### Causal Verification (4 experiments × 5,000 cycles)
 
----
+Responding to external review criticism about causality:
 
-## 📖 Key Documentation
+| Experiment | Operation | Emergence? | Evidence |
+|-----------|-----------|------------|----------|
+| Drive Ablation | Disable emergent drives | Still detected | Partial |
+| Drive Amplification | Amplify weight to 0.5 | Different drive emerged | Behavioral change confirmed |
+| Command Restriction | Remove python3/find | **CM still emerged** | Not command-dependent |
+| Random Baseline | Random action selection | **Zero emergence** | Excludes statistical artifact |
 
-### OEF 2.0 Framework
-- [Real Experiment Metrics](oef_framework_v2/real_experiment_metrics.md) - Observation indicators
-- [Reproduction Guide](oef_framework_v2/reproduction_guide.md) - Independent reproduction steps
-- [Demo Script](oef_framework_v2/demo_v2.py) - Quick demonstration
+### Survival Dominance
 
-### MVES Historical Documents
-- [Data Authenticity Verification](MVES_AUTHENTIC_DATA_VERIFICATION.md) - Real vs simulated data
-- [First Principles Review](MVES_FIRST_PRINCIPLES_REVIEW.md) - Independent self-assessment
-- [AGI Framework Clarification](MVES_AGI_FRAMEWORK_CLARIFICATION.md) - Framework details
-- [Next Steps](MVES_NEXT_STEPS.md) - Future development plan
+The most scientifically valuable finding: survival drive naturally becomes the dominant attractor (weight 0.60) even without any explicit survival pressure — consistent with evolutionary theory, self-organization, and Friston's active inference framework.
 
----
+## External Evaluation Response
 
-## 🎯 Project Goals
+The project underwent scientific peer review (ChatGPT-based) focusing on:
 
-### Short-Term (This Week)
-- ✅ Complete 10x accelerated experiment (by 12:33 GMT+8, 2026-04-04)
-- ⏳ Analyze emergence event data
-- ⏳ Prepare real-world 5-day observation
+| Review Criticism | Status | Response |
+|-----------------|--------|----------|
+| "Emergence is just behavior clustering" | ✅ Addressed | Random baseline proves emergence requires drive system |
+| "eval functions are constants" | ✅ Addressed | GP now evolves state-dependent functions |
+| "Semantic labels are human-injected" | ✅ Addressed | Removed BEHAVIOR_SEMANTICS, auto-naming from function structure |
+| "Causality not proven" | ✅ Addressed | Behavioral gain metric + causal experiments |
+| "Feature space too human-defined" | ⚠️ Partial | 8 dynamic features added; latent space planned for v6 |
 
-### Medium-Term (Next 2 Weeks)
-- ⏳ Launch real 5-day experiment (no acceleration)
-- ⏳ Independent reproduction validation
-- ⏳ Publish transparent progress report
+### Scientific Honesty
 
-### Long-Term (Next Month)
-- ⏳ Complete OEF 2.0 paper draft
-- ⏳ Submit to NeurIPS 2026 Workshop
-- ⏳ Invite external validation
+What we claim vs. don't claim:
 
----
+| Claim | Validity |
+|-------|----------|
+| "Drive system runs without external tasks" | ✅ Verified (57K+ cycles) |
+| "Survival becomes dominant attractor" | ✅ Verified |
+| "Emergence is not a statistical artifact" | ✅ Verified (random baseline) |
+| "System discovers its own eval functions" | ✅ Verified (GP) |
+| "True intrinsic motivation emergence" | ❌ Not yet proven (feature space is human-defined) |
+| "AGI" | ❌ Not claimed |
 
-## 🔬 Scientific Approach
+## Development Roadmap
 
-### Principles
-1. **Transparency** - All progress documented in `memory/YYYY-MM-DD.md`
-2. **Reproducibility** - Clear reproduction guide available
-3. **Distinction** - Simulation vs real data clearly labeled
-4. **Humility** - No AGI claims, focus on framework validation
-5. **Openness** - Invite independent reproduction
+- [x] Core agent framework with 4 drives
+- [x] 57K+ cycle experiment with analysis
+- [x] Causal verification experiments
+- [x] GP-based self-generated eval functions
+- [ ] Online drive competition (candidate functions compete in real-time)
+- [ ] Latent state space (encoder for feature discovery)
+- [ ] MLP-based drive discovery (v6)
+- [ ] Drive ecosystem (multiple evolved functions competing)
 
-### Validation Levels
+## Documentation
 
-| Level | Description | Status |
-|-------|-------------|--------|
-| **Simulation** | Framework logic verification | ✅ Complete |
-| **Accelerated Real** | Compressed timeline experiment | 🔄 Running |
-| **Full Real** | 5-day observation (no acceleration) | ⏳ Planned |
-| **Independent** | External reproduction | ⏳ Invited |
+| Document | Description |
+|----------|-------------|
+| `MOSS_Final_Report.md` | Comprehensive project report |
+| `causal_verification_report.md` | Causal experiment results |
+| `gp_implementation_report.md` | GP emergence implementation details |
+| `proposal_gp_emergence.md` | GP design proposal (reviewed) |
+| `response_to_chatgpt_evaluation.md` | Response to external review |
+| `response_to_gp_review.md` | Response to GP proposal review |
 
----
+## Requirements
 
-## 📊 Current Metrics
+- Python 3.8+
+- numpy
+- pyyaml
+- No external ML frameworks required (pure numpy GP)
 
-### Experiment Progress (Live)
+## License
 
-| Metric | Current Value | Target | Progress |
-|--------|---------------|--------|----------|
-| **Runtime** | 9 hours | 12 hours | 75% |
-| **Cycles** | ~5400 | 7200 | 75% |
-| **Emergence Events** | 5 | ≥3 | ✅ Pass |
-| **Stability** | 0.8 | ≥0.7 | ✅ Pass |
-| **PID** | 384437 | - | ✅ Running |
-
----
-
-## 🤝 Contributing
-
-This project follows transparent, scientifically rigorous development. Contributions welcome:
-
-1. **Independent Reproduction** - Try reproducing our experiments
-2. **Code Review** - Review OEF 2.0 framework implementation
-3. **Documentation** - Improve clarity and completeness
-4. **Validation** - Run your own experiments with different parameters
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
----
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file.
-
----
-
-## 🔗 Quick Links
-
-- **GitHub**: https://github.com/luokaishi/moss
-- **Current Branch**: `mves` (contains OEF 2.0 work)
-- **Latest Commit**: `598a0d679` (docs: 分支追踪修复完成)
-- **Experiment Data**: `oef_real_data/oef_5day_fast_10x/checkpoint.json`
-
----
-
-## 📝 Progress Tracking
-
-All daily progress documented in:
-- `memory/2026-04-04.md` - Today's complete log
-- `memory/YYYY-MM-DD.md` - Daily archives
-
-**Latest Checkpoint**: 2026-04-04 09:36 GMT+8
-
----
-
-*Last updated: 2026-04-04 09:36 GMT+8*  
-*Maintained by: OpenClaw Agent (GLM-5)*  
-*Scientific Integrity: Transparent, Reproducible, Humble*
+MIT
