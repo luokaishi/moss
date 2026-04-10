@@ -24,6 +24,8 @@ class EmergentDrive:
     causal_independence: float
     cluster_center: np.ndarray
     emergence_pattern: str = "embedding_cluster"
+    evolved_fn: Optional[callable] = None
+    expr_string: str = ""
 
     def to_dict(self) -> Dict:
         return {
@@ -52,10 +54,17 @@ class EmergenceDetector:
         self.min_novelty = config.get('min_novelty', 0.5)
         self.independence_threshold = config.get('independence_threshold', 0.6)
         self._history: List[Dict] = []
-        self.gp = GeneticProgrammer(config.get('gp', {}))
-        self._state_buffer: List[Dict] = []  # 缓存环境状态供 GP 使用
-        self._label_buffer: List[int] = []   # 缓存行为标签供 GP 使用
+        gp_cfg = config.get('gp', {})
+        gp_cfg.setdefault('min_samples', 20)
+        gp_cfg.setdefault('acceptance_threshold', 0.3)
+        gp_cfg.setdefault('null_model_samples', 10)
+        gp_cfg.setdefault('validation_ratio', 0.1)
+        self.gp = GeneticProgrammer(gp_cfg)
+        self._state_buffer: List[Dict] = []
+        self._label_buffer: List[float] = []
         self._emerge_count = 0
+        self._last_gp_cycle = 0
+        self._gp_cooldown = config.get('gp_cooldown', 30)
 
     def record_state(self, env_state: Dict, behavior_label: int):
         """记录环境状态和行为标签，供 GP 使用"""
@@ -71,32 +80,37 @@ class EmergenceDetector:
         """
         检测涌现驱动力 (v2: GP-based)
 
-        步骤：
-        1. 检测行为分布变化
-        2. 收集数据（环境状态 + 行为标签）
-        3. 触发 GP 进化 eval 函数
-        4. 三重验证（相关性 + 因果力 + null model）
-        5. 生成自动命名的涌现驱动
+        数据驱动触发：缓冲区足够 + 标签有方差 + 冷却期通过 → 运行 GP
         """
-        recent_behaviors = behavior_tracker.get_recent_behaviors(30)
-        if len(recent_behaviors) < 10:
+        # 条件 1: 缓冲区足够
+        if len(self._state_buffer) < self.gp.min_samples:
             return None
 
-        # 检查是否已有足够数据供 GP
-        if len(self._state_buffer) < 30:
-            return None
-
-        # 检查是否已有涌现驱动力（限制最大数量）
+        # 条件 2: 已有过多涌现驱动力
         if len(existing_drive_names) >= 6:
             return None
 
-        # 构建行为标签：最近 30 个周期中哪些属于新行为模式
-        # 使用简单的“新命令出现”作为行为标签
-        behavior_labels = self._build_behavior_labels(recent_behaviors)
-        if sum(behavior_labels[-len(recent_behaviors):]) < 3:
+        # 条件 3: 标签方差足够（全 0.5 或全同值无法学习）
+        labels = self._label_buffer
+        if np.std(labels) < 0.05:
             return None
 
-        # 触发 GP
+        # 条件 4: 标签中有足够正值（GP 需要正负样本）
+        pos_count = sum(1 for l in labels if l > 0.6)
+        neg_count = sum(1 for l in labels if l < 0.4)
+        if pos_count < 3 or neg_count < 3:
+            return None
+
+        # 条件 5: 冷却期
+        # 通过 behavior_tracker 的 total_records 近似周期数
+        total = len(behavior_tracker.records) if hasattr(behavior_tracker, 'records') else 0
+        if total - self._last_gp_cycle < self._gp_cooldown:
+            return None
+
+        # 运行 GP
+        recent_behaviors = behavior_tracker.get_recent_behaviors(30)
+        self._last_gp_cycle = total
+
         evolved = self.gp.evolve(
             behavior_labels=self._label_buffer,
             env_states=self._state_buffer,
@@ -104,6 +118,10 @@ class EmergenceDetector:
 
         if evolved is None:
             return None
+
+        # 清空缓冲区，避免重复学习相同模式
+        self._state_buffer.clear()
+        self._label_buffer.clear()
 
         # 构建 EmergentDrive 对象
         cluster_center = np.zeros(64, dtype=np.float32)

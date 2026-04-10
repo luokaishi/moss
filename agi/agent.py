@@ -8,6 +8,7 @@ AGIAgent - 自主涌现驱动力Agent
 4. 新驱动力通过验证后纳入决策系统
 """
 
+import numpy as np
 import yaml
 import time
 import logging
@@ -54,6 +55,7 @@ class AGIAgent:
         # 统计
         self._emerged_drives: List[str] = []
         self._start_time = time.time()
+        self._seen_commands_ever: set = set()
 
         # 日志
         logging.basicConfig(
@@ -158,17 +160,17 @@ class AGIAgent:
         # 更新驱动权重
         self.drive_manager.update_weight_from_feedback(best_drive, reward, lr=0.05)
 
-        # 7. 记录行为 + 涌现检测
+        # 7. 记录行为
         self.behavior_tracker.record(action, result, reward, drive_used=best_drive)
 
-        if self.behavior_tracker.has_significant_change():
-            self._try_emergence()
+        # 8. 每周期记录状态到 GP 缓冲区（不依赖变化检测）
+        self._record_emergence_state()
 
-    def _try_emergence(self):
-        """尝试涌现检测 (v2: GP-based)"""
-        logger.info("  >> 行为变化检测到! 尝试 GP 涌现检测...")
+        # 9. 尝试涌现检测
+        self._try_emergence()
 
-        # 记录当前环境状态供 GP 使用
+    def _record_emergence_state(self):
+        """每周期记录环境状态和行为标签到 GP 缓冲区"""
         state = self.env.perceive()
         env_dict = {
             'resource_level': state.resource_level,
@@ -180,12 +182,39 @@ class AGIAgent:
             'interaction_norm': min(state.interactions_count / 50.0, 1.0),
             'task_completion': state.task_completion_rate,
         }
-        # 简单行为标签：最近窗口内 write_file 比例高则为 1
-        recent = self.behavior_tracker.get_recent_behaviors(10) if hasattr(self.behavior_tracker, 'get_recent_behaviors') else []
-        write_ratio = sum(1 for b in recent if b.get('type') == 'write_file') / max(len(recent), 1)
-        label = 1 if write_ratio > 0.3 else 0
+        label = self._compute_behavior_label()
         self.emergence_detector.record_state(env_dict, label)
 
+    def _compute_behavior_label(self) -> float:
+        """计算多维行为模式标签 [0, 1] 连续值"""
+        recent = self.behavior_tracker.get_recent_behaviors(20)
+        if not recent:
+            return 0.5
+
+        # 维度 1: 行为多样性
+        types = set(r.get('type', 'shell') for r in recent)
+        diversity = min(len(types) / 3.0, 1.0)
+
+        # 维度 2: 新命令比例
+        seen = set(r.get('command', '')[:20] for r in recent)
+        new_cmds = seen - self._seen_commands_ever
+        new_ratio = min(len(new_cmds) / max(len(seen), 1) * 3, 1.0)
+        self._seen_commands_ever |= seen
+
+        # 维度 3: 成功率趋势（后半 vs 前半）
+        successes = [float(r.get('success', 1.0)) for r in recent]
+        if len(successes) >= 10:
+            first_avg = np.mean(successes[:len(successes) // 2])
+            second_avg = np.mean(successes[len(successes) // 2:])
+            trend = float(np.clip((second_avg - first_avg) * 2 + 0.5, 0, 1))
+        else:
+            trend = 0.5
+
+        label = 0.3 * diversity + 0.4 * new_ratio + 0.3 * trend
+        return float(np.clip(label, 0, 1))
+
+    def _try_emergence(self):
+        """尝试涌现检测 (v2: GP-based)"""
         existing_drives = self.drive_manager.get_all_drive_names()
         new_drive = self.emergence_detector.detect(
             self.behavior_tracker, existing_drives, self.memory
