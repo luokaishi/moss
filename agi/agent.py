@@ -167,23 +167,36 @@ class AGIAgent:
             self._try_emergence()
 
     def _try_emergence(self):
-        """尝试涌现检测"""
-        logger.info("  >> 行为变化检测到! 尝试涌现检测...")
+        """尝试涌现检测 (v2: GP-based)"""
+        logger.info("  >> 行为变化检测到! 尝试 GP 涌现检测...")
+
+        # 记录当前环境状态供 GP 使用
+        state = self.env.perceive()
+        env_dict = {
+            'resource_level': state.resource_level,
+            'environment_entropy': state.environment_entropy,
+            'error_rate': state.error_rate,
+            'file_count_norm': state.file_count / max(state.total_paths, 1),
+            'visited_ratio': state.visited_paths / max(state.total_paths, 1),
+            'uptime_norm': min(state.uptime_hours / 72.0, 1.0),
+            'interaction_norm': min(state.interactions_count / 50.0, 1.0),
+            'task_completion': state.task_completion_rate,
+        }
+        # 简单行为标签：最近窗口内 write_file 比例高则为 1
+        recent = self.behavior_tracker.get_recent_behaviors(10) if hasattr(self.behavior_tracker, 'get_recent_behaviors') else []
+        write_ratio = sum(1 for b in recent if b.get('type') == 'write_file') / max(len(recent), 1)
+        label = 1 if write_ratio > 0.3 else 0
+        self.emergence_detector.record_state(env_dict, label)
+
         existing_drives = self.drive_manager.get_all_drive_names()
         new_drive = self.emergence_detector.detect(
             self.behavior_tracker, existing_drives, self.memory
         )
         if new_drive:
-            # 生成评估函数（基于聚类中心）
-            center = new_drive.cluster_center
-
-            def make_eval(center_vec):
-                def eval_fn(state):
-                    # 使用驱动力历史得分作为代理
-                    return min(0.8, 0.5 + 0.3 * center_vec[0])
-                return eval_fn
-
-            eval_fn = make_eval(center)
+            # 使用 GP 进化的 eval 函数（非常数）
+            eval_fn = getattr(new_drive, 'evolved_fn', None)
+            if eval_fn is None:
+                eval_fn = lambda s: 0.5  # fallback
 
             success = self.drive_manager.add_emergent_drive(
                 name=new_drive.name,
@@ -196,17 +209,16 @@ class AGIAgent:
             )
             if success:
                 self._emerged_drives.append(new_drive.name)
-                logger.info(f"  >> !! 新驱动力涌现: {new_drive.name}")
+                expr_str = getattr(new_drive, 'expr_string', 'N/A')
+                logger.info(f"  >> !! GP 涌现驱动力: {new_drive.name}")
                 logger.info(f"     描述: {new_drive.description}")
-                logger.info(f"     新颖性: {new_drive.novelty_score:.2f}")
-                logger.info(f"     因果独立性: {new_drive.causal_independence:.2f}")
-                logger.info(f"     来源行为: {new_drive.source_behaviors}")
-                # 存储涌现事件到记忆
+                logger.info(f"     函数: {expr_str}")
+                logger.info(f"     因果力: {new_drive.causal_independence:.2f}")
                 self.memory.store(
-                    content=f"涌现新驱动力: {new_drive.name} - {new_drive.description}",
+                    content=f"GP涌现: {new_drive.name} = {expr_str}",
                     memory_type='reflection',
                     importance=0.9,
-                    tags=['emergence', new_drive.name]
+                    tags=['emergence', new_drive.name, 'gp_evolved']
                 )
 
     def _state_to_query(self, state: EnvState) -> str:

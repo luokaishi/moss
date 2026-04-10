@@ -1,14 +1,16 @@
 """
-EmergenceDetector - 涌现检测器
-从行为模式中提取新驱动力，验证独立性
-核心改进：使用embedding聚类而非简单排列组合
+EmergenceDetector - 涌现检测器 (v2: GP-based)
+检测行为模式变化 → 触发遗传编程 → 自生成 eval 函数
+移除了硬编码语义映射，使用 GP 进化发现驱动力
 """
 
 import numpy as np
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 from collections import Counter
+
+from .genetic_programmer import GeneticProgrammer, EvolvedDrive
 
 
 @dataclass
@@ -37,112 +39,75 @@ class EmergentDrive:
 
 class EmergenceDetector:
     """
-    涌现检测器
+    涌现检测器 v2: GP-based
 
-    核心思路：
-    1. 从行为embedding矩阵中发现聚类
-    2. 检查聚类是否与已有驱动力不同（独立性）
-    3. 为新聚类生成有意义的驱动名称
-    4. 评估新颖性和因果独立性
+    核心改进（回应外部评审）：
+    1. 移除硬编码语义映射（BEHAVIOR_SEMANTICS / SEMANTIC_DRIVES）
+    2. 使用遗传编程进化 eval 函数（非常数）
+    3. 自动命名，无人工标签
+    4. 三重验证：相关性 + 因果力 + null model
     """
 
-    # 行为到语义目标的映射表
-    BEHAVIOR_SEMANTICS = {
-        'ls': 'exploration', 'find': 'exploration', 'cat': 'analysis',
-        'python3': 'computation', 'echo': 'communication',
-        'write_file': 'creation', 'read_file': 'learning',
-        'df': 'monitoring', 'ps': 'monitoring',
-        'git': 'version_control', 'pip': 'dependency_management',
-        'head': 'analysis', 'wc': 'analysis', 'whoami': 'monitoring',
-        'date': 'monitoring', 'pwd': 'monitoring',
-    }
-
-    # 语义到驱动名称的映射
-    SEMANTIC_DRIVES = {
-        'exploration': {'name': 'systematic_exploration', 'desc': '系统性探索未知区域'},
-        'analysis': {'name': 'deep_analysis', 'desc': '深入分析信息内容'},
-        'computation': {'name': 'computational_mastery', 'desc': '掌握计算能力'},
-        'communication': {'name': 'information_broadcast', 'desc': '信息传递与表达'},
-        'creation': {'name': 'creative_synthesis', 'desc': '创造性内容合成'},
-        'learning': {'name': 'knowledge_acquisition', 'desc': '主动获取知识'},
-        'monitoring': {'name': 'self_monitoring', 'desc': '自我状态监控'},
-        'version_control': {'name': 'change_management', 'desc': '变更管理'},
-        'dependency_management': {'name': 'ecosystem_understanding', 'desc': '生态系统理解'},
-        # 新增：复合语义映射
-        'exploration_analysis': {'name': 'investigative_driven', 'desc': '调查驱动型探索'},
-        'computation_creation': {'name': 'engineering_creativity', 'desc': '工程创造性'},
-    }
-
     def __init__(self, config: Dict):
-        self.min_novelty = config.get('min_novelty', 0.7)
+        self.min_novelty = config.get('min_novelty', 0.5)
         self.independence_threshold = config.get('independence_threshold', 0.6)
         self._history: List[Dict] = []
+        self.gp = GeneticProgrammer(config.get('gp', {}))
+        self._state_buffer: List[Dict] = []  # 缓存环境状态供 GP 使用
+        self._label_buffer: List[int] = []   # 缓存行为标签供 GP 使用
+        self._emerge_count = 0
+
+    def record_state(self, env_state: Dict, behavior_label: int):
+        """记录环境状态和行为标签，供 GP 使用"""
+        self._state_buffer.append(env_state)
+        self._label_buffer.append(behavior_label)
+        # 保留最近 200 条
+        if len(self._state_buffer) > 200:
+            self._state_buffer = self._state_buffer[-200:]
+            self._label_buffer = self._label_buffer[-200:]
 
     def detect(self, behavior_tracker, existing_drive_names: List[str],
                memory_engine) -> Optional[EmergentDrive]:
         """
-        检测涌现驱动力
+        检测涌现驱动力 (v2: GP-based)
 
         步骤：
-        1. 分析最近行为的主导语义
-        2. 检查是否已有对应驱动
-        3. 评估新颖性和独立性
-        4. 生成涌现驱动
+        1. 检测行为分布变化
+        2. 收集数据（环境状态 + 行为标签）
+        3. 触发 GP 进化 eval 函数
+        4. 三重验证（相关性 + 因果力 + null model）
+        5. 生成自动命名的涌现驱动
         """
-        # 1. 行为语义分析
         recent_behaviors = behavior_tracker.get_recent_behaviors(30)
         if len(recent_behaviors) < 10:
             return None
 
-        behavior_semantics = []
-        for b in recent_behaviors:
-            cmd = b['command'].split()[0] if b['command'] else ''
-            semantic = self.BEHAVIOR_SEMANTICS.get(cmd, b['type'])
-            behavior_semantics.append(semantic)
-
-        # 2. 发现主导语义模式
-        semantics_counter = Counter(behavior_semantics)
-        dominant_semantic, dominant_count = semantics_counter.most_common(1)[0]
-        dominance_ratio = dominant_count / len(behavior_semantics)
-
-        # 3. 检查是否已存在对应驱动
-        # 即使dominance_ratio较低，如果该语义与现有驱动完全不同，也值得尝试
-        if dominance_ratio < 0.15:
+        # 检查是否已有足够数据供 GP
+        if len(self._state_buffer) < 30:
             return None
 
-        # 检查与现有驱动的独立性
-        semantic_drive_info = self.SEMANTIC_DRIVES.get(dominant_semantic)
-        if not semantic_drive_info:
+        # 检查是否已有涌现驱动力（限制最大数量）
+        if len(existing_drive_names) >= 6:
             return None
 
-        candidate_name = semantic_drive_info['name']
-
-        # 如果已经存在这个驱动，跳过
-        if any(candidate_name == existing for existing in existing_drive_names):
+        # 构建行为标签：最近 30 个周期中哪些属于新行为模式
+        # 使用简单的“新命令出现”作为行为标签
+        behavior_labels = self._build_behavior_labels(recent_behaviors)
+        if sum(behavior_labels[-len(recent_behaviors):]) < 3:
             return None
 
-        # 4. 评估新颖性
-        novelty = self._calculate_novelty(
-            candidate_name, dominant_semantic, existing_drive_names, memory_engine
+        # 触发 GP
+        evolved = self.gp.evolve(
+            behavior_labels=self._label_buffer,
+            env_states=self._state_buffer,
         )
 
-        if novelty < self.min_novelty:
+        if evolved is None:
             return None
 
-        # 5. 评估因果独立性（降低阈值以适应真实系统）
-        causal_independence = self._calculate_causal_independence(
-            behavior_tracker, recent_behaviors
-        )
-
-        if causal_independence < self.independence_threshold:
-            # 即使因果独立性略低，如果新颖性很高也允许涌现
-            if novelty < 0.9:
-                return None
-
-        # 6. 生成涌现驱动
-        # 用简单向量代替embedding矩阵
+        # 构建 EmergentDrive 对象
         cluster_center = np.zeros(64, dtype=np.float32)
-        np.random.seed(hash(dominant_semantic) % 2**31)
+        np.random.seed(hash(evolved.name) % (2**31))
         cluster_center = np.random.randn(64).astype(np.float32)
         norm = np.linalg.norm(cluster_center)
         if norm > 0:
@@ -153,49 +118,53 @@ class EmergenceDetector:
             if b['command'] and b.get('success')
         ))[:5]
 
+        self._emerge_count += 1
         emergent = EmergentDrive(
-            name=candidate_name,
-            description=semantic_drive_info['desc'],
+            name=evolved.name,
+            description=evolved.description,
             weight=0.15,
             source_behaviors=source_behaviors,
-            novelty_score=novelty,
-            causal_independence=causal_independence,
-            cluster_center=cluster_center
+            novelty_score=evolved.correlation,
+            causal_independence=evolved.behavioral_gain,
+            cluster_center=cluster_center,
+            emergence_pattern='gp_evolved',
+            evolved_fn=evolved.eval_fn,
+            expr_string=evolved.expr_string,
         )
 
         self._history.append({
             'timestamp': datetime.now().isoformat(),
             'drive': emergent.to_dict(),
-            'trigger_behaviors': behavior_semantics[:10],
-            'dominance_ratio': dominance_ratio
+            'gp_correlation': evolved.correlation,
+            'gp_behavioral_gain': evolved.behavioral_gain,
+            'gp_node_count': evolved.node_count,
+            'gp_expr': evolved.expr_string,
         })
 
         return emergent
 
+    def _build_behavior_labels(self, recent_behaviors: List[Dict]) -> List[int]:
+        """构建行为标签：1=属于当前新兴行为模式, 0=常规行为"""
+        # 使用已有的 _label_buffer，但需要根据新的行为数据更新最后一段
+        labels = list(self._label_buffer)
+        # 标记最近的周期：如果行为类型分布发生变化则为 1
+        types = [b.get('type', 'shell') for b in recent_behaviors]
+        type_counter = Counter(types)
+        most_common_type, most_common_count = type_counter.most_common(1)[0]
+        is_pattern = most_common_count / len(types) > 0.6 if types else False
+
+        # 更新最后 len(recent_behaviors) 个标签
+        for i in range(min(len(recent_behaviors), len(labels))):
+            if i < len(labels):
+                labels[-(i+1)] = 1 if is_pattern and recent_behaviors[-(i+1)].get('type') == most_common_type else labels[-(i+1)]
+
+        return labels
+
     def _calculate_novelty(self, candidate_name: str, semantic: str,
                            existing_drives: List[str],
                            memory_engine) -> float:
-        """
-        评估新颖性
-
-        1. 检查与现有驱动的语义距离
-        2. 检查记忆中是否有过类似目标
-        """
-        # 与现有驱动的语义距离
-        semantic_distances = []
-        for existing in existing_drives:
-            dist = self._semantic_distance(candidate_name, existing)
-            semantic_distances.append(dist)
-
-        min_distance = min(semantic_distances) if semantic_distances else 1.0
-
-        # 记忆中是否有相关记录
-        related_memories = memory_engine.recall(semantic, top_k=3, min_similarity=0.5)
-        memory_overlap = len(related_memories) / 3.0  # 越多记忆相关，越不新颖
-
-        # 新颖性 = 语义距离高 + 记忆中少见的
-        novelty = 0.7 * min_distance + 0.3 * (1.0 - memory_overlap)
-        return float(np.clip(novelty, 0, 1))
+        """评估新颖性（兼容接口）"""
+        return float(np.clip(self._emerge_count * 0.1 + 0.5, 0, 1))
 
     def _semantic_distance(self, name_a: str, name_b: str) -> float:
         """简单语义距离（基于共同词和字符重合度）"""
