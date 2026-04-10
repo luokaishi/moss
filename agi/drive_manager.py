@@ -4,9 +4,12 @@ DriveManager - 驱动力管理器
 """
 
 import numpy as np
-from typing import Dict, List, Optional, Callable
+from typing import Dict, List, Optional, Callable, TYPE_CHECKING
 from dataclasses import dataclass, field
 from datetime import datetime
+
+if TYPE_CHECKING:
+    from .environment import EnvState
 
 
 def _to_native(obj):

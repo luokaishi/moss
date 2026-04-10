@@ -13,8 +13,6 @@ import time
 import logging
 from typing import Dict, List, Optional
 from pathlib import Path
-from datetime import datetime
-
 from .drive_manager import DriveManager
 from .memory_engine import MemoryEngine
 from .environment import RealEnvironment, EnvState
@@ -196,7 +194,8 @@ class AGIAgent:
             # 使用 GP 进化的 eval 函数（非常数）
             eval_fn = getattr(new_drive, 'evolved_fn', None)
             if eval_fn is None:
-                eval_fn = lambda s: 0.5  # fallback
+                def eval_fn(s):
+                    return 0.5  # fallback
 
             success = self.drive_manager.add_emergent_drive(
                 name=new_drive.name,
@@ -253,7 +252,7 @@ class AGIAgent:
         mem_stats = self.memory.get_stats()
 
         print(f"\n--- Cycle {self.cycle} Status ---")
-        print(f"  Drives: ", end='')
+        print('  Drives: ', end='')
         for name, info in drives.items():
             marker = '*' if info['is_emergent'] else ''
             print(f"{name}={info['weight']:.2f}(s={info['score']:.2f}){marker} ", end='')
@@ -279,7 +278,7 @@ class AGIAgent:
         print(f"  Emerged drives: {len(self._emerged_drives)}")
         for name in self._emerged_drives:
             print(f"    - {name}")
-        print(f"\n  Final Drive Weights:")
+        print("\n  Final Drive Weights:")
         for name, info in drives.items():
             marker = ' [EMERGED]' if info['is_emergent'] else ''
             print(f"    {name}: weight={info['weight']:.3f}, stability={info['stability']:.2f}{marker}")

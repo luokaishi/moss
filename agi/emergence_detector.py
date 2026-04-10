@@ -5,12 +5,12 @@ EmergenceDetector - 涌现检测器 (v2: GP-based)
 """
 
 import numpy as np
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, field
+from typing import Dict, List, Optional
+from dataclasses import dataclass
 from datetime import datetime
 from collections import Counter
 
-from .genetic_programmer import GeneticProgrammer, EvolvedDrive
+from .genetic_programmer import GeneticProgrammer
 
 
 @dataclass
@@ -156,7 +156,9 @@ class EmergenceDetector:
         # 更新最后 len(recent_behaviors) 个标签
         for i in range(min(len(recent_behaviors), len(labels))):
             if i < len(labels):
-                labels[-(i+1)] = 1 if is_pattern and recent_behaviors[-(i+1)].get('type') == most_common_type else labels[-(i+1)]
+                pos = -(i + 1)
+                is_match = is_pattern and recent_behaviors[pos].get('type') == most_common_type
+                labels[pos] = 1 if is_match else labels[pos]
 
         return labels
 
@@ -173,8 +175,8 @@ class EmergenceDetector:
         jaccard = len(words_a & words_b) / max(len(words_a | words_b), 1)
         return 1.0 - jaccard
 
-    def _calculate_causal_independence(self, behavior_tracker,
-                                        recent_behaviors: List[Dict]) -> float:
+    def _calculate_causal_independence(
+            self, behavior_tracker, recent_behaviors):
         """
         评估因果独立性
 
@@ -202,7 +204,7 @@ class EmergenceDetector:
         second_types = Counter(b['type'] for b in second)
         all_types = set(first_types.keys()) | set(second_types.keys())
         type_change = sum(
-            abs(first_types.get(t, 0)/len(first) - second_types.get(t, 0)/len(second))
+            abs(first_types.get(t, 0) / len(first) - second_types.get(t, 0) / len(second))
             for t in all_types
         ) / 2.0
 

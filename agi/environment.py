@@ -4,13 +4,11 @@ RealEnvironment - 真实计算机系统环境接口
 行动：shell命令（带安全过滤）、文件读写
 """
 
-import os
 import subprocess
 import time
 import shutil
-import platform
 import random
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path

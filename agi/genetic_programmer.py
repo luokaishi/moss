@@ -7,9 +7,8 @@ GeneticProgrammer - 遗传编程涌现函数发现器
 
 import numpy as np
 import random
-from typing import Dict, List, Optional, Tuple, Callable
-from dataclasses import dataclass, field
-from copy import deepcopy
+from typing import Dict, List, Optional, Callable
+from dataclasses import dataclass
 
 np.random.seed(None)
 
@@ -30,17 +29,17 @@ TERMINALS_DYNAMIC = [
 ALL_TERMINALS = TERMINALS_STATIC + TERMINALS_DYNAMIC
 
 FUNCTIONS = {
-    'add':    {'fn': lambda a, b: a + b, 'arity': 2},
-    'sub':    {'fn': lambda a, b: a - b, 'arity': 2},
-    'mul':    {'fn': lambda a, b: a * b, 'arity': 2},
-    'div':    {'fn': lambda a, b: a / max(abs(b), 0.001) * np.sign(b), 'arity': 2},
-    'neg':    {'fn': lambda a: -a, 'arity': 1},
+    'add': {'fn': lambda a, b: a + b, 'arity': 2},
+    'sub': {'fn': lambda a, b: a - b, 'arity': 2},
+    'mul': {'fn': lambda a, b: a * b, 'arity': 2},
+    'div': {'fn': lambda a, b: a / max(abs(b), 0.001) * np.sign(b), 'arity': 2},
+    'neg': {'fn': lambda a: -a, 'arity': 1},
     'sigmoid': {'fn': lambda a: 1.0 / (1.0 + np.exp(-np.clip(a, -20, 20))), 'arity': 1},
-    'relu':   {'fn': lambda a: max(0.0, a), 'arity': 1},
+    'relu': {'fn': lambda a: max(0.0, a), 'arity': 1},
     'clip01': {'fn': lambda a: np.clip(a, 0, 1), 'arity': 1},
-    'abs':    {'fn': lambda a: abs(a), 'arity': 1},
-    'sqrt':   {'fn': lambda a: np.sqrt(abs(a)), 'arity': 1},
-    'gt':     {'fn': lambda a, b: 1.0 if a > b else 0.0, 'arity': 2},
+    'abs': {'fn': lambda a: abs(a), 'arity': 1},
+    'sqrt': {'fn': lambda a: np.sqrt(abs(a)), 'arity': 1},
+    'gt': {'fn': lambda a, b: 1.0 if a > b else 0.0, 'arity': 2},
 }
 
 
@@ -405,7 +404,6 @@ class GeneticProgrammer:
 
         # Behavioral gain
         gain = self._behavioral_gain_from_preds(B, predictions)
-
 
         # 复杂度惩罚
         nc = tree.node_count()

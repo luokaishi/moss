@@ -4,7 +4,7 @@ BehaviorTracker - 行为跟踪与变化检测
 """
 
 import numpy as np
-from typing import Dict, List, Optional
+from typing import Dict, List
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -98,9 +98,9 @@ class BehaviorTracker:
         # --- 综合判断 ---
         # 任何单一指标超过阈值就触发
         has_change = (
-            change_score > self.change_threshold or
-            new_action_ratio > 0.3 or
-            success_change > 0.4
+            change_score > self.change_threshold
+            or new_action_ratio > 0.3
+            or success_change > 0.4
         )
 
         if has_change:
