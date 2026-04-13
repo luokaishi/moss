@@ -27,8 +27,11 @@ from datetime import datetime
 from typing import Dict, List, Tuple
 # import matplotlib.pyplot as plt  # Optional for visualization
 
-sys.path.insert(0, '/workspace/projects/moss')
-sys.path.insert(0, '/workspace/projects/moss/v5/core')
+import sys
+import os
+_MOSS_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, _MOSS_ROOT)
+sys.path.insert(0, os.path.join(_MOSS_ROOT, '_archive_v5', 'core'))
 
 from pure_algorithm_agent import PureMOSSAgent
 

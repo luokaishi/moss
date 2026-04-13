@@ -18,7 +18,9 @@ from dataclasses import dataclass
 from datetime import datetime
 import copy
 
-sys.path.insert(0, '/workspace/projects/moss')
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 @dataclass

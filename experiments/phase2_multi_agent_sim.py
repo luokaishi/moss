@@ -9,7 +9,8 @@ MOSS Phase 2 - Multi-Agent Simulation
 """
 
 import sys
-sys.path.insert(0, '/workspace/projects/moss')
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from moss.core import UnifiedMOSSAgent, MOSSConfig
 from moss.core.phase2_components import MessageHub, TaskPool, TrustNetwork, DivisionOfLaborAnalyzer, Message
