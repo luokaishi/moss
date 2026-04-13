@@ -178,11 +178,25 @@ class InterventionValidator:
         se = np.sqrt(t_success * (1 - t_success) / n + c_success * (1 - c_success) / n + 1e-8)
         z = (t_success - c_success) / se
 
-        # 双尾检验 p-value
-        from scipy import stats
-        p_value = 2 * (1 - stats.norm.cdf(abs(z)))
+        # 双尾检验 p-value（使用正态CDF近似）
+        p_value = self._norm_cdf_approx(abs(z))
+        p_value = 2 * (1 - p_value)
 
         return float(p_value)
+
+    def _norm_cdf_approx(self, x: float) -> float:
+        """标准正态分布CDF的Hastings近似（避免scipy依赖）"""
+        if x < 0:
+            return 1 - self._norm_cdf_approx(-x)
+        # 常数
+        a1, a2, a3, a4, a5 = 0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429
+        p = 0.3275911
+        # 计算
+        sign = 1 if x >= 0 else -1
+        x = abs(x) / (2 ** 0.5)
+        t = 1.0 / (1.0 + p * x)
+        y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * np.exp(-x * x)
+        return 0.5 * (1.0 + sign * y)
 
     def _compute_ci(self, delta: float, treatment: Dict, control: Dict) -> tuple:
         """计算置信区间"""
