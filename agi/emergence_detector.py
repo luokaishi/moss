@@ -10,7 +10,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from collections import Counter
 
+import logging
+
 from .genetic_programmer import GeneticProgrammer
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -98,8 +102,8 @@ class EmergenceDetector:
             return None
 
         # 条件 4: 标签中有足够正值（GP 需要正负样本）
-        pos_count = sum(1 for l in labels if l > 0.6)
-        neg_count = sum(1 for l in labels if l < 0.4)
+        pos_count = sum(1 for lb in labels if lb > 0.6)
+        neg_count = sum(1 for lb in labels if lb < 0.4)
         if pos_count < 3 or neg_count < 3:
             return None
 

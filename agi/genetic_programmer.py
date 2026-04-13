@@ -498,7 +498,7 @@ class GeneticProgrammer:
     # ========== 干预式因果验证 ==========
 
     def behavioral_gain_interventional(self, candidate_drive, agent_config: Dict,
-                                        existing_drives: List[str]) -> Dict:
+                                       existing_drives: List[str]) -> Dict:
         """
         干预式因果验证（新增方法，不破坏现有逻辑）
 

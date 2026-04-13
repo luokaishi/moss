@@ -14,7 +14,7 @@
 """
 
 import numpy as np
-from typing import Dict, List, Optional
+from typing import Dict, List
 from dataclasses import dataclass
 import logging
 import tempfile
@@ -107,8 +107,6 @@ class InterventionValidator:
     def _run_treatment(self, candidate_drive, agent_config: Dict,
                        existing_drives: List[str]) -> Dict:
         """运行 Treatment 组：强制启用候选驱动力"""
-        from .agent import AGIAgent
-
         # 创建临时 Agent
         agent = self._create_test_agent(agent_config)
 
@@ -139,8 +137,6 @@ class InterventionValidator:
     def _run_control(self, candidate_drive, agent_config: Dict,
                      existing_drives: List[str]) -> Dict:
         """运行 Control 组：正常状态（不添加候选驱动力）"""
-        from .agent import AGIAgent
-
         # 创建临时 Agent（不添加候选驱动力）
         agent = self._create_test_agent(agent_config)
 
