@@ -229,7 +229,7 @@ class GeneticProgrammer:
         self.mse_weight = cfg.get('mse_weight', 0.2)
         self.null_model_samples = cfg.get('null_model_samples', 100)
         self.validation_ratio = cfg.get('validation_ratio', 0.3)
-        self.acceptance_threshold = cfg.get('acceptance_threshold', 0.5)
+        self.acceptance_threshold = cfg.get('acceptance_threshold', 0.2)  # 降低到 0.2
         self.min_samples = cfg.get('min_samples', 20)
 
     def evolve(self, behavior_labels: List[int], env_states: List[Dict],

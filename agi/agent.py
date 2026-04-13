@@ -51,6 +51,7 @@ class AGIAgent:
             change_threshold=emergence_cfg.get('change_threshold', 0.05)
         )
         self.emergence_detector = EmergenceDetector(emergence_cfg)
+        self.emergence_detector._agent_config = self.config  # 供干预验证使用
 
         # 统计
         self._emerged_drives: List[str] = []

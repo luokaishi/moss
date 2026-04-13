@@ -65,6 +65,14 @@ emergence:
   change_threshold: 0.05     # 行为变化阈值
   min_novelty: 0.7           # 最低新颖性分数
   independence_threshold: 0.6 # 因果独立性阈值
+  gp_cooldown: 30            # GP 触发冷却周期
+
+  # 干预式因果验证（新增）
+  intervention_validation:
+    enabled: true             # 启用干预验证
+    cycles_per_condition: 20 # 每组实验周期数（减少加速）
+    warmup_cycles: 3         # 预热周期
+    significance_threshold: 0.15 # p 值阈值（宽松）（宽松版）
 
 # 环境配置
 environment:

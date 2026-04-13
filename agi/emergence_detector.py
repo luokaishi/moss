@@ -51,6 +51,7 @@ class EmergenceDetector:
     """
 
     def __init__(self, config: Dict):
+        self.config = config  # 保存配置供后续使用
         self.min_novelty = config.get('min_novelty', 0.5)
         self.independence_threshold = config.get('independence_threshold', 0.6)
         self._history: List[Dict] = []
@@ -65,6 +66,7 @@ class EmergenceDetector:
         self._emerge_count = 0
         self._last_gp_cycle = 0
         self._gp_cooldown = config.get('gp_cooldown', 30)
+        self._agent_config = None  # 由 agent 设置
 
     def record_state(self, env_state: Dict, behavior_label: int):
         """记录环境状态和行为标签，供 GP 使用"""
@@ -118,6 +120,35 @@ class EmergenceDetector:
 
         if evolved is None:
             return None
+
+        # ========== 干预式因果验证 ==========
+        # 只有启用干预验证时才执行
+        intv_cfg = self.config.get('intervention_validation', {})
+        if intv_cfg and intv_cfg.get('enabled', False):
+            from .intervention_validator import InterventionValidator
+            logger.info(f"  >> 开始干预式验证: {evolved.name}")
+
+            validator = InterventionValidator({
+                'cycles_per_condition': intv_cfg.get('cycles_per_condition', 30),
+                'warmup_cycles': intv_cfg.get('warmup_cycles', 5),
+                'significance_threshold': intv_cfg.get('significance_threshold', 0.1),
+            })
+
+            # 需要 agent_config 来创建临时 Agent
+            agent_config = getattr(self, '_agent_config', None)
+            if agent_config:
+                result = validator.validate_drive(evolved, agent_config, existing_drive_names)
+
+                # 只有显著且正向因果效应才接受
+                if not result.significant or result.delta_behavior <= 0:
+                    logger.info(f"  >> 干预验证失败: Δ={result.delta_behavior:.4f}, p={result.p_value:.4f}")
+                    self._state_buffer.clear()
+                    self._label_buffer.clear()
+                    return None
+
+                logger.info(f"  >> 干预验证通过: Δ={result.delta_behavior:.4f}, p={result.p_value:.4f}")
+                # 更新 causal_independence 为干预式因果效应
+                evolved.behavioral_gain = result.delta_behavior
 
         # 清空缓冲区，避免重复学习相同模式
         self._state_buffer.clear()
