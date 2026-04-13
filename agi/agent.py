@@ -57,6 +57,11 @@ class AGIAgent:
         self._start_time = time.time()
         self._seen_commands_ever: set = set()
 
+        # 干预实验模式
+        self._intervention_mode = False
+        self._forced_drive = None
+        self._disabled_drives = set()
+
         # 日志
         logging.basicConfig(
             level=logging.INFO,
@@ -248,6 +253,88 @@ class AGIAgent:
                     importance=0.9,
                     tags=['emergence', new_drive.name, 'gp_evolved']
                 )
+
+    # ========== 干预实验模式方法 ==========
+
+    def set_intervention_mode(self, forced_drive: str = None,
+                              disabled_drives: List[str] = None) -> None:
+        """
+        设置干预实验模式
+
+        Args:
+            forced_drive: 强制使用的驱动力名称（优先级最高）
+            disabled_drives: 要禁用的驱动力名称列表
+        """
+        self._intervention_mode = True
+        self._forced_drive = forced_drive
+        self._disabled_drives = set(disabled_drives or [])
+
+        # 应用干预设置
+        if forced_drive:
+            self.drive_manager.force_drive(forced_drive)
+        for d in self._disabled_drives:
+            self.drive_manager.disable_drive(d)
+
+    def clear_intervention_mode(self, saved_weights: Dict[str, float] = None) -> None:
+        """清除干预模式，恢复正常运行"""
+        self._intervention_mode = False
+        self._forced_drive = None
+        self._disabled_drives.clear()
+
+        if saved_weights:
+            self.drive_manager.restore_weights(saved_weights)
+        else:
+            self.drive_manager._normalize_weights()
+
+    def run_intervention_cycles(self, cycles: int) -> Dict:
+        """
+        在干预模式下运行指定周期数，收集行为指标
+
+        Returns:
+            {
+                'success_rate': float,
+                'reward_avg': float,
+                'behavior_diversity': float,
+                'novel_action_ratio': float,
+                'drive_usage': Dict[str, int]
+            }
+        """
+        initial_cycle = self.cycle
+
+        metrics = {
+            'success_count': 0,
+            'total_reward': 0.0,
+            'action_types': [],
+            'novel_actions': set(),
+            'drive_usage': {}
+        }
+
+        for i in range(cycles):
+            self.cycle = initial_cycle + i + 1
+            self._one_cycle()
+
+            # 收集指标
+            recent = self.behavior_tracker.get_recent_behaviors(1)
+            if recent:
+                rec = recent[0]
+                if rec.get('success', False):
+                    metrics['success_count'] += 1
+                metrics['total_reward'] += rec.get('reward', 0.5)
+                metrics['action_types'].append(rec.get('type', 'unknown'))
+
+                drive = rec.get('drive', 'unknown')
+                metrics['drive_usage'][drive] = metrics['drive_usage'].get(drive, 0) + 1
+
+        # 计算最终指标
+        result = {
+            'success_rate': metrics['success_count'] / max(cycles, 1),
+            'reward_avg': metrics['total_reward'] / max(cycles, 1),
+            'behavior_diversity': len(set(metrics['action_types'])) / max(len(metrics['action_types']), 1),
+            'novel_action_ratio': len(metrics['novel_actions']) / max(cycles, 1),
+            'drive_usage': metrics['drive_usage']
+        }
+
+        return result
 
     def _state_to_query(self, state: EnvState) -> str:
         """将环境状态转为记忆检索查询"""

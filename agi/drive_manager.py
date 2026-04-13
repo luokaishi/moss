@@ -158,6 +158,43 @@ class DriveManager:
             for d in self.drives.values():
                 d.weight /= total
 
+    # ========== 干预式验证支持方法 ==========
+
+    def force_drive(self, drive_name: str) -> None:
+        """
+        干预模式：强制使用指定驱动力
+        将该驱动力权重设为接近1.0，其他设为接近0
+        """
+        if drive_name not in self.drives:
+            return
+        for name, drive in self.drives.items():
+            if name == drive_name:
+                drive.weight = 0.99
+            else:
+                drive.weight = 0.01 / max(len(self.drives) - 1, 1)
+        # 不调用 _normalize_weights()，保持干预状态
+
+    def disable_drive(self, drive_name: str) -> None:
+        """
+        干预模式：禁用指定驱动力
+        将该驱动力权重设为接近0，重新归一化其他驱动力
+        """
+        if drive_name not in self.drives:
+            return
+        self.drives[drive_name].weight = 0.01
+        self._normalize_weights()
+
+    def save_weights(self) -> Dict[str, float]:
+        """保存当前权重"""
+        return {name: drive.weight for name, drive in self.drives.items()}
+
+    def restore_weights(self, saved_weights: Dict[str, float]) -> None:
+        """恢复保存的权重（干预实验后恢复）"""
+        for name, weight in saved_weights.items():
+            if name in self.drives:
+                self.drives[name].weight = weight
+        self._normalize_weights()
+
     def evaluate_all(self, state: 'EnvState') -> Dict[str, float]:
         """评估所有驱动力得分"""
         scores = {}

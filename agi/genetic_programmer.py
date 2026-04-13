@@ -494,3 +494,49 @@ class GeneticProgrammer:
         template = op_templates.get(top_op, 'unknown')
         features_str = " and ".join(top_features)
         return f"{template}: responds to {features_str}"
+
+    # ========== 干预式因果验证 ==========
+
+    def behavioral_gain_interventional(self, candidate_drive, agent_config: Dict,
+                                        existing_drives: List[str]) -> Dict:
+        """
+        干预式因果验证（新增方法，不破坏现有逻辑）
+
+        使用干预实验计算因果效应：
+        Δbehavior = E[behavior | do(f=high)] - E[behavior | do(f=low)]
+
+        Args:
+            candidate_drive: EvolvedDrive 候选驱动力
+            agent_config: Agent 配置
+            existing_drives: 现有驱动力名称列表
+
+        Returns:
+            {
+                'delta_behavior': float,
+                'treatment_metrics': Dict,
+                'control_metrics': Dict,
+                'significant': bool,
+                'p_value': float
+            }
+        """
+        from .intervention_validator import InterventionValidator
+
+        validator = InterventionValidator({
+            'cycles_per_condition': 50,
+            'warmup_cycles': 10,
+            'significance_threshold': 0.05
+        })
+
+        result = validator.validate_drive(
+            candidate_drive,
+            agent_config,
+            existing_drives
+        )
+
+        return {
+            'delta_behavior': result.delta_behavior,
+            'treatment_metrics': result.treatment_metrics,
+            'control_metrics': result.control_metrics,
+            'significant': result.significant,
+            'p_value': result.p_value
+        }

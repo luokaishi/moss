@@ -582,5 +582,39 @@ class TestAgentIntegration:
         assert len(s) > 0
 
 
+class TestInterventionValidator:
+    """干预验证器测试"""
+
+    def test_validator_initialization(self):
+        """测试验证器初始化"""
+        from agi.intervention_validator import InterventionValidator
+        validator = InterventionValidator({'cycles_per_condition': 30})
+        assert validator.cycles_per_condition == 30
+        assert validator.warmup_cycles == 10
+
+    def test_force_drive_changes_weights(self):
+        """测试强制驱动力"""
+        dm = DriveManager([make_drive_config(n) for n in ['survival', 'curiosity']])
+        dm.force_drive('survival')
+        assert dm.drives['survival'].weight > 0.9
+        assert dm.drives['curiosity'].weight < 0.1
+
+    def test_disable_drive_reduces_weight(self):
+        """测试禁用驱动力"""
+        dm = DriveManager([make_drive_config(n) for n in ['survival', 'curiosity']])
+        original_weight = dm.drives['curiosity'].weight
+        dm.disable_drive('curiosity')
+        assert dm.drives['curiosity'].weight < original_weight
+
+    def test_save_and_restore_weights(self):
+        """测试权重保存与恢复"""
+        dm = DriveManager([make_drive_config(n) for n in ['survival', 'curiosity']])
+        saved = dm.save_weights()
+        dm.force_drive('survival')
+        dm.restore_weights(saved)
+        total = sum(d.weight for d in dm.drives.values())
+        assert abs(total - 1.0) < 1e-6
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v', '--tb=short'])
