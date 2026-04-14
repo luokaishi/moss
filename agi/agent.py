@@ -192,18 +192,20 @@ class AGIAgent:
         self.emergence_detector.record_state(env_dict, label)
 
     def _compute_behavior_label(self) -> float:
-        """计算行为标签 - 使用周期性模式确保GP有正负样本"""
-        # 使用周期位置创建周期性标签模式
-        # 这样GP可以学习"在哪些周期条件下"行为模式变化
+        """计算行为标签 - 使用真实外部信号（任务完成率 + 资源效率）"""
+        state = self.env.perceive()
 
-        cycle_phase = (self.cycle % 50) / 50.0  # 0-1周期性变化
+        # 真实外部信号1: 任务完成率（长期目标进展）
+        task_progress = state.task_completion_rate
 
-        # 组合：周期相位 + 环境噪声
-        label = cycle_phase * 0.7 + np.random.uniform(0, 0.3)
+        # 真实外部信号2: 资源效率（资源消耗越少越好）
+        resource_efficiency = 1.0 - state.resource_level
 
-        # 偶尔添加极端值确保分布 tails
-        if np.random.random() < 0.1:
-            label = np.random.choice([0.1, 0.9])
+        # 真实外部信号3: 系统稳定性（错误率倒数）
+        stability = 1.0 - state.error_rate
+
+        # 加权组合（确保方差）
+        label = 0.5 * task_progress + 0.3 * resource_efficiency + 0.2 * stability
 
         return float(np.clip(label, 0, 1))
 
