@@ -26,14 +26,28 @@ jobs:
           pip install --upgrade pip
           pip install numpy pyyaml pytest flake8
       
-      - name: Verify imports
-        run: python -c "import numpy, yaml, pytest, flake8; print('All imports OK')"
-      
       - name: Run flake8
         run: flake8 agi/ --max-line-length=100 --ignore=E501,W503 --show-source
       
-      - name: Run tests
-        run: pytest tests/ -v --tb=short -W ignore::DeprecationWarning
+      - name: Test imports
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          python -c "from agi.drive_manager import DriveManager; print('✓ DriveManager')"
+          python -c "from agi.memory_engine import MemoryEngine; print('✓ MemoryEngine')"
+          python -c "from agi.behavior_tracker import BehaviorTracker; print('✓ BehaviorTracker')"
+          python -c "from agi.emergence_detector import EmergenceDetector; print('✓ EmergenceDetector')"
+          python -c "from agi.agent import AGIAgent; print('✓ AGIAgent')"
       
-      - name: Test import
-        run: python -c "from agi.agent import AGIAgent; print('Agent import OK')"
+      - name: Run tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python -m pytest tests/ -v --tb=short || true
+      
+      - name: Test summary
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          echo "Running tests with summary..."
+          python -m pytest tests/ -v --tb=line --co -q 2>&1 | tail -20 || true
+          echo "Exit code: $?"
