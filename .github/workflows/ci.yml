@@ -27,28 +27,32 @@ jobs:
           pip install numpy pyyaml pytest flake8
       
       - name: Verify imports
-        run: python -c "import numpy, yaml, pytest, flake8; print('All imports OK')"
+        run: |
+          python -c "import numpy, yaml, pytest, flake8; print('All imports OK')"
+          python -c "import sys; sys.path.insert(0, '.'); from agi.agent import AGIAgent; print('AGIAgent import OK')"
       
       - name: Run flake8
         run: flake8 agi/ --max-line-length=100 --ignore=E501,W503 --show-source
       
-      - name: Debug test discovery
+      - name: Test single import
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Directory structure:"
-          ls -la
-          echo "Tests directory:"
-          ls -la tests/
-          echo "Python path:"
-          python -c "import sys; print(chr(10).join(sys.path))"
-          echo "Test discovery:"
-          python -m pytest tests/ --collect-only 2>&1 || true
+          cd ${{ github.workspace }}
+          python -c "from agi.drive_manager import DriveManager; print('DriveManager OK')"
+          python -c "from agi.memory_engine import MemoryEngine; print('MemoryEngine OK')"
+          python -c "from agi.behavior_tracker import BehaviorTracker; print('BehaviorTracker OK')"
+          python -c "from agi.emergence_detector import EmergenceDetector; print('EmergenceDetector OK')"
       
-      - name: Run tests
+      - name: Run tests with full output
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: |
-          python -m pytest tests/ -v --tb=short -W ignore::DeprecationWarning --color=yes 2>&1
+          cd ${{ github.workspace }}
+          python -m pytest tests/test_agi_core.py -v --tb=long --capture=no -x 2>&1 | head -200
+        continue-on-error: true
       
-      - name: Test import
-        run: python -c "from agi.agent import AGIAgent; print('Agent import OK')"
+      - name: Run all tests (final)
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          cd ${{ github.workspace }}
+          python -m pytest tests/ -v --tb=short 2>&1
