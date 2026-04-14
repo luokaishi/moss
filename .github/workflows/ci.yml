@@ -8,13 +8,32 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install numpy pyyaml pytest flake8
-      - run: flake8 agi/ --max-line-length=100 --ignore=E501,W503
-      - run: python -m pytest tests/ -v
-      - run: python -c "from agi.agent import AGIAgent; print('import OK')"
+          cache: 'pip'
+      
+      - name: Uninstall conflicting packages
+        run: pip uninstall -y pylama pylama-core 2>/dev/null || true
+      
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install numpy pyyaml pytest flake8
+      
+      - name: Verify imports
+        run: python -c "import numpy, yaml, pytest, flake8; print('All imports OK')"
+      
+      - name: Run flake8
+        run: flake8 agi/ --max-line-length=100 --ignore=E501,W503 --show-source
+      
+      - name: Run tests
+        run: pytest tests/ -v --tb=short -W ignore::DeprecationWarning
+      
+      - name: Test import
+        run: python -c "from agi.agent import AGIAgent; print('Agent import OK')"
