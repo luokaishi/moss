@@ -32,8 +32,23 @@ jobs:
       - name: Run flake8
         run: flake8 agi/ --max-line-length=100 --ignore=E501,W503 --show-source
       
+      - name: Debug test discovery
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory structure:"
+          ls -la
+          echo "Tests directory:"
+          ls -la tests/
+          echo "Python path:"
+          python -c "import sys; print(chr(10).join(sys.path))"
+          echo "Test discovery:"
+          python -m pytest tests/ --collect-only 2>&1 || true
+      
       - name: Run tests
-        run: pytest tests/ -v --tb=short -W ignore::DeprecationWarning
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          python -m pytest tests/ -v --tb=short -W ignore::DeprecationWarning --color=yes 2>&1
       
       - name: Test import
         run: python -c "from agi.agent import AGIAgent; print('Agent import OK')"
