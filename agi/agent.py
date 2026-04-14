@@ -195,19 +195,16 @@ class AGIAgent:
         """计算行为标签 - 使用周期性模式确保GP有正负样本"""
         # 使用周期位置创建周期性标签模式
         # 这样GP可以学习"在哪些周期条件下"行为模式变化
-        
+
         cycle_phase = (self.cycle % 50) / 50.0  # 0-1周期性变化
-        
-        # 获取环境状态作为调制信号
-        state = self.env.perceive()
-        
+
         # 组合：周期相位 + 环境噪声
         label = cycle_phase * 0.7 + np.random.uniform(0, 0.3)
-        
+
         # 偶尔添加极端值确保分布 tails
         if np.random.random() < 0.1:
             label = np.random.choice([0.1, 0.9])
-        
+
         return float(np.clip(label, 0, 1))
 
     def _try_emergence(self):
