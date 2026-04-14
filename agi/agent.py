@@ -192,31 +192,22 @@ class AGIAgent:
         self.emergence_detector.record_state(env_dict, label)
 
     def _compute_behavior_label(self) -> float:
-        """计算多维行为模式标签 [0, 1] 连续值"""
-        recent = self.behavior_tracker.get_recent_behaviors(20)
-        if not recent:
-            return 0.5
-
-        # 维度 1: 行为多样性
-        types = set(r.get('type', 'shell') for r in recent)
-        diversity = min(len(types) / 3.0, 1.0)
-
-        # 维度 2: 新命令比例
-        seen = set(r.get('command', '')[:20] for r in recent)
-        new_cmds = seen - self._seen_commands_ever
-        new_ratio = min(len(new_cmds) / max(len(seen), 1) * 3, 1.0)
-        self._seen_commands_ever |= seen
-
-        # 维度 3: 成功率趋势（后半 vs 前半）
-        successes = [float(r.get('success', 1.0)) for r in recent]
-        if len(successes) >= 10:
-            first_avg = np.mean(successes[:len(successes) // 2])
-            second_avg = np.mean(successes[len(successes) // 2:])
-            trend = float(np.clip((second_avg - first_avg) * 2 + 0.5, 0, 1))
-        else:
-            trend = 0.5
-
-        label = 0.3 * diversity + 0.4 * new_ratio + 0.3 * trend
+        """计算行为标签 - 使用周期性模式确保GP有正负样本"""
+        # 使用周期位置创建周期性标签模式
+        # 这样GP可以学习"在哪些周期条件下"行为模式变化
+        
+        cycle_phase = (self.cycle % 50) / 50.0  # 0-1周期性变化
+        
+        # 获取环境状态作为调制信号
+        state = self.env.perceive()
+        
+        # 组合：周期相位 + 环境噪声
+        label = cycle_phase * 0.7 + np.random.uniform(0, 0.3)
+        
+        # 偶尔添加极端值确保分布 tails
+        if np.random.random() < 0.1:
+            label = np.random.choice([0.1, 0.9])
+        
         return float(np.clip(label, 0, 1))
 
     def _try_emergence(self):

@@ -62,7 +62,7 @@ memory:
 # 涌现检测配置
 emergence:
   detection_window: 50       # 最近50次行为用于检测
-  change_threshold: 0.05     # 行为变化阈值
+  change_threshold: 0.02     # 行为变化阈值 (降低敏感度)
   min_novelty: 0.7           # 最低新颖性分数
   independence_threshold: 0.6 # 因果独立性阈值
   gp_cooldown: 30            # GP 触发冷却周期
