@@ -1,10 +1,18 @@
-# MOSS - Multi-Objective Self-Driven Agent
+# MOSS/MVES v5.4.0 - Multi-Objective Self-Driven Agent
 
+> **MVES Branch** | Classic Emergent Drive Research Baseline
+>
 > An autonomous AI agent that operates without external tasks, discovering and evolving its own drive functions through genetic programming.
+>
+> 🏷️ **Version**: v5.4.0 | **Branch**: `mves` | **Status**: Stable Research Baseline
+>
+> 📊 **Key Achievement**: 57,300+ cycles, 86% emergence detection rate, Manus Evaluation Passed
 
-## What is MOSS?
+## What is MOSS/MVES?
 
-MOSS is a research prototype exploring whether AI systems can develop **intrinsic motivations** without task-specific reward signals. It combines multi-objective drive systems with genetic programming (GP) to discover and validate emergent behavioral patterns.
+**MVES** (Multi-Vector Evolution System) is the classic research branch exploring whether AI systems can develop **intrinsic motivations** without task-specific reward signals.
+
+> 🔄 **Note**: This is the `mves` branch - a stable research baseline. For the latest Open-Ended Evolution Framework (OEF), see the `main` branch. It combines multi-objective drive systems with genetic programming (GP) to discover and validate emergent behavioral patterns.
 
 **Key idea**: Instead of optimizing for externally defined rewards, the agent uses internal drive evaluations (survival, curiosity, influence, optimization) and autonomously discovers new drive functions when behavioral patterns shift.
 
@@ -183,14 +191,26 @@ What we claim vs. don't claim:
 
 ## Documentation
 
+### v5.4.0 Core Documents
+
 | Document | Description |
 |----------|-------------|
-| `MOSS_Final_Report.md` | Comprehensive project report |
+| `PROJECT_STATUS_v5.4.0.md` | Current project status and milestones |
+| `docs/mves/MANUS_EVALUATION_REPORT_v5.4.0.md` | **Manus External Evaluation Report** |
+| `docs/mves/ROADMAP_v5.5.0.md` | Next iteration roadmap |
+
+### Research Reports
+
+| Document | Description |
+|----------|-------------|
+| `MOSS_Final_Report.md` | Comprehensive project report (v5.4.0) |
 | `causal_verification_report.md` | Causal experiment results |
 | `gp_implementation_report.md` | GP emergence implementation details |
 | `proposal_gp_emergence.md` | GP design proposal (reviewed) |
 | `response_to_chatgpt_evaluation.md` | Response to external review |
 | `response_to_gp_review.md` | Response to GP proposal review |
+
+> 📌 **Note**: This branch (`mves`) maintains the classic MVES research baseline at v5.4.0. For the Open-Ended Evolution Framework (OEF) evolution, see the `main` branch.
 
 ## Requirements
 

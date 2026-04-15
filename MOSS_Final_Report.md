@@ -1,12 +1,18 @@
-# MOSS: Multi-Objective Self-Driven System
+# MOSS/MVES v5.4.0: Multi-Objective Self-Driven System
 
 ## 自主涌现驱动力 AGI Agent — 项目总报告
 
-**版本**: 5.4.0
-**日期**: 2025-04-10
-**作者**: Cash, Fuxi
-**仓库**: https://github.com/luokaishi/moss
-**分支**: mves
+> **⚠️ MVES Branch (Classic Research Baseline)**
+> 
+> This is the stable v5.4.0 release on the `mves` branch, serving as the research baseline for emergent drive studies.
+> For the Open-Ended Evolution Framework (OEF), see the `main` branch.
+
+**版本**: 5.4.0  
+**日期**: 2025-04-10  
+**作者**: Cash, Fuxi  
+**仓库**: https://github.com/luokaishi/moss  
+**分支**: `mves` (独立版本线)  
+**标签**: [`v5.4.0`](https://github.com/luokaishi/moss/releases/tag/v5.4.0)
 
 ---
 
