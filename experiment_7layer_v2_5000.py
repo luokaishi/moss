@@ -22,13 +22,8 @@ from agi.goal import GoalSystem
 from agi.meta_drive.self_model_v2 import SelfModelV2
 from agi.meta_drive.meta_controller_v2 import MetaControllerV2
 
-# 修改GoalSystem的轨迹长度
-from agi.goal.goal_system import TrajectoryBuffer
-TrajectoryBuffer.__init__ = lambda self, max_trajectories=50, trajectory_length=200: (
-    setattr(self, 'max_trajectories', max_trajectories),
-    setattr(self, 'trajectory_length', trajectory_length),
-    setattr(self, 'trajectories', __import__('collections').deque(maxlen=max_trajectories))
-)[0]
+# 注意：GoalSystem现在默认使用trajectory_length=100
+# 如需200，需要修改agi/goal/goal_system.py中的默认值
 
 output_dir = Path('experiments/7layer_v2_5000')
 output_dir.mkdir(parents=True, exist_ok=True)
