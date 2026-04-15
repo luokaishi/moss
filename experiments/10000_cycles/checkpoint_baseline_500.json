@@ -1,0 +1,61 @@
+{
+  "phase": "baseline",
+  "cycle": 500,
+  "timestamp": "2026-04-14T14:24:15.868417",
+  "emergence_events": [
+    {
+      "cycle": 82,
+      "name": "auto_success_rate_recent",
+      "type": "emergence"
+    }
+  ],
+  "drives": {
+    "survival": {
+      "weight": 0.6,
+      "score": 0.7960363691208172,
+      "stability": 0.9999995663602532,
+      "is_emergent": false,
+      "history_len": 200
+    },
+    "curiosity": {
+      "weight": 0.10389610389610397,
+      "score": 0.6225242718446602,
+      "stability": 0.9999999999999998,
+      "is_emergent": false,
+      "history_len": 200
+    },
+    "influence": {
+      "weight": 0.10389610389610397,
+      "score": 1.0,
+      "stability": 1.0,
+      "is_emergent": false,
+      "history_len": 200
+    },
+    "optimization": {
+      "weight": 0.08311688311688323,
+      "score": 0.8400000000000001,
+      "stability": 1.0,
+      "is_emergent": false,
+      "history_len": 200
+    },
+    "auto_success_rate_recent": {
+      "weight": 0.10909090909090895,
+      "score": 0.5,
+      "stability": 1.0,
+      "is_emergent": true,
+      "history_len": 200
+    }
+  },
+  "behavior": {
+    "total": 250,
+    "window_total": 50,
+    "recent_types": {
+      "shell": 43,
+      "write_file": 7
+    },
+    "success_rate": 1.0,
+    "avg_reward": 1.0,
+    "unique_commands_ever": 79,
+    "changes_detected": 0
+  }
+}
