@@ -39,19 +39,20 @@
 
 ---
 
-#### 2. 行为多样性扩展
+#### 2. 行为多样性扩展 ✅ 进行中
 **问题**: Agent 收敛到 shell 为主的策略 (86% shell, 14% write_file)  
 **目标**: 行为类型分布更均衡，探索更多 action 类型
 
 **任务**:
-- [ ] 扩展 action space:
-  - 文件编辑 (edit_file, append_file)
-  - 代码执行 (exec_python)
-  - 网络操作 (fetch_url, ping)
-  - 数据分析 (analyze_log, generate_report)
+- [x] 扩展 action space - `RealEnvironmentV2`:
+  - [x] 文件编辑 (edit_file: append/prepend/replace)
+  - [x] 代码执行 (exec_python) - AST安全检查
+  - [x] 数据分析 (analyze_data: workspace/actions)
+  - [x] 报告生成 (generate_report: summary/diversity)
+- [x] 创建多样性实验脚本 - `experiment_v5_diversity.py`
 - [ ] 实现 action 探索奖励机制
 - [ ] 添加 action 成功率反馈到驱动力评估
-- [ ] 实验验证行为多样性提升
+- [ ] 实验验证行为多样性提升 (目标: shell < 60%)
 
 **验收标准**:
 - shell 占比降至 60% 以下
