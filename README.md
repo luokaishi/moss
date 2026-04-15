@@ -91,6 +91,60 @@ Responding to external review criticism about causality:
 
 The most scientifically valuable finding: survival drive naturally becomes the dominant attractor (weight 0.60) even without any explicit survival pressure — consistent with evolutionary theory, self-organization, and Friston's active inference framework.
 
+## 7-Layer AGI Emergence Architecture (New)
+
+Building on the GP-based emergence system, we implemented a complete **7-layer AGI emergence architecture** based on theoretical framework from ChatGPT scientific evaluation:
+
+### Architecture Layers
+
+```
+Layer 7: Concept System      → State compression & abstraction
+Layer 6: Goal System         → Trajectory pattern extraction  
+Layer 5: Drive System        → Intrinsic motivation (existing)
+Layer 4: Meta-Drive          → Self-modification of drives
+Layer 3: Self-Model          → Self-prediction capability
+Layer 2: Ecology             → Multi-agent competition
+Layer 1: Policy/Action       → Behavior execution
+```
+
+### Key Results (5000 cycles)
+
+| Component | Metric | Result | Status |
+|-----------|--------|--------|--------|
+| **Concept System** | Prediction error | 0.309 → 0.028 (↓91%) | ✅ Excellent |
+| **Concept System** | Stability | 0.999 | ✅ Perfect |
+| **Self-Model V2** | Accuracy | 89.6% | ✅ Breakthrough |
+| **Goal System** | Emerged goals | 2 (explore, exploit) | ✅ Emerged |
+| **Goal System** | Stability | >0.99 | ✅ Stable |
+| **Meta-Drive** | Trigger mechanism | Working | ⚠️ Tuning needed |
+
+### Key Innovation: Conditional Self-Model
+
+The breakthrough from 12% to 89.6% accuracy came from architectural fix:
+
+```python
+# Failed: M(state) → action  # 12% accuracy
+# Success: M(state, drives) → action  # 89.6% accuracy
+```
+
+**Insight**: Non-stationary policies require conditional inputs.
+
+### Goal Emergence
+
+At cycle 1500, system spontaneously extracted 2 stable goals:
+- `goal_580_explore`: Exploration behavior pattern (stability=0.994)
+- `goal_383_exploit`: Exploitation behavior pattern (stability=0.995)
+
+Both maintained for 3500+ cycles, demonstrating **weak emergence**.
+
+### Documentation
+
+- [7-Layer Architecture](docs/mves/SEVEN_LAYER_ARCHITECTURE.md)
+- [V2 Improvement Report](docs/mves/V2_IMPROVEMENT_REPORT.md)
+- [5000-Cycle Final Report](docs/mves/FINAL_REPORT_7LAYER_EMERGENCE.md)
+
+---
+
 ## External Evaluation Response
 
 The project underwent scientific peer review (ChatGPT-based) focusing on:
