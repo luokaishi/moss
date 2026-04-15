@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  moss:
+    build: .
+    container_name: moss_7layer
+    volumes:
+      - ./experiments/output:/app/experiments/output
+      - ./experiments/reproducibility:/app/experiments/reproducibility
+    environment:
+      - PYTHONPATH=/app
+      - MOSS_RANDOM_SEED=42
+    command: python experiment_7layer_v2_5000.py
+
+  moss-multi-seed:
+    build: .
+    container_name: moss_multi_seed
+    volumes:
+      - ./experiments/output:/app/experiments/output
+    environment:
+      - PYTHONPATH=/app
+    command: python experiment_multi_seed_validation.py
+
+  moss-feature-compare:
+    build: .
+    container_name: moss_feature_compare
+    volumes:
+      - ./experiments/output:/app/experiments/output
+    environment:
+      - PYTHONPATH=/app
+    command: python experiment_feature_comparison.py
