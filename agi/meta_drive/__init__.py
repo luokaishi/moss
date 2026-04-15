@@ -12,6 +12,8 @@ Meta-Drive System - 元驱动系统 (第4层)
 """
 
 from .meta_controller import MetaController
+from .meta_controller_v2 import MetaControllerV2
 from .self_model import SelfModel
+from .self_model_v2 import SelfModelV2
 
-__all__ = ['MetaController', 'SelfModel']
+__all__ = ['MetaController', 'MetaControllerV2', 'SelfModel', 'SelfModelV2']
