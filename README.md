@@ -2,16 +2,63 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v5.2.0-green.svg)](https://github.com/luokaishi/moss/releases)
-[![Paper](https://img.shields.io/badge/paper-NeurIPS%202026-red.svg)](https://github.com/luokaishi/moss/releases/tag/v2.0.0)
-[![v3 Paper](https://img.shields.io/badge/v3%20paper-In%20Preparation-orange.svg)](./paper/v3_extended/)
-[![Experiments](https://img.shields.io/badge/experiments-200%2B-9cf.svg)](./docs/)
+[![Version](https://img.shields.io/badge/version-v7.0.0-green.svg)](https://github.com/luokaishi/moss/releases/tag/v7.0.0)
+[![Paper v3.0](https://img.shields.io/badge/paper-v3.0-red.svg)](./paper/main.tex)
+[![SME](https://img.shields.io/badge/Self--Modification-v7.0-orange.svg)](./moss/core/self_modification_engine.py)
 
 > **Self-driven motivation is the key missing ingredient for AI autonomous evolution.**
 
 MOSS (Multi-Objective Self-Driven System) is a theoretical framework that endows AI agents with four parallel intrinsic objectives: **survival**, **curiosity**, **influence**, and **self-optimization**.
 
-📄 **[Read the Paper](./docs/paper_simple.pdf)** | 📑 **[v3.1 Paper PDF](./MOSS_v31_Paper.pdf)** | 🧪 **[Run Experiments](./sandbox/)** | 🐳 **[Docker Support](#docker)** | 📖 **[Documentation](./docs/)**
+📄 **[Read the Paper v3.0](./paper/main.tex)** | 📑 **[v3.1 Paper PDF](./MOSS_v31_Paper.pdf)** | 🧪 **[Run Experiments](./sandbox/)** | 🐳 **[Docker Support](#docker)** | 📖 **[Documentation](./docs/)**
+
+---
+
+## 🆕 MOSS v7.0.0 已发布（2026-04-16）✅ | [Meta-SME: Self-Modifying the Self-Modifier](https://github.com/luokaishi/moss/releases/tag/v7.0.0) 🧬
+
+**Code Self-Modification Engine with Semantic Guidance, Pareto Optimization, and Meta-Level Self-Rewriting**
+
+MOSS v7.0 实现了AI系统的**代码级自改写**——Agent不仅能修改自己的参数权重，还能改写自己的源代码，并最终改写改写引擎本身。
+
+### 四层自改写架构演进
+
+```
+v6.1 Code Self-Modification  →  AST变异 + 沙箱验证 + Fitness评估
+v6.2 Semantic Guidance       →  Purpose向量引导变异方向
+v6.3 Pareto Optimization     →  4维非支配前沿多目标权衡
+v7.0 Meta-SME                →  引擎改写自身（双重沙箱+回滚保护）
+```
+
+### 核心实验成果
+
+| 版本 | 核心突破 | 关键指标 |
+|------|---------|---------|
+| **v6.1** | 代码自改写引擎 | 30代进化，fitness +6.3%（0.7257→0.7713），33%接受率 |
+| **v6.2** | 语义引导变异（PurposeGuidedSelector） | 接受率 25%→41%（+60%） |
+| **v6.3** | Pareto多目标优化（ParetoArchive） | Δfitness +144%，接受率62%，Hypervolume=0.176 |
+| **v7.0** | Meta-SME（三层安全机制） | 50代Meta进化，Meta-fitness +26.3% |
+
+### 技术亮点
+
+- **9种AST变异类型**：constant_tweak, condition_flip, weight_shift, threshold_mutate, action_insert, epsilon_tune, weight_hardcode, action_shuffle, branch_inject
+- **4维Fitness评估**：success_rate(0.35) + diversity(0.25) + purpose_align(0.20) + emergence(0.20)
+- **Pareto非支配前沿**：维护最大50个非支配解，拥挤度距离保持多样性
+- **Meta-SME安全机制**：元不可变函数清单 + 双重沙箱验证 + 自动回滚
+- **论文v3.0**：整合全部成果，含7个对比表格
+
+### 核心文件
+
+```
+moss/core/self_modification_engine.py   # 自改写引擎 v7.0（~1900行）
+experiments/run_v62_semantic_guided.py  # v6.2 语义引导对比实验
+experiments/run_v63_pareto.py           # v6.3 Pareto多目标实验
+experiments/run_v70_meta_sme.py         # v7.0 Meta-SME实验
+docs/MOSS_V62_SEMANTIC_REPORT.md       # v6.2 技术报告
+docs/MOSS_V70_META_REPORT.md           # v7.0 技术报告
+paper/main.tex                          # 论文 v3.0
+```
+
+**发布**: [GitHub Release v7.0.0](https://github.com/luokaishi/moss/releases/tag/v7.0.0) | [Release Notes](./releases/v7.0.0_RELEASE_NOTES.md)
 
 ---
 
@@ -534,33 +581,37 @@ MOSS implements a graduated response safety system that automatically manages re
 
 ```
 moss/
-├── agents/
-│   ├── moss_agent.py              # v1.0 Original agent
-│   └── moss_agent_v2.py           # v2.0 Real-world deployment
-├── core/
-│   ├── objectives.py              # Four objective modules
-│   ├── gradient_safety_guard.py   # ✅ NEW: 5-level safety (v0.3.0)
-│   ├── conflict_resolver_enhanced.py  # ✅ NEW: Priority-based resolution
-│   ├── self_optimization_v2.py    # ✅ NEW: Closed-loop self-optimization
-│   ├── llm_verification_closed_loop.py  # ✅ NEW: Multi-provider verification
-│   └── multimodal_extension.py    # ✅ NEW: Multimodal support
+├── moss/
+│   ├── core/
+│   │   ├── unified_agent.py              # 9维UnifiedMOSSAgent
+│   │   ├── self_modification_engine.py   # 🆕 Self-Modification Engine v7.0（~1900行）
+│   │   ├── objectives.py                 # Four objective modules
+│   │   ├── gradient_safety_guard.py      # 5-level safety
+│   │   └── conflict_resolver_enhanced.py # Priority-based resolution
+│   └── api/
+│       └── adapter.py                    # Multi-version Agent API adapter
 ├── experiments/
-│   ├── moss_72h_experiment.py     # 72-hour autonomous experiment
-│   ├── weight_quantization_experiment.py  # ✅ NEW: Data-driven weights
-│   └── generalization_test_suite.py       # ✅ NEW: Scale validation
-├── sandbox/
-│   ├── experiment*.py             # Original 5 experiments
-│   └── moss_llm_real_verifier.py  # LLM verification
+│   ├── run_v62_semantic_guided.py        # 🆕 v6.2 语义引导对比实验
+│   ├── run_v63_pareto.py                 # 🆕 v6.3 Pareto多目标实验
+│   ├── run_v70_meta_sme.py               # 🆕 v7.0 Meta-SME实验
+│   ├── self_modification/                # 🆕 实验结果数据
+│   └── ...legacy experiments
 ├── docs/
-│   ├── EXTERNAL_EVALUATION_FEEDBACK_*.md  # 8 independent evaluations
-│   └── *.md                       # Comprehensive documentation
-├── tests/
-│   ├── test_basic.py              # Basic functionality
-│   └── test_v2_comprehensive.py   # v2.0 tests
-├── Dockerfile                     # Docker image
-├── docker-compose.yml             # Docker Compose config
-├── Makefile                       # Development commands
-└── requirements.txt               # Python dependencies
+│   ├── MOSS_V62_SEMANTIC_REPORT.md       # 🆕 v6.2 技术报告
+│   ├── MOSS_V70_META_REPORT.md           # 🆕 v7.0 技术报告
+│   └── ...legacy documentation
+├── paper/
+│   └── main.tex                          # 🆕 论文 v3.0（含SME/Pareto/Meta-SME）
+├── releases/
+│   ├── v7.0.0_RELEASE_NOTES.md           # 🆕 v7.0 发布说明
+│   └── v5.2.0_RELEASE_NOTES.md           # v5.2.0 发布说明
+├── agents/
+│   ├── moss_agent.py                     # v1.0 Original agent
+│   └── moss_agent_v2.py                  # v2.0 Real-world deployment
+├── sandbox/                              # Original 5 experiments
+├── tests/                                # Test suites
+├── Dockerfile                            # Docker image
+└── requirements.txt                      # Python dependencies
 ```
 
 ---
@@ -604,13 +655,35 @@ Reproducibility datasets from MOSS experiments are available in the `datasets/` 
 
 | Version | Date | Key Changes |
 |---------|------|-------------|
-| v0.1.0 | 2026-03-01 | Initial framework with 4 objectives |
-| v0.2.0 | 2026-03-08 | Real-world deployment, Docker, web monitor |
-| **v0.3.0** | **2026-03-10** | **8-evaluation feedback integration, 7 major improvements** |
+| **v7.0.0** | **2026-04-16** | **Meta-SME: 代码自改写引擎终极形态，论文v3.0** |
+| v6.3.0 | 2026-04-15 | Pareto多目标优化，Δfitness+144%，HV=0.176 |
+| v6.2.0 | 2026-04-14 | 语义引导变异（PurposeGuidedSelector），接受率+60% |
+| v6.1.0 | 2026-04-13 | 代码自改写引擎（AST变异+沙箱验证），fitness+6.3% |
+| v5.2.0 | 2026-03-29 | 72小时真实世界自治实验，完整数据整合 |
+| v5.1.0 | 2026-03-25 | Purpose因果验证，98-run大样本研究 |
+| v4.1.0 | 2026-03-24 | Purpose演化可复现性（Run 4.x系列） |
+| v3.1.0 | 2026-03-19 | D9 Purpose维度，自生成意义，+632%适应力 |
+| v3.0.0 | 2026-03-19 | 8维扩展，社交涌现，+50.12%合作 |
+| v2.0.0 | 2026-03-15 | 4维基础框架，NeurIPS 2026投稿 |
+| v0.3.0 | 2026-03-10 | 8方评审反馈整合，7项改进 |
+| v0.1.0 | 2026-03-01 | 初始框架，4个目标模块 |
 
 ---
 
 ## 📄 Citation
+
+### v7.0.0 (Self-Modification Engine)
+
+```bibtex
+@software{moss_v7_2026,
+  title={MOSS v7.0: From Weight Self-Modification to Code Self-Modification
+         with Semantic Guidance, Pareto Optimization, and Meta-Level Self-Rewriting},
+  author={Cash and Fuxi},
+  year={2026},
+  url={https://github.com/luokaishi/moss},
+  note={arXiv preprint, April 2026}
+}
+```
 
 ### v3.0.0 Extended Version (8 Dimensions)
 
@@ -648,34 +721,31 @@ Reproducibility datasets from MOSS experiments are available in the `datasets/` 
 
 ## 📊 Current Status
 
-**v3.0.0 Release**: ✅ **COMPLETE** (2026-03-19)
-- 8-dimensional system: ✅ Implemented
-- Multi-agent experiments: ✅ Validated  
-- Extended paper: ✅ In preparation
-- Control experiment: ✅ +50.12% cooperation improvement
+**v7.0.0 Release**: ✅ **COMPLETE** (2026-04-16)
+- Self-Modification Engine: ✅ Implemented（~1900行）
+- Semantic-Guided Mutation (v6.2): ✅ Validated（接受率+60%）
+- Pareto Multi-Objective (v6.3): ✅ Validated（Δfitness+144%）
+- Meta-SME (v7.0): ✅ Validated（Meta-fitness+26.3%）
+- Paper v3.0: ✅ Complete
 
 **Key Milestones**:
 - ✅ D5 Coherence (Identity locking)
 - ✅ D6 Valence (Personality differentiation)
 - ✅ D7 Other (Trust networks)
 - ✅ D8 Norm (100% cooperation)
-- ✅ **D9 Purpose** (Self-generated meaning)
-
-**v3.1.0**: ✅ **RELEASED** (2026-03-19)
-- Dimension 9 (Purpose/Meaning): ✅ Complete
-- Purpose Divergence (H1): ✅ 4 types from identical starts
-- Purpose Stability (H2): ✅ 0.9977 score, 10k steps perfect
-- Purpose Fulfillment (H4): ✅ +26.66% satisfaction
-- D9 Validation: ✅ +632% adaptation, objective mutation confirmed
+- ✅ D9 Purpose (Self-generated meaning)
+- ✅ **Code Self-Modification** (AST变异+沙箱+Fitness)
+- ✅ **Semantic Guidance** (Purpose向量引导变异方向)
+- ✅ **Pareto Optimization** (4维非支配前沿)
+- ✅ **Meta-SME** (引擎改写自身)
 
 **Hypothesis Validation Status**:
 - Core (v2.0.0): ✅ **Validated**
 - Social Emergence (v3.0.0): ✅ **Validated**
-- **Self-Generated Purpose (v3.1.0)**: ✅ **Validated**
+- Self-Generated Purpose (v3.1.0): ✅ **Validated**
+- Code Self-Modification (v6.1-v7.0): ✅ **Validated**
 
 ---
 
-**Status**: v3.1.0 Complete | **Target**: NeurIPS 2027
-**License**: MIT
-
+**Status**: v7.0.0 Complete | **Target**: arXiv 2026
 **License**: MIT

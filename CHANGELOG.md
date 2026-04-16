@@ -2,6 +2,124 @@
 
 All notable changes to the MOSS project.
 
+## [7.0.0] - 2026-04-16
+
+### 🧬 Major Release: Meta-SME — Self-Modifying the Self-Modifier
+
+**The ultimate form of code self-modification: the engine rewrites its own code.**
+
+### Added
+
+#### Self-Modification Engine v7.0 (`moss/core/self_modification_engine.py`, ~1900 lines)
+Complete code self-modification pipeline with four layers of evolution:
+
+- **v6.1 Code Self-Modification Engine**
+  - 9 AST mutation types: constant_tweak, condition_flip, weight_shift, threshold_mutate, action_insert, epsilon_tune, weight_hardcode, action_shuffle, branch_inject
+  - Sandboxed execution with 3-stage validation (syntax + import + instantiation, ≥2/3 pass)
+  - EmergenceGuidedFitness: success_rate(0.35) + diversity(0.25) + purpose_align(0.20) + emergence(0.20)
+  - 30-generation evolution: fitness +6.3% (0.7257→0.7713), 33% acceptance rate
+
+- **v6.2 Semantic-Guided Mutation (PurposeGuidedSelector)**
+  - Purpose vector D9 → 4D semantic mapping for 9 mutation types
+  - Cosine similarity between mutation intent and current purpose
+  - Softmax-weighted mutation selection with temperature control
+  - **Acceptance rate: 25% → 41% (+60% improvement)**
+
+- **v6.3 Pareto Multi-Objective Optimization (ParetoArchive)**
+  - 4-dimensional non-dominated solution archive (max capacity: 50)
+  - Crowding distance for diversity preservation
+  - NSGA-II-style non-dominated sorting for acceptance
+  - **Δfitness: +144%, acceptance rate: 62%, Hypervolume: 0.176**
+
+- **v7.0 Meta-SME (Meta-Level Self-Rewriting)**
+  - Engine modifies its own source code (`self_modification_engine.py`)
+  - Three-layer safety mechanism:
+    1. Immutable function whitelist (core I/O functions protected)
+    2. Dual sandbox verification (syntax + functional test)
+    3. Automatic rollback on failure
+  - **50-generation Meta evolution: Meta-fitness +26.3%**
+
+#### Experiment Scripts
+- `experiments/run_v62_semantic_guided.py` — v6.2 semantic vs random comparison
+- `experiments/run_v63_pareto.py` — v6.3 Pareto vs scalar fitness comparison
+- `experiments/run_v70_meta_sme.py` — v7.0 Meta-SME self-modification experiment
+- `experiments/self_modification/` — Result data directory
+
+#### Technical Reports
+- `docs/MOSS_V62_SEMANTIC_REPORT.md` — v6.2 semantic guidance results
+- `docs/MOSS_V63_PARETO_REPORT.md` — v6.3 Pareto optimization analysis
+- `docs/MOSS_V70_META_REPORT.md` — v7.0 Meta-SME technical report
+
+#### Paper v3.0 (`paper/main.tex`)
+- Complete rewrite of abstract covering v6.1-v7.0
+- New Section: Self-Modification Engine architecture
+- 7 comparison tables (mutation types, semantic vectors, version evolution, etc.)
+- Discussion on efficiency-safety tradeoff and open-loop learning
+
+### Changed
+- `moss/core/self_modification_engine.py` extended from ~900 to ~1900 lines
+- `moss/api/adapter.py` updated for v7.0 compatibility
+- All new features backward-compatible via `SMEConfig` flags
+
+---
+
+## [6.3.0] - 2026-04-15
+
+### 📊 Pareto Multi-Objective Optimization
+
+### Added
+- `ParetoArchive` class: 4D non-dominated solution maintenance
+- Crowding distance calculation for archive pruning
+- NSGA-II-style non-dominated sorting replacing scalar fitness comparison
+- 3 Pareto-optimal strategies discovered (balanced, explorative, emergent)
+
+### Key Results
+- Hypervolume (HV): 0.176
+- Archive utilization: 50/50 solutions
+- Δfitness vs scalar baseline: +144%
+- Acceptance rate: 62%
+
+---
+
+## [6.2.0] - 2026-04-14
+
+### 🎯 Semantic-Guided Mutation
+
+### Added
+- `PurposeGuidedSelector` class: purpose-aware mutation direction selection
+- 9×4 semantic mapping matrix (mutation types × fitness dimensions)
+- Cosine similarity-based alignment scoring
+- Softmax temperature parameter for exploration-exploitation balance
+
+### Key Results
+- Acceptance rate: 25% → 41% (+60% improvement)
+- Fitness: 0.7713 → 0.7930 (+2.8%)
+- Optimal temperature: 0.7
+
+---
+
+## [6.1.0] - 2026-04-13
+
+### 🔧 Code Self-Modification Engine (First Implementation)
+
+### Added
+- `SelfModificationEngine` class: AST-based code mutation framework
+- `ASTMutator` with 9 mutation types for Python AST manipulation
+- `CodeSandbox` with 3-stage validation pipeline
+- `EmergenceGuidedFitness`: 4-component fitness function
+- `SMEConfig` for backward-compatible configuration
+
+### Key Results
+- 30 generations of evolution
+- 10 accepted mutations (33% acceptance rate)
+- Fitness: 0.7257 → 0.7713 (+6.3%)
+- Target functions: `step` (score=54), `_apply_state_weights` (score=30)
+
+### Technical Report
+- `docs/MOSS_V6_SELF_MODIFICATION_REPORT_V2_20260413.md`
+
+---
+
 ## [5.2.0] - 2026-03-29
 
 ### 🎯 Major Release: 72-Hour Real-World Autonomous Operation Validated
@@ -348,6 +466,14 @@ Three independent long-running experiments (2,880,000 steps each) validating Pur
 
 ## Version History
 
+- **v7.0.0** (2026-04-16) - Meta-SME, code self-modification ultimate form, paper v3.0
+- **v6.3.0** (2026-04-15) - Pareto multi-objective optimization
+- **v6.2.0** (2026-04-14) - Semantic-guided mutation
+- **v6.1.0** (2026-04-13) - Code self-modification engine
+- **v5.2.0** (2026-03-29) - 72h real-world autonomous operation
+- **v5.1.0** (2026-03-25) - Purpose causality validation (98-run study)
+- **v4.1.0** (2026-03-24) - Purpose evolution reproducibility
+- **v3.1.0** (2026-03-19) - 9D system with self-generated Purpose
 - **v3.0.0** (2026-03-19) - 8-dimensional extension, social emergence
 - **v2.0.0** (2026-03-15) - 4-dimensional foundation, NeurIPS 2026 submission
 - **v0.3.0** (2026-03-06) - Fixed weight baseline, initial experiments
@@ -356,14 +482,14 @@ Three independent long-running experiments (2,880,000 steps each) validating Pur
 
 ## Future Work
 
-### v3.1.0 (Planned)
-- Long-term simulations (100,000+ steps)
-- Larger networks (100+ agents)
-- Complex environments beyond prisoner's dilemma
-- Real-world deployment experiments
+### v7.x (Planned)
+- Scale Meta-SME to 100-200 generations for long-term adaptation study
+- Statistical significance validation (N≥10 independent runs)
+- LaTeX figures: fitness evolution curves, Pareto frontier scatter plots
+- arXiv submission
 
-### v4.0.0 (Vision)
-- Integration with LLM agents
-- Economic applications
-- Distributed multi-agent systems
-- Human-AI collaboration frameworks
+### v8.0 (Vision)
+- Integration with LLM-based code generation
+- Multi-agent self-modification coordination
+- External tool discovery and integration
+- Real-world deployment with self-modification
