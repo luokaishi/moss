@@ -64,16 +64,19 @@
 
 ---
 
-#### 3. 多Agent协作验证
+#### 3. 多Agent协作验证 ✅ 进行中
 **问题**: 已有多Agent模块但未充分验证  
 **目标**: 验证涌现驱动力在多Agent场景中的稳定性
 
 **任务**:
-- [ ] 完成 multi_agent.py 模块集成
-- [ ] 设计 2-Agent 协作实验
-- [ ] 设计 3-Agent 竞争实验
-- [ ] 观察涌现驱动在群体中的传播/收敛
-- [ ] 生成多Agent实验报告
+- [x] 完成 multi_agent.py 模块集成 - 使用现有 `agi/ecology/world.py`
+- [x] 设计 2-Agent 协作实验 - `experiment_v5_multiagent.py --mode 2agent`
+- [x] 设计 3-Agent 竞争实验 - `experiment_v5_multiagent.py --mode 3agent`
+- [x] 实现驱动力传播检测 - `drive_transmission_log`
+- [x] 实现涌现收敛分析 - `emergence_convergence` 跟踪
+- [ ] 运行 5,000 周期实验并验证
+
+**实现文件**: `examples/experiment_v5_multiagent.py`
 
 **验收标准**:
 - 2-Agent 场景运行 5,000 周期无错误
