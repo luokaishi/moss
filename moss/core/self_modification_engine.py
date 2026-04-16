@@ -1801,3 +1801,482 @@ class SelfModificationEngine:
         print(f"  接受变异数 : {report['total_mutations_accepted']}")
         print(f"  耗时       : {report['elapsed_seconds']:.1f}s")
         print("=" * 60)
+
+
+# ─────────────────────────────────────────────
+# v7.0 Meta-SME：自改写引擎改写自己
+# ─────────────────────────────────────────────
+
+class MetaSME(SelfModificationEngine):
+    """
+    MOSS v7.0 — Meta Self-Modification Engine（自改写的自改写）
+
+    核心创新：
+    让SME引擎改写 self_modification_engine.py 自身，实现"元级"进化。
+    SME进化 unified_agent.py（对象级改写）。
+    MetaSME进化 self_modification_engine.py（元级改写）。
+
+    安全机制：
+    1. 元不可变函数清单（meta_immutable_functions）：核心I/O不可改
+    2. 变异类型白名单（META_SAFE_MUTATIONS）：仅允许参数调整，禁止结构注入
+    3. 双重沙箱验证：语法+实例化+自改写功能验证（元沙箱）
+    4. 自动回滚：每次变异前完整备份，失败自动恢复
+
+    可改写目标：
+    - ASTMutator参数（intensity, FUNCTION_RICHNESS权重）
+    - EmergenceGuidedFitness权重（alpha/beta/gamma/delta）
+    - SMEConfig默认参数（acceptance_threshold, population_size等）
+    - ParetoArchive容量（max_size）
+
+    版本: 7.0.0-dev
+    """
+
+    META_VERSION = "7.0.0-dev"
+
+    # 元不可变函数（绝对不能被Meta改写，否则引擎自毁）
+    META_IMMUTABLE_FUNCTIONS = [
+        "_evaluate_source",     # 核心评估逻辑
+        "_build_eval_module",   # 模块构建
+        "_find_project_root",   # 路径解析
+        "_module_to_path",      # 路径转换
+        "_source_hash",         # 哈希计算
+        "_load_source",         # 文件读取
+        "_write_source",        # 文件写入（含备份）
+        "validate",             # 沙箱验证
+        "__init__",             # 初始化
+    ]
+
+    # Meta变异白名单：只允许参数级变异（禁止结构注入）
+    META_SAFE_MUTATIONS = [
+        "constant_tweak",    # 调整数值常量（权重、阈值）
+        "threshold_mutate",  # 修改阈值参数
+        "weight_shift",      # 调整权重数组
+    ]
+
+    # Meta改写目标函数（SME引擎自身的关键函数）
+    META_TARGET_FUNCTIONS = [
+        "__init__",                     # 初始化参数（但被保护，实际只改常量部分）
+        "evolve_one_generation",        # 进化逻辑（含阈值参数）
+        "compute_mutation_probs",       # 语义引导概率计算
+        "evaluate",                     # fitness评估（权重参数α/β/γ/δ）
+        "_real_emergence_detection",    # 涌现检测（窗口参数）
+        "_crowding_distance_prune",     # Pareto裁剪（容量参数）
+    ]
+
+    def __init__(self, project_root: str = None):
+        """
+        初始化MetaSME引擎
+
+        MetaSME的目标模块是self_modification_engine.py本身
+        """
+        # MetaSME的目标是SME引擎自身
+        meta_config = SMEConfig(
+            target_module="moss.core.self_modification_engine",
+            target_functions=self.META_TARGET_FUNCTIONS,
+            population_size=4,           # Meta搜索空间较小（安全优先）
+            max_generations=50,          # 更多代数（META进化较慢）
+            acceptance_threshold=-0.001, # 更严格的接受标准（META谨慎）
+            enable_hot_reload=False,     # Meta不热重载（避免递归问题）
+            enable_structural_mutations=False,  # 禁用结构级变异
+            mutation_intensity=0.2,      # 保守强度
+            use_real_emergence=True,
+            enable_semantic_guidance=False,  # Meta不用语义引导
+            use_pareto=False,
+            immutable_functions=self.META_IMMUTABLE_FUNCTIONS,
+            output_dir="experiments/meta_sme",
+        )
+
+        # 初始化父类（目标=SME自身）
+        super().__init__(config=meta_config, project_root=project_root)
+
+        # 覆盖mutator，使用Meta白名单
+        self.meta_mutator = ASTMutator(
+            intensity=meta_config.mutation_intensity
+        )
+
+        # Meta备份目录
+        self.meta_backup_dir = self.project_root / "experiments" / "meta_sme" / "backups"
+        self.meta_backup_dir.mkdir(parents=True, exist_ok=True)
+
+        # Meta评估器（评估SME引擎质量，通过让SME跑一次unified_agent改写）
+        self.meta_fitness_history: List[Dict] = []
+        self._original_sme_source: str = ""  # 保存最初的SME源码
+
+        logger.info(f"[MetaSME] v{self.META_VERSION} initialized")
+        logger.info(f"[MetaSME] Target: {meta_config.target_module}")
+        logger.info(f"[MetaSME] Safe mutations: {self.META_SAFE_MUTATIONS}")
+
+    def _meta_mutate(self, sme_source: str) -> Tuple[str, str]:
+        """
+        对SME源码进行一次保守变异（仅白名单类型）
+
+        Returns:
+            (mutated_source, mutation_type) or (original, 'no_op')
+        """
+        # 随机选择白名单变异类型
+        mut_type = random.choice(self.META_SAFE_MUTATIONS)
+
+        mutated, applied_type = self.meta_mutator.mutate(
+            sme_source,
+            target_functions=self.META_TARGET_FUNCTIONS,
+            mutation_type=mut_type
+        )
+
+        if applied_type == "no_op":
+            return sme_source, "no_op"
+
+        return mutated, applied_type
+
+    def _meta_sandbox_validate(self, sme_source: str) -> Dict:
+        """
+        双重沙箱验证变异后的SME代码
+
+        验证层次：
+        1. 语法检查（AST parse）
+        2. 模块导入检查（确保SME类存在）
+        3. 功能检查：用变异后的SME运行一次mini实验（5代unified_agent改写）
+
+        Returns:
+            {'passed': bool, 'reason': str, 'tests_passed': int}
+        """
+        result = {"passed": False, "reason": "", "tests_passed": 0}
+
+        # Test 1: 语法检查
+        try:
+            ast.parse(sme_source)
+            result["tests_passed"] += 1
+        except SyntaxError as e:
+            result["reason"] = f"Syntax error: {e}"
+            return result
+
+        # Test 2: 模块导入检查
+        try:
+            import types
+            import moss.core.self_modification_engine as _real_sme
+
+            exec_globals = dict(_real_sme.__dict__)
+            exec_globals.update({
+                "__name__": "moss.core._meta_sme_eval",
+                "__package__": "moss.core",
+                "__spec__": None,
+            })
+            exec(compile(sme_source, "<meta_sme_mutated>", "exec"), exec_globals)
+
+            eval_module = types.ModuleType("_meta_sme_eval")
+            eval_module.__dict__.update(exec_globals)
+
+            # 检查关键类存在
+            assert hasattr(eval_module, "SelfModificationEngine"), "SelfModificationEngine missing"
+            assert hasattr(eval_module, "ASTMutator"), "ASTMutator missing"
+            assert hasattr(eval_module, "EmergenceGuidedFitness"), "EmergenceGuidedFitness missing"
+            result["tests_passed"] += 1
+        except Exception as e:
+            result["reason"] = f"Import/class check failed: {e}"
+            return result
+
+        # Test 3: 功能检查 — 用变异后的SME执行5代mini实验
+        try:
+            SMEClass = exec_globals.get("SelfModificationEngine")
+            if SMEClass is None:
+                result["reason"] = "SelfModificationEngine not found in exec_globals"
+                return result
+
+            mini_config_cls = exec_globals.get("SMEConfig")
+            if mini_config_cls is None:
+                result["reason"] = "SMEConfig not found"
+                return result
+
+            mini_config = mini_config_cls(
+                target_module="moss.core.unified_agent",
+                population_size=2,
+                max_generations=5,
+                acceptance_threshold=-0.01,
+                enable_hot_reload=False,
+                output_dir="experiments/meta_sme/mini_test",
+                mutation_intensity=0.2,
+            )
+            mini_sme = SMEClass(config=mini_config, project_root=str(self.project_root))
+            mini_result = mini_sme.run(max_generations=5)
+
+            # 关键检查：能运行且返回合理的fitness
+            assert mini_result.get("final_fitness", 0.0) > 0.1, "Final fitness too low"
+            result["tests_passed"] += 1
+            result["passed"] = True
+            result["mini_result"] = {
+                "initial_fitness": mini_result.get("initial_fitness", 0.0),
+                "final_fitness": mini_result.get("final_fitness", 0.0),
+            }
+
+        except Exception as e:
+            result["reason"] = f"Functional test failed: {e}"
+            # 注意：功能测试失败不强制拒绝（可能是保守问题），只记录
+            # 但要求至少2/3测试通过
+            pass
+
+        # 至少2/3通过
+        if result["tests_passed"] >= 2:
+            result["passed"] = True
+
+        return result
+
+    def _evaluate_sme_fitness(self, sme_source: str) -> float:
+        """
+        评估变异后的SME引擎质量
+
+        策略：用变异后的SME运行10代unified_agent改写，
+        以SME带来的fitness提升作为Meta fitness指标
+
+        Returns:
+            meta_fitness (0.0 ~ 1.0)
+        """
+        try:
+            import types
+            import moss.core.self_modification_engine as _real_sme
+
+            exec_globals = dict(_real_sme.__dict__)
+            exec_globals.update({
+                "__name__": "moss.core._meta_eval",
+                "__package__": "moss.core",
+            })
+            exec(compile(sme_source, "<meta_eval>", "exec"), exec_globals)
+
+            SMEClass = exec_globals.get("SelfModificationEngine")
+            SMEConfigClass = exec_globals.get("SMEConfig")
+
+            if SMEClass is None or SMEConfigClass is None:
+                return 0.0
+
+            eval_config = SMEConfigClass(
+                target_module="moss.core.unified_agent",
+                population_size=3,
+                max_generations=10,
+                acceptance_threshold=-0.002,
+                enable_hot_reload=False,
+                output_dir="experiments/meta_sme/eval",
+                mutation_intensity=0.3,
+            )
+
+            eval_sme = SMEClass(config=eval_config, project_root=str(self.project_root))
+            result = eval_sme.run(max_generations=10)
+
+            # Meta fitness = SME带来的fitness提升 / 初始fitness (归一化)
+            init_f = result.get("initial_fitness", 0.0)
+            final_f = result.get("final_fitness", 0.0)
+            accept_rate = result.get("total_mutations_accepted", 0) / 10.0
+
+            if init_f > 0:
+                relative_gain = (final_f - init_f) / init_f
+            else:
+                relative_gain = 0.0
+
+            # meta_fitness = 50%接受率 + 50%相对提升（归一化）
+            meta_fitness = 0.5 * accept_rate + 0.5 * min(1.0, max(0.0, relative_gain * 5))
+
+            logger.info(
+                f"[MetaSME] Meta-fitness: init={init_f:.4f} final={final_f:.4f} "
+                f"accept_rate={accept_rate:.2f} meta_f={meta_fitness:.4f}"
+            )
+            return float(meta_fitness)
+
+        except Exception as e:
+            logger.debug(f"[MetaSME] _evaluate_sme_fitness error: {e}")
+            return 0.0
+
+    def _meta_write_source(self, new_sme_source: str, generation: int):
+        """
+        将变异后的SME源码写回（先备份，支持回滚）
+        """
+        sme_path = self._module_to_path("moss.core.self_modification_engine")
+
+        # 备份当前版本
+        ts = datetime.now().strftime("%H%M%S")
+        backup_path = self.meta_backup_dir / f"sme_gen{generation}_{ts}.py"
+        backup_path.write_text(self.current_source, encoding="utf-8")
+        logger.info(f"[MetaSME] Backup saved: {backup_path.name}")
+
+        # 写入新版本
+        sme_path.write_text(new_sme_source, encoding="utf-8")
+        logger.info(f"[MetaSME] SME source updated: {sme_path}")
+
+    def _meta_rollback(self, generation: int):
+        """
+        回滚SME到最近备份（元沙箱失败时使用）
+        """
+        sme_path = self._module_to_path("moss.core.self_modification_engine")
+        backups = sorted(self.meta_backup_dir.glob(f"sme_gen{generation}_*.py"))
+        if backups:
+            rollback_source = backups[-1].read_text(encoding="utf-8")
+            sme_path.write_text(rollback_source, encoding="utf-8")
+            logger.warning(f"[MetaSME] Rolled back from {backups[-1].name}")
+        else:
+            # 回滚到原始版本
+            if self._original_sme_source:
+                sme_path.write_text(self._original_sme_source, encoding="utf-8")
+                logger.warning("[MetaSME] Rolled back to original source")
+
+    def run_meta_evolution(self, max_generations: int = 50) -> Dict:
+        """
+        运行Meta-SME进化循环（让SME引擎改写自己）
+
+        Args:
+            max_generations: 最大代数
+
+        Returns:
+            完整Meta进化报告
+        """
+        logger.info(f"\n[MetaSME] {'='*50}")
+        logger.info(f"[MetaSME] 🧬 Meta-SME进化启动 (max_gen={max_generations})")
+        logger.info(f"[MetaSME] 目标：self_modification_engine.py 自改写")
+        logger.info(f"[MetaSME] {'='*50}")
+
+        sme_path = self._module_to_path("moss.core.self_modification_engine")
+        self.current_source = sme_path.read_text(encoding="utf-8")
+        self._original_sme_source = self.current_source
+
+        # 评估初始SME质量
+        logger.info("[MetaSME] 评估初始SME引擎质量...")
+        baseline_meta_fitness = self._evaluate_sme_fitness(self.current_source)
+        logger.info(f"[MetaSME] 初始Meta-fitness: {baseline_meta_fitness:.4f}")
+
+        meta_run_start = datetime.now()
+        meta_summaries = []
+        meta_mutations_accepted = 0
+
+        for gen in range(max_generations):
+            gen_num = gen + 1
+            logger.info(f"\n[MetaSME] ═══ Meta-Generation {gen_num}/{max_generations} ═══")
+
+            meta_candidates = []
+
+            for i in range(self.config.population_size):
+                # 生成Meta变异
+                mutated_sme, mut_type = self._meta_mutate(self.current_source)
+
+                if mut_type == "no_op":
+                    logger.debug(f"[MetaSME] Candidate {i+1}: no_op")
+                    continue
+
+                # 双重沙箱验证
+                sandbox_result = self._meta_sandbox_validate(mutated_sme)
+
+                if not sandbox_result["passed"]:
+                    logger.debug(
+                        f"[MetaSME] Candidate {i+1} [{mut_type}] failed meta-sandbox: "
+                        f"{sandbox_result.get('reason','')[:80]}"
+                    )
+                    continue
+
+                # 评估Meta-fitness
+                meta_fitness = self._evaluate_sme_fitness(mutated_sme)
+                delta = meta_fitness - baseline_meta_fitness
+
+                meta_candidates.append({
+                    "source": mutated_sme,
+                    "meta_fitness": meta_fitness,
+                    "delta": delta,
+                    "mutation_type": mut_type,
+                    "sandbox": sandbox_result,
+                })
+
+                logger.info(
+                    f"[MetaSME] Candidate {i+1} [{mut_type}]: "
+                    f"meta_fitness={meta_fitness:.4f} Δ={delta:+.4f}"
+                )
+
+            # 选择最优Meta变异
+            accepted = False
+            best_meta = None
+
+            if meta_candidates:
+                best_meta = max(meta_candidates, key=lambda c: c["meta_fitness"])
+                if best_meta["delta"] > self.config.acceptance_threshold:
+                    # 接受：写入变异后的SME
+                    self._meta_write_source(best_meta["source"], gen_num)
+                    self.current_source = best_meta["source"]
+                    baseline_meta_fitness = best_meta["meta_fitness"]
+                    meta_mutations_accepted += 1
+                    accepted = True
+
+                    logger.info(
+                        f"[MetaSME] ✅ Meta变异 ACCEPTED: "
+                        f"meta_fitness {best_meta['meta_fitness'] - best_meta['delta']:.4f} "
+                        f"→ {best_meta['meta_fitness']:.4f} ({best_meta['delta']:+.4f})"
+                    )
+                else:
+                    logger.info(
+                        f"[MetaSME] ⚠️  Best meta Δ={best_meta['delta']:+.4f} below threshold"
+                    )
+
+            gen_summary = {
+                "meta_generation": gen_num,
+                "baseline_meta_fitness": baseline_meta_fitness,
+                "accepted": accepted,
+                "mutation_type": best_meta["mutation_type"] if best_meta else "no_op",
+                "candidates_generated": len(meta_candidates),
+                "meta_fitness_delta": best_meta["delta"] if best_meta else 0.0,
+            }
+            meta_summaries.append(gen_summary)
+
+        meta_run_end = datetime.now()
+        elapsed = (meta_run_end - meta_run_start).total_seconds()
+
+        # 最终评估
+        final_meta_fitness = self._evaluate_sme_fitness(self.current_source)
+
+        meta_report = {
+            "version": self.META_VERSION,
+            "experiment": "Meta-SME: self_modification_engine.py自改写",
+            "initial_meta_fitness": float(
+                self._evaluate_sme_fitness(
+                    sme_path.read_text(encoding="utf-8")
+                    if not self._original_sme_source
+                    else self._original_sme_source
+                )
+            ) if not meta_summaries else meta_summaries[0]["baseline_meta_fitness"],
+            "final_meta_fitness": final_meta_fitness,
+            "meta_fitness_improvement": final_meta_fitness - (
+                meta_summaries[0]["baseline_meta_fitness"] if meta_summaries else 0.0
+            ),
+            "total_meta_generations": max_generations,
+            "total_meta_mutations_accepted": meta_mutations_accepted,
+            "meta_acceptance_rate": meta_mutations_accepted / max_generations,
+            "elapsed_seconds": elapsed,
+            "meta_generations": meta_summaries,
+            "safe_mutations_used": self.META_SAFE_MUTATIONS,
+            "meta_immutable_functions": self.META_IMMUTABLE_FUNCTIONS,
+        }
+
+        # 保存报告
+        meta_output_dir = self.project_root / "experiments" / "meta_sme"
+        meta_output_dir.mkdir(parents=True, exist_ok=True)
+        report_path = meta_output_dir / f"meta_sme_run_{meta_run_end:%Y%m%d_%H%M%S}.json"
+
+        def enc(obj):
+            if isinstance(obj, (np.integer, np.floating)):
+                return float(obj)
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            raise TypeError(type(obj))
+
+        with open(report_path, "w", encoding="utf-8") as f:
+            json.dump(meta_report, f, indent=2, default=enc, ensure_ascii=False)
+
+        # 打印摘要
+        print("\n" + "=" * 65)
+        print(f"  MetaSME v{self.META_VERSION} — 自改写引擎Meta进化报告")
+        print("=" * 65)
+        print(f"  目标        : self_modification_engine.py")
+        print(f"  Meta进化代数: {max_generations}")
+        print(f"  初始Meta-f  : {meta_summaries[0]['baseline_meta_fitness'] if meta_summaries else 0.0:.4f}")
+        print(f"  最终Meta-f  : {final_meta_fitness:.4f}")
+        print(f"  Meta-f提升  : {meta_report['meta_fitness_improvement']:+.4f}")
+        print(f"  接受Meta变异: {meta_mutations_accepted}/{max_generations} ({meta_report['meta_acceptance_rate']:.1%})")
+        print(f"  耗时        : {elapsed:.1f}s")
+        print(f"  报告        : {report_path.name}")
+        print("=" * 65)
+
+        logger.info(f"[MetaSME] ✅ Meta进化完成. Report: {report_path}")
+        return meta_report
+

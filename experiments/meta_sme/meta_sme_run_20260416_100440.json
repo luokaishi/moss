@@ -1,0 +1,109 @@
+{
+  "version": "7.0.0-dev",
+  "experiment": "Meta-SME: self_modification_engine.py自改写",
+  "initial_meta_fitness": 0.27582583081183903,
+  "final_meta_fitness": 0.2678716804627975,
+  "meta_fitness_improvement": -0.007954150349041511,
+  "total_meta_generations": 10,
+  "total_meta_mutations_accepted": 2,
+  "meta_acceptance_rate": 0.2,
+  "elapsed_seconds": 403.615916,
+  "meta_generations": [
+    {
+      "meta_generation": 1,
+      "baseline_meta_fitness": 0.27582583081183903,
+      "accepted": true,
+      "mutation_type": "constant_tweak",
+      "candidates_generated": 4,
+      "meta_fitness_delta": 0.21430083124645605
+    },
+    {
+      "meta_generation": 2,
+      "baseline_meta_fitness": 0.27582583081183903,
+      "accepted": false,
+      "mutation_type": "constant_tweak",
+      "candidates_generated": 4,
+      "meta_fitness_delta": -0.02938546125312208
+    },
+    {
+      "meta_generation": 3,
+      "baseline_meta_fitness": 0.29192970441548194,
+      "accepted": true,
+      "mutation_type": "threshold_mutate",
+      "candidates_generated": 4,
+      "meta_fitness_delta": 0.016103873603642904
+    },
+    {
+      "meta_generation": 4,
+      "baseline_meta_fitness": 0.29192970441548194,
+      "accepted": false,
+      "mutation_type": "constant_tweak",
+      "candidates_generated": 3,
+      "meta_fitness_delta": -0.018184094277989227
+    },
+    {
+      "meta_generation": 5,
+      "baseline_meta_fitness": 0.29192970441548194,
+      "accepted": false,
+      "mutation_type": "constant_tweak",
+      "candidates_generated": 3,
+      "meta_fitness_delta": -0.14192970441548194
+    },
+    {
+      "meta_generation": 6,
+      "baseline_meta_fitness": 0.29192970441548194,
+      "accepted": false,
+      "mutation_type": "threshold_mutate",
+      "candidates_generated": 4,
+      "meta_fitness_delta": -0.11860192938805589
+    },
+    {
+      "meta_generation": 7,
+      "baseline_meta_fitness": 0.29192970441548194,
+      "accepted": false,
+      "mutation_type": "threshold_mutate",
+      "candidates_generated": 2,
+      "meta_fitness_delta": -0.029362984239807655
+    },
+    {
+      "meta_generation": 8,
+      "baseline_meta_fitness": 0.29192970441548194,
+      "accepted": false,
+      "mutation_type": "constant_tweak",
+      "candidates_generated": 2,
+      "meta_fitness_delta": -0.1927859065844424
+    },
+    {
+      "meta_generation": 9,
+      "baseline_meta_fitness": 0.29192970441548194,
+      "accepted": false,
+      "mutation_type": "constant_tweak",
+      "candidates_generated": 1,
+      "meta_fitness_delta": -0.09075023069227439
+    },
+    {
+      "meta_generation": 10,
+      "baseline_meta_fitness": 0.29192970441548194,
+      "accepted": false,
+      "mutation_type": "threshold_mutate",
+      "candidates_generated": 3,
+      "meta_fitness_delta": -0.11297399503804395
+    }
+  ],
+  "safe_mutations_used": [
+    "constant_tweak",
+    "threshold_mutate",
+    "weight_shift"
+  ],
+  "meta_immutable_functions": [
+    "_evaluate_source",
+    "_build_eval_module",
+    "_find_project_root",
+    "_module_to_path",
+    "_source_hash",
+    "_load_source",
+    "_write_source",
+    "validate",
+    "__init__"
+  ]
+}
