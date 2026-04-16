@@ -1,0 +1,1135 @@
+{
+  "version": "6.3.0-dev",
+  "target_module": "moss.core.unified_agent",
+  "total_generations": 20,
+  "initial_fitness": 0.7548372236149947,
+  "final_fitness": 0.7829040081621065,
+  "fitness_improvement": 0.028066784547111756,
+  "total_mutations_accepted": 14,
+  "elapsed_seconds": 40.922735,
+  "generations": [
+    {
+      "generation": 1,
+      "baseline_fitness": 0.7548372236149947,
+      "best_fitness": 0.7622757313767471,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 2,
+      "accepted": true,
+      "mutation_type": "constant_tweak",
+      "fitness_delta": 0.0074385077617523665,
+      "mutation_types_tried": [
+        "constant_tweak",
+        "no_op",
+        "no_op",
+        "constant_tweak",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 2,
+        "hypervolume": 0.09996832395102356,
+        "best_balanced": {
+          "scalar_fitness": 0.7622757313767471,
+          "fitness_vector": [
+            0.9066666666666666,
+            0.8922429362843051,
+            0.9859870630700898,
+            0.12342125679159749
+          ],
+          "mutation_type": "constant_tweak"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9066666666666666,
+          "diversity": 0.9060529534558962,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.12342125679159749
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333333,
+          "diversity": 0.8991479448701006,
+          "purpose_align": 0.9835148160008331,
+          "emergence": 0.11715479326921126
+        }
+      }
+    },
+    {
+      "generation": 2,
+      "baseline_fitness": 0.7513319551502512,
+      "best_fitness": 0.7622757313767471,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "constant_tweak",
+      "fitness_delta": 0.010943776226495894,
+      "mutation_types_tried": [
+        "condition_flip",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 2,
+        "hypervolume": 0.09996832395102356,
+        "best_balanced": {
+          "scalar_fitness": 0.7622757313767471,
+          "fitness_vector": [
+            0.9066666666666666,
+            0.8922429362843051,
+            0.9859870630700898,
+            0.12342125679159749
+          ],
+          "mutation_type": "constant_tweak"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9066666666666666,
+          "diversity": 0.9060529534558962,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.12342125679159749
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333333,
+          "diversity": 0.8991479448701006,
+          "purpose_align": 0.9835148160008331,
+          "emergence": 0.11715479326921126
+        }
+      }
+    },
+    {
+      "generation": 3,
+      "baseline_fitness": 0.7606164249664905,
+      "best_fitness": 0.7622757313767471,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 0,
+      "accepted": false,
+      "mutation_type": "no_op",
+      "fitness_delta": 0.0,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 2,
+        "hypervolume": 0.09996832395102356,
+        "best_balanced": {
+          "scalar_fitness": 0.7622757313767471,
+          "fitness_vector": [
+            0.9066666666666666,
+            0.8922429362843051,
+            0.9859870630700898,
+            0.12342125679159749
+          ],
+          "mutation_type": "constant_tweak"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9066666666666666,
+          "diversity": 0.9060529534558962,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.12342125679159749
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333333,
+          "diversity": 0.8991479448701006,
+          "purpose_align": 0.9835148160008331,
+          "emergence": 0.11715479326921126
+        }
+      }
+    },
+    {
+      "generation": 4,
+      "baseline_fitness": 0.7601294440207349,
+      "best_fitness": 0.7668406606822699,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "constant_tweak",
+      "fitness_delta": 0.006711216661534958,
+      "mutation_types_tried": [
+        "constant_tweak",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 3,
+        "hypervolume": 0.13246944862417293,
+        "best_balanced": {
+          "scalar_fitness": 0.7668406606822699,
+          "fitness_vector": [
+            0.9,
+            0.8877575326550416,
+            0.9859591239243541,
+            0.16354726366819292
+          ],
+          "mutation_type": "constant_tweak"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9066666666666666,
+          "diversity": 0.9060529534558962,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9022222222222221,
+          "diversity": 0.8953511407984144,
+          "purpose_align": 0.9843295853086734,
+          "emergence": 0.1326189500688718
+        }
+      }
+    },
+    {
+      "generation": 5,
+      "baseline_fitness": 0.749012041233209,
+      "best_fitness": 0.7668406606822699,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 2,
+      "accepted": true,
+      "mutation_type": "constant_tweak",
+      "fitness_delta": 0.01782861944906089,
+      "mutation_types_tried": [
+        "constant_tweak",
+        "no_op",
+        "no_op",
+        "condition_flip",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 3,
+        "hypervolume": 0.13246944862417293,
+        "best_balanced": {
+          "scalar_fitness": 0.7668406606822699,
+          "fitness_vector": [
+            0.9,
+            0.8877575326550416,
+            0.9859591239243541,
+            0.16354726366819292
+          ],
+          "mutation_type": "constant_tweak"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9066666666666666,
+          "diversity": 0.9060529534558962,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9022222222222221,
+          "diversity": 0.8953511407984144,
+          "purpose_align": 0.9843295853086734,
+          "emergence": 0.1326189500688718
+        }
+      }
+    },
+    {
+      "generation": 6,
+      "baseline_fitness": 0.7582574105771585,
+      "best_fitness": 0.7668406606822699,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "constant_tweak",
+      "fitness_delta": 0.008583250105111406,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "weight_shift",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 4,
+        "hypervolume": 0.13246944862417293,
+        "best_balanced": {
+          "scalar_fitness": 0.7668406606822699,
+          "fitness_vector": [
+            0.9,
+            0.8877575326550416,
+            0.9859591239243541,
+            0.16354726366819292
+          ],
+          "mutation_type": "constant_tweak"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9066666666666666,
+          "diversity": 0.9060529534558962,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9016666666666666,
+          "diversity": 0.8897482291508886,
+          "purpose_align": 0.9847406692214196,
+          "emergence": 0.13369085359810007
+        }
+      }
+    },
+    {
+      "generation": 7,
+      "baseline_fitness": 0.7658498151121518,
+      "best_fitness": 0.768131476500586,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 3,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.0022816613884342196,
+      "mutation_types_tried": [
+        "no_op",
+        "weight_shift",
+        "no_op",
+        "no_op",
+        "weight_hardcode",
+        "weight_shift"
+      ],
+      "pareto_archive_stats": {
+        "size": 6,
+        "hypervolume": 0.13490352449261261,
+        "best_balanced": {
+          "scalar_fitness": 0.768131476500586,
+          "fitness_vector": [
+            0.9066666666666666,
+            0.9084097050061255,
+            0.985966640834625,
+            0.13251194374398143
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.92,
+          "diversity": 0.9093288496961232,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9022222222222221,
+          "diversity": 0.8906991194774861,
+          "purpose_align": 0.9859715129632054,
+          "emergence": 0.13181559886717453
+        }
+      }
+    },
+    {
+      "generation": 8,
+      "baseline_fitness": 0.7668509555646654,
+      "best_fitness": 0.768131476500586,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.0012805209359205705,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "condition_flip",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 7,
+        "hypervolume": 0.13490352449261261,
+        "best_balanced": {
+          "scalar_fitness": 0.768131476500586,
+          "fitness_vector": [
+            0.9066666666666666,
+            0.9084097050061255,
+            0.985966640834625,
+            0.13251194374398143
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.92,
+          "diversity": 0.9093288496961232,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9038095238095237,
+          "diversity": 0.8931660697297165,
+          "purpose_align": 0.9769910924064658,
+          "emergence": 0.1301662036786276
+        }
+      }
+    },
+    {
+      "generation": 9,
+      "baseline_fitness": 0.7485284220009016,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 2,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.03437558616120484,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "condition_flip",
+        "weight_hardcode"
+      ],
+      "pareto_archive_stats": {
+        "size": 5,
+        "hypervolume": 0.13788182204118155,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9026666666666665,
+          "diversity": 0.896997354436782,
+          "purpose_align": 0.9859734680017009,
+          "emergence": 0.14375511648651226
+        }
+      }
+    },
+    {
+      "generation": 10,
+      "baseline_fitness": 0.7394595198598104,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.04344448830229608,
+      "mutation_types_tried": [
+        "threshold_mutate",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 5,
+        "hypervolume": 0.13788182204118155,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9026666666666665,
+          "diversity": 0.896997354436782,
+          "purpose_align": 0.9859734680017009,
+          "emergence": 0.14375511648651226
+        }
+      }
+    },
+    {
+      "generation": 11,
+      "baseline_fitness": 0.7609354777524129,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 2,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.0219685304096936,
+      "mutation_types_tried": [
+        "no_op",
+        "condition_flip",
+        "no_op",
+        "no_op",
+        "no_op",
+        "weight_shift"
+      ],
+      "pareto_archive_stats": {
+        "size": 6,
+        "hypervolume": 0.13788182204118155,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333332,
+          "diversity": 0.8980282266652094,
+          "purpose_align": 0.9859744627865624,
+          "emergence": 0.1407992967234837
+        }
+      }
+    },
+    {
+      "generation": 12,
+      "baseline_fitness": 0.7603280198372406,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 0,
+      "accepted": false,
+      "mutation_type": "no_op",
+      "fitness_delta": 0.0,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 6,
+        "hypervolume": 0.13788182204118155,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333332,
+          "diversity": 0.8980282266652094,
+          "purpose_align": 0.9859744627865624,
+          "emergence": 0.1407992967234837
+        }
+      }
+    },
+    {
+      "generation": 13,
+      "baseline_fitness": 0.7754884866966896,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 0,
+      "accepted": false,
+      "mutation_type": "no_op",
+      "fitness_delta": 0.0,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 6,
+        "hypervolume": 0.13788182204118155,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333332,
+          "diversity": 0.8980282266652094,
+          "purpose_align": 0.9859744627865624,
+          "emergence": 0.1407992967234837
+        }
+      }
+    },
+    {
+      "generation": 14,
+      "baseline_fitness": 0.7424537649535816,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 0,
+      "accepted": false,
+      "mutation_type": "no_op",
+      "fitness_delta": 0.0,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 6,
+        "hypervolume": 0.13788182204118155,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333332,
+          "diversity": 0.8980282266652094,
+          "purpose_align": 0.9859744627865624,
+          "emergence": 0.1407992967234837
+        }
+      }
+    },
+    {
+      "generation": 15,
+      "baseline_fitness": 0.7487274395850952,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.034176568577011235,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "constant_tweak",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 6,
+        "hypervolume": 0.13788182204118155,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333332,
+          "diversity": 0.8980282266652094,
+          "purpose_align": 0.9859744627865624,
+          "emergence": 0.1407992967234837
+        }
+      }
+    },
+    {
+      "generation": 16,
+      "baseline_fitness": 0.7831223975929689,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 0,
+      "accepted": false,
+      "mutation_type": "no_op",
+      "fitness_delta": 0.0,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 6,
+        "hypervolume": 0.13788182204118155,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.9859870630700898,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9033333333333332,
+          "diversity": 0.8980282266652094,
+          "purpose_align": 0.9859744627865624,
+          "emergence": 0.1407992967234837
+        }
+      }
+    },
+    {
+      "generation": 17,
+      "baseline_fitness": 0.7586080150103434,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.024295993151763118,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "threshold_mutate",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 7,
+        "hypervolume": 0.13877329618376455,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.992361956864181,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9019047619047618,
+          "diversity": 0.9005196961162966,
+          "purpose_align": 0.9868869619405078,
+          "emergence": 0.13738691533583572
+        }
+      }
+    },
+    {
+      "generation": 18,
+      "baseline_fitness": 0.7667773868347135,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 0,
+      "accepted": false,
+      "mutation_type": "no_op",
+      "fitness_delta": 0.0,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 7,
+        "hypervolume": 0.13877329618376455,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9227179593401283,
+          "purpose_align": 0.992361956864181,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9019047619047618,
+          "diversity": 0.9005196961162966,
+          "purpose_align": 0.9868869619405078,
+          "emergence": 0.13738691533583572
+        }
+      }
+    },
+    {
+      "generation": 19,
+      "baseline_fitness": 0.753750230813213,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.02915377734889346,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op",
+        "weight_shift",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": {
+        "size": 7,
+        "hypervolume": 0.13952344254149981,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9277057598424625,
+          "purpose_align": 0.992361956864181,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9019047619047619,
+          "diversity": 0.9083434483497468,
+          "purpose_align": 0.986888230744327,
+          "emergence": 0.13759917416901674
+        }
+      }
+    },
+    {
+      "generation": 20,
+      "baseline_fitness": 0.7463687486390196,
+      "best_fitness": 0.7829040081621065,
+      "candidates_generated": 6,
+      "candidates_passed_sandbox": 3,
+      "accepted": true,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": 0.036535259523086894,
+      "mutation_types_tried": [
+        "constant_tweak",
+        "no_op",
+        "no_op",
+        "no_op",
+        "weight_shift",
+        "threshold_mutate"
+      ],
+      "pareto_archive_stats": {
+        "size": 7,
+        "hypervolume": 0.13952344254149981,
+        "best_balanced": {
+          "scalar_fitness": 0.7829040081621065,
+          "fitness_vector": [
+            0.9266666666666666,
+            0.9227179593401283,
+            0.9859732034770643,
+            0.1534827214916409
+          ],
+          "mutation_type": "weight_hardcode"
+        },
+        "dimension_maxes": {
+          "success_rate": 0.9266666666666666,
+          "diversity": 0.9277057598424625,
+          "purpose_align": 0.992361956864181,
+          "emergence": 0.16354726366819292
+        },
+        "dimension_means": {
+          "success_rate": 0.9019047619047619,
+          "diversity": 0.9083434483497468,
+          "purpose_align": 0.986888230744327,
+          "emergence": 0.13759917416901674
+        }
+      }
+    }
+  ],
+  "mutation_history": [
+    {
+      "mutation_id": "gen1_094451",
+      "mutation_type": "constant_tweak",
+      "original_hash": "179ca59d",
+      "mutated_hash": "179ca59d",
+      "fitness_before": 0.7548372236149947,
+      "fitness_after": 0.7622757313767471,
+      "fitness_delta": 0.0074385077617523665,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:44:51.174157"
+    },
+    {
+      "mutation_id": "gen2_094452",
+      "mutation_type": "constant_tweak",
+      "original_hash": "179ca59d",
+      "mutated_hash": "179ca59d",
+      "fitness_before": 0.7513319551502512,
+      "fitness_after": 0.7622757313767471,
+      "fitness_delta": 0.010943776226495894,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:44:52.678635"
+    },
+    {
+      "mutation_id": "gen3_094452",
+      "mutation_type": "no_op",
+      "original_hash": "179ca59d",
+      "mutated_hash": "",
+      "fitness_before": 0.7606164249664905,
+      "fitness_after": 0.7606164249664905,
+      "fitness_delta": 0.0,
+      "accepted": false,
+      "sandbox_passed": false,
+      "timestamp": "2026-04-16T09:44:52.907899"
+    },
+    {
+      "mutation_id": "gen4_094454",
+      "mutation_type": "constant_tweak",
+      "original_hash": "fe5b12bc",
+      "mutated_hash": "fe5b12bc",
+      "fitness_before": 0.7601294440207349,
+      "fitness_after": 0.7668406606822699,
+      "fitness_delta": 0.006711216661534958,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:44:54.504605"
+    },
+    {
+      "mutation_id": "gen5_094457",
+      "mutation_type": "constant_tweak",
+      "original_hash": "fe5b12bc",
+      "mutated_hash": "fe5b12bc",
+      "fitness_before": 0.749012041233209,
+      "fitness_after": 0.7668406606822699,
+      "fitness_delta": 0.01782861944906089,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:44:57.495003"
+    },
+    {
+      "mutation_id": "gen6_094501",
+      "mutation_type": "constant_tweak",
+      "original_hash": "fe5b12bc",
+      "mutated_hash": "fe5b12bc",
+      "fitness_before": 0.7582574105771585,
+      "fitness_after": 0.7668406606822699,
+      "fitness_delta": 0.008583250105111406,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:01.159708"
+    },
+    {
+      "mutation_id": "gen7_094510",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "9303d504",
+      "mutated_hash": "9303d504",
+      "fitness_before": 0.7658498151121518,
+      "fitness_after": 0.768131476500586,
+      "fitness_delta": 0.0022816613884342196,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:10.873949"
+    },
+    {
+      "mutation_id": "gen8_094512",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "9303d504",
+      "mutated_hash": "9303d504",
+      "fitness_before": 0.7668509555646654,
+      "fitness_after": 0.768131476500586,
+      "fitness_delta": 0.0012805209359205705,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:12.437657"
+    },
+    {
+      "mutation_id": "gen9_094515",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "80f53585",
+      "mutated_hash": "80f53585",
+      "fitness_before": 0.7485284220009016,
+      "fitness_after": 0.7829040081621065,
+      "fitness_delta": 0.03437558616120484,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:15.168754"
+    },
+    {
+      "mutation_id": "gen10_094516",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "80f53585",
+      "mutated_hash": "80f53585",
+      "fitness_before": 0.7394595198598104,
+      "fitness_after": 0.7829040081621065,
+      "fitness_delta": 0.04344448830229608,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:16.716123"
+    },
+    {
+      "mutation_id": "gen11_094519",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "80f53585",
+      "mutated_hash": "80f53585",
+      "fitness_before": 0.7609354777524129,
+      "fitness_after": 0.7829040081621065,
+      "fitness_delta": 0.0219685304096936,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:19.489532"
+    },
+    {
+      "mutation_id": "gen12_094519",
+      "mutation_type": "no_op",
+      "original_hash": "80f53585",
+      "mutated_hash": "",
+      "fitness_before": 0.7603280198372406,
+      "fitness_after": 0.7603280198372406,
+      "fitness_delta": 0.0,
+      "accepted": false,
+      "sandbox_passed": false,
+      "timestamp": "2026-04-16T09:45:19.772263"
+    },
+    {
+      "mutation_id": "gen13_094520",
+      "mutation_type": "no_op",
+      "original_hash": "80f53585",
+      "mutated_hash": "",
+      "fitness_before": 0.7754884866966896,
+      "fitness_after": 0.7754884866966896,
+      "fitness_delta": 0.0,
+      "accepted": false,
+      "sandbox_passed": false,
+      "timestamp": "2026-04-16T09:45:20.028319"
+    },
+    {
+      "mutation_id": "gen14_094520",
+      "mutation_type": "no_op",
+      "original_hash": "80f53585",
+      "mutated_hash": "",
+      "fitness_before": 0.7424537649535816,
+      "fitness_after": 0.7424537649535816,
+      "fitness_delta": 0.0,
+      "accepted": false,
+      "sandbox_passed": false,
+      "timestamp": "2026-04-16T09:45:20.262022"
+    },
+    {
+      "mutation_id": "gen15_094521",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "80f53585",
+      "mutated_hash": "80f53585",
+      "fitness_before": 0.7487274395850952,
+      "fitness_after": 0.7829040081621065,
+      "fitness_delta": 0.034176568577011235,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:21.773180"
+    },
+    {
+      "mutation_id": "gen16_094521",
+      "mutation_type": "no_op",
+      "original_hash": "80f53585",
+      "mutated_hash": "",
+      "fitness_before": 0.7831223975929689,
+      "fitness_after": 0.7831223975929689,
+      "fitness_delta": 0.0,
+      "accepted": false,
+      "sandbox_passed": false,
+      "timestamp": "2026-04-16T09:45:21.992700"
+    },
+    {
+      "mutation_id": "gen17_094523",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "80f53585",
+      "mutated_hash": "80f53585",
+      "fitness_before": 0.7586080150103434,
+      "fitness_after": 0.7829040081621065,
+      "fitness_delta": 0.024295993151763118,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:23.460122"
+    },
+    {
+      "mutation_id": "gen18_094523",
+      "mutation_type": "no_op",
+      "original_hash": "80f53585",
+      "mutated_hash": "",
+      "fitness_before": 0.7667773868347135,
+      "fitness_after": 0.7667773868347135,
+      "fitness_delta": 0.0,
+      "accepted": false,
+      "sandbox_passed": false,
+      "timestamp": "2026-04-16T09:45:23.682336"
+    },
+    {
+      "mutation_id": "gen19_094525",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "80f53585",
+      "mutated_hash": "80f53585",
+      "fitness_before": 0.753750230813213,
+      "fitness_after": 0.7829040081621065,
+      "fitness_delta": 0.02915377734889346,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:25.261565"
+    },
+    {
+      "mutation_id": "gen20_094529",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "80f53585",
+      "mutated_hash": "80f53585",
+      "fitness_before": 0.7463687486390196,
+      "fitness_after": 0.7829040081621065,
+      "fitness_delta": 0.036535259523086894,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-16T09:45:29.278823"
+    }
+  ],
+  "timestamp": "2026-04-16T09:45:29.280131"
+}
