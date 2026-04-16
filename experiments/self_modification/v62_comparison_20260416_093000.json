@@ -1,0 +1,303 @@
+{
+  "experiment_id": "v62_comparison_20260416_093000",
+  "config": {
+    "n_trials": 1,
+    "max_generations": 20,
+    "base_seed": 42,
+    "purpose_vector_uniform": [
+      0.25,
+      0.25,
+      0.25,
+      0.25
+    ],
+    "purpose_vector_diversity": [
+      0.15,
+      0.4,
+      0.2,
+      0.35
+    ]
+  },
+  "results_random": [
+    {
+      "trial_id": 1,
+      "mode": "random",
+      "seed": 42,
+      "enable_semantic_guidance": false,
+      "initial_fitness": 0.6573740660467869,
+      "final_fitness": 0.6758905084126657,
+      "fitness_improvement": 0.018516442365878794,
+      "fitness_improvement_pct": 2.816728453744771,
+      "total_mutations_accepted": 4,
+      "total_generations": 20,
+      "acceptance_rate": 0.2,
+      "elapsed_seconds": 21.629055738449097,
+      "mutation_type_distribution": [
+        "constant_tweak",
+        "threshold_mutate",
+        "weight_hardcode",
+        "condition_flip",
+        "weight_shift",
+        "action_insert",
+        "threshold_mutate",
+        "condition_flip",
+        "action_insert",
+        "condition_flip",
+        "condition_flip",
+        "weight_hardcode"
+      ],
+      "mutation_diversity_entropy": 2.418295833188872,
+      "fitness_trajectory": [
+        0.6836474494756065,
+        0.6836474494756065,
+        0.6836474494756065,
+        0.6836474494756065,
+        0.6836474494756065,
+        0.6836474494756065,
+        0.6568312914445944,
+        0.6568312914445944,
+        0.6568312914445944,
+        0.6568312914445944,
+        0.6568312914445944,
+        0.6568312914445944,
+        0.6568312914445944,
+        0.6568312914445944,
+        0.6568312914445944,
+        0.6432222268279324,
+        0.6758905084126657,
+        0.6758905084126657,
+        0.6758905084126657,
+        0.6758905084126657
+      ]
+    }
+  ],
+  "results_semantic_uniform": [
+    {
+      "trial_id": 2,
+      "mode": "semantic",
+      "seed": 42,
+      "enable_semantic_guidance": true,
+      "initial_fitness": 0.7441579369331792,
+      "final_fitness": 0.7570807092174396,
+      "fitness_improvement": 0.01292277228426042,
+      "fitness_improvement_pct": 1.7365631195869116,
+      "total_mutations_accepted": 9,
+      "total_generations": 20,
+      "acceptance_rate": 0.45,
+      "elapsed_seconds": 34.7306272983551,
+      "mutation_type_distribution": [
+        "constant_tweak",
+        "condition_flip",
+        "constant_tweak",
+        "constant_tweak",
+        "weight_shift",
+        "weight_hardcode",
+        "condition_flip",
+        "weight_hardcode",
+        "threshold_mutate",
+        "condition_flip",
+        "constant_tweak",
+        "weight_shift",
+        "threshold_mutate",
+        "weight_shift",
+        "threshold_mutate"
+      ],
+      "mutation_diversity_entropy": 2.289246427787811,
+      "fitness_trajectory": [
+        0.7602992270667536,
+        0.7602992270667536,
+        0.7602992270667536,
+        0.7658202859179655,
+        0.7461076255538207,
+        0.7461076255538207,
+        0.7609474236110835,
+        0.7609474236110835,
+        0.7683189152473359,
+        0.7437188181767485,
+        0.7437188181767485,
+        0.7551542678650113,
+        0.7630134692328429,
+        0.7630134692328429,
+        0.7630134692328429,
+        0.7630134692328429,
+        0.7630134692328429,
+        0.7630134692328429,
+        0.7570807092174396,
+        0.7570807092174396
+      ]
+    }
+  ],
+  "results_semantic_diversity": [
+    {
+      "trial_id": 3,
+      "mode": "semantic",
+      "seed": 42,
+      "enable_semantic_guidance": true,
+      "initial_fitness": 0.7515046761281828,
+      "final_fitness": 0.7659959437149364,
+      "fitness_improvement": 0.014491267586753565,
+      "fitness_improvement_pct": 1.9283003881511198,
+      "total_mutations_accepted": 9,
+      "total_generations": 20,
+      "acceptance_rate": 0.45,
+      "elapsed_seconds": 50.62853264808655,
+      "mutation_type_distribution": [
+        "constant_tweak",
+        "condition_flip",
+        "constant_tweak",
+        "constant_tweak",
+        "weight_shift",
+        "weight_hardcode",
+        "condition_flip",
+        "weight_hardcode",
+        "threshold_mutate",
+        "condition_flip",
+        "constant_tweak",
+        "weight_shift",
+        "threshold_mutate",
+        "weight_shift",
+        "threshold_mutate"
+      ],
+      "mutation_diversity_entropy": 2.289246427787811,
+      "fitness_trajectory": [
+        0.769204325966849,
+        0.769204325966849,
+        0.769204325966849,
+        0.7747361656152378,
+        0.7550145730827477,
+        0.7550145730827477,
+        0.7698584324516997,
+        0.7698584324516997,
+        0.7772291605389939,
+        0.7526278773866727,
+        0.7526278773866727,
+        0.7640692632023679,
+        0.7719358025843374,
+        0.7719358025843374,
+        0.7719358025843374,
+        0.7719358025843374,
+        0.7719358025843374,
+        0.7719358025843374,
+        0.7659959437149364,
+        0.7659959437149364
+      ]
+    }
+  ],
+  "analysis": {
+    "v61_random": {
+      "fitness_improvement": {
+        "mean": 0.018516442365878794,
+        "std": 0.0,
+        "min": 0.018516442365878794,
+        "max": 0.018516442365878794,
+        "values": [
+          0.018516442365878794
+        ]
+      },
+      "fitness_improvement_pct": {
+        "mean": 2.816728453744771,
+        "std": 0.0,
+        "min": 2.816728453744771,
+        "max": 2.816728453744771,
+        "values": [
+          2.816728453744771
+        ]
+      },
+      "acceptance_rate": {
+        "mean": 0.2,
+        "std": 0.0,
+        "min": 0.2,
+        "max": 0.2,
+        "values": [
+          0.2
+        ]
+      },
+      "mutation_diversity": {
+        "mean": 2.418295833188872,
+        "std": 0.0,
+        "min": 2.418295833188872,
+        "max": 2.418295833188872,
+        "values": [
+          2.418295833188872
+        ]
+      }
+    },
+    "v62_semantic_uniform": {
+      "fitness_improvement": {
+        "mean": 0.01292277228426042,
+        "std": 0.0,
+        "min": 0.01292277228426042,
+        "max": 0.01292277228426042,
+        "values": [
+          0.01292277228426042
+        ]
+      },
+      "fitness_improvement_pct": {
+        "mean": 1.7365631195869116,
+        "std": 0.0,
+        "min": 1.7365631195869116,
+        "max": 1.7365631195869116,
+        "values": [
+          1.7365631195869116
+        ]
+      },
+      "acceptance_rate": {
+        "mean": 0.45,
+        "std": 0.0,
+        "min": 0.45,
+        "max": 0.45,
+        "values": [
+          0.45
+        ]
+      },
+      "mutation_diversity": {
+        "mean": 2.289246427787811,
+        "std": 0.0,
+        "min": 2.289246427787811,
+        "max": 2.289246427787811,
+        "values": [
+          2.289246427787811
+        ]
+      },
+      "relative_improvement_vs_random_pct": -30.209205262486705
+    },
+    "v62_semantic_diversity": {
+      "fitness_improvement": {
+        "mean": 0.014491267586753565,
+        "std": 0.0,
+        "min": 0.014491267586753565,
+        "max": 0.014491267586753565,
+        "values": [
+          0.014491267586753565
+        ]
+      },
+      "fitness_improvement_pct": {
+        "mean": 1.9283003881511198,
+        "std": 0.0,
+        "min": 1.9283003881511198,
+        "max": 1.9283003881511198,
+        "values": [
+          1.9283003881511198
+        ]
+      },
+      "acceptance_rate": {
+        "mean": 0.45,
+        "std": 0.0,
+        "min": 0.45,
+        "max": 0.45,
+        "values": [
+          0.45
+        ]
+      },
+      "mutation_diversity": {
+        "mean": 2.289246427787811,
+        "std": 0.0,
+        "min": 2.289246427787811,
+        "max": 2.289246427787811,
+        "values": [
+          2.289246427787811
+        ]
+      },
+      "relative_improvement_vs_random_pct": -21.738380945913384
+    }
+  }
+}

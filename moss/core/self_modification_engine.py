@@ -1,5 +1,5 @@
 """
-MOSS v6.0 - Self-Modification Engine (SME)
+MOSS v6.2 - Self-Modification Engine (SME)
 ==========================================
 
 Agent自写自身代码的核心引擎
@@ -12,9 +12,14 @@ Agent自写自身代码的核心引擎
 - 隔离沙箱安全验证
 - importlib热重载
 
+升级历史：
+- v6.0: 初始AST变异引擎
+- v6.1: 强化版（加权函数选择、真实涌现检测三信号、放宽沙箱通过标准）
+- v6.2: 语义引导变异（PurposeGuidedSelector）- 基于目的向量余弦相似度软权重变异类型
+
 Author: MOSS v6.0 Auto-Build
 Date: 2026-04-13
-Version: 6.1.0-dev  (强化版)
+Version: 6.2.0-dev  (语义引导变异版)
 """
 
 import ast
@@ -87,11 +92,165 @@ class SMEConfig:
         "__init__", "save_checkpoint", "load_checkpoint",
         "_setup_logging", "get_state"
     ])                                                        # 不可变函数（安全锁定）
+    # ── v6.2 新增：语义引导变异 ──
+    enable_semantic_guidance: bool = True                    # 启用语义引导变异选择（v6.2新增）
+    semantic_temperature: float = 1.5                        # softmax温度（低→贪心，高→均匀）
+    semantic_exploration_bonus: float = 0.1                  # 探索奖励（防止语义引导过度收敛）
+    # ── v6.3 预留：Pareto多目标优化 ──
+    use_pareto: bool = False                                  # 启用Pareto多目标优化（v6.3新增，默认关闭）
+    pareto_archive_size: int = 50                             # Pareto档案最大容量
+
+
+# ─────────────────────────────────────────────
+# v6.2 语义引导变异选择器（PurposeGuidedSelector）
+# ─────────────────────────────────────────────
+
+class PurposeGuidedSelector:
+    """
+    语义引导变异选择器（v6.2 核心创新）
+
+    核心思路：
+    - 9种变异类型各有其"语义倾向向量"（对fitness四分量的期望影响方向）
+    - 目的向量D9降维后与语义倾向对齐，计算余弦相似度
+    - 用softmax将相似度转换为选择概率，引导变异朝"目的对齐"方向搜索
+    - 温度参数控制探索/利用平衡：temperature=2.0接近均匀随机，→0趋向贪心
+
+    语义映射维度（对应fitness四分量）：
+    0: success_rate  - 成功率影响
+    1: diversity     - 行为多样性影响
+    2: purpose_align - 目的对齐度影响
+    3: emergence     - 涌现信号影响
+    """
+
+    # 9种变异类型的语义倾向向量（经验设计，对fitness四分量的期望增益方向）
+    # 格式：[success_rate, diversity, purpose_align, emergence]
+    MUTATION_SEMANTICS = {
+        # 参数级变异（精细调整）
+        'constant_tweak':   np.array([0.6, 0.2, 0.3, 0.4]),  # 精调常量→提升成功率&涌现
+        'condition_flip':   np.array([0.3, 0.5, 0.2, 0.6]),  # 翻转条件→增加行为多样性&涌现
+        'weight_shift':     np.array([0.4, 0.4, 0.6, 0.3]),  # 权重重分配→提升目的对齐
+        'threshold_mutate': np.array([0.5, 0.3, 0.4, 0.3]),  # 阈值调整→提升成功率
+        # 结构级变异（激进探索）
+        'epsilon_tune':     np.array([0.2, 0.7, 0.2, 0.5]),  # 探索率调整→增加多样性
+        'weight_hardcode':  np.array([0.6, 0.2, 0.5, 0.2]),  # 硬编码极端策略→成功率&对齐
+        'action_insert':    np.array([0.3, 0.6, 0.3, 0.5]),  # 插入/删除动作→多样性&涌现
+        'action_shuffle':   np.array([0.2, 0.8, 0.2, 0.6]),  # 重排优先级→多样性&涌现
+        'branch_inject':    np.array([0.4, 0.5, 0.4, 0.7]),  # 注入条件分支→全面提升
+    }
+
+    def __init__(self, temperature: float = 1.5, exploration_bonus: float = 0.1):
+        """
+        Args:
+            temperature: softmax温度（高→探索/均匀，低→贪心/确定）
+            exploration_bonus: 均匀分布混合系数（防止某类变异被完全忽略）
+        """
+        self.temperature = temperature
+        self.exploration_bonus = exploration_bonus
+        # 预归一化语义向量
+        self._normalized_semantics = {}
+        for mut_type, vec in self.MUTATION_SEMANTICS.items():
+            norm = np.linalg.norm(vec)
+            self._normalized_semantics[mut_type] = vec / (norm + 1e-10)
+
+    def compute_mutation_probs(self,
+                                purpose_vector: Optional[np.ndarray],
+                                available_mutations: List[str]) -> Dict[str, float]:
+        """
+        计算可用变异类型的选择概率
+
+        Args:
+            purpose_vector: Agent的目的向量（D9维或4维），None时退化为均匀分布
+            available_mutations: 当前可用的变异类型列表
+
+        Returns:
+            {mutation_type: probability}，所有值之和=1.0
+        """
+        if purpose_vector is None or len(available_mutations) == 0:
+            # 退化为均匀分布
+            uniform_p = 1.0 / len(available_mutations)
+            return {m: uniform_p for m in available_mutations}
+
+        # 提取前4维（对应fitness四分量）
+        pv = np.array(purpose_vector, dtype=float)
+        if len(pv) >= 4:
+            pv4 = pv[:4]
+        else:
+            # 维度不足时补零
+            pv4 = np.zeros(4)
+            pv4[:len(pv)] = pv
+
+        # 归一化目的向量
+        pv_norm = pv4 / (np.linalg.norm(pv4) + 1e-10)
+
+        # 计算每种可用变异类型与目的向量的余弦相似度
+        scores = {}
+        for mut_type in available_mutations:
+            if mut_type in self._normalized_semantics:
+                sem_vec = self._normalized_semantics[mut_type]
+                cosine = float(np.dot(pv_norm, sem_vec))
+                scores[mut_type] = cosine
+            else:
+                scores[mut_type] = 0.0  # 未知类型给中性分
+
+        # Softmax（带温度）
+        score_arr = np.array([scores[m] for m in available_mutations])
+        # 平移到非负（避免exp数值问题）
+        score_arr = score_arr - score_arr.max()
+        exp_arr = np.exp(score_arr / max(self.temperature, 0.01))
+        softmax_probs = exp_arr / (exp_arr.sum() + 1e-10)
+
+        # 与均匀分布混合（exploration_bonus控制探索比例）
+        n = len(available_mutations)
+        uniform_probs = np.ones(n) / n
+        final_probs = ((1.0 - self.exploration_bonus) * softmax_probs
+                       + self.exploration_bonus * uniform_probs)
+
+        return {m: float(p) for m, p in zip(available_mutations, final_probs)}
+
+    def select_mutation_type(self,
+                              purpose_vector: Optional[np.ndarray],
+                              available_mutations: List[str],
+                              rng: random.Random) -> str:
+        """
+        按语义引导概率采样一种变异类型
+
+        Args:
+            purpose_vector: 目的向量
+            available_mutations: 候选变异类型列表
+            rng: 随机数生成器
+
+        Returns:
+            选中的变异类型名称
+        """
+        probs = self.compute_mutation_probs(purpose_vector, available_mutations)
+        types = list(probs.keys())
+        weights = [probs[t] for t in types]
+
+        # 加权随机采样
+        rand_val = rng.random()
+        cumulative = 0.0
+        for t, w in zip(types, weights):
+            cumulative += w
+            if rand_val <= cumulative:
+                return t
+        return types[-1]  # fallback
+
+    def get_alignment_report(self,
+                              purpose_vector: Optional[np.ndarray],
+                              available_mutations: List[str]) -> str:
+        """生成语义对齐报告（用于调试/日志）"""
+        probs = self.compute_mutation_probs(purpose_vector, available_mutations)
+        lines = ["[PurposeGuide] 变异类型语义对齐概率:"]
+        for mut_type, prob in sorted(probs.items(), key=lambda x: -x[1]):
+            bar = "█" * int(prob * 20)
+            lines.append(f"  {mut_type:20s} {bar:20s} {prob:.3f}")
+        return "\n".join(lines)
 
 
 # ─────────────────────────────────────────────
 # AST 变异器（纯Python实现，无需deap/gplearn）
 # ─────────────────────────────────────────────
+
 
 class ASTMutator:
     """
@@ -150,15 +309,24 @@ class ASTMutator:
         "_update_purpose": 2,
     }
 
-    def __init__(self, rng_seed: Optional[int] = None, intensity: float = 0.3):
+    def __init__(self, rng_seed: Optional[int] = None, intensity: float = 0.3,
+                 purpose_guided_selector: Optional['PurposeGuidedSelector'] = None):
         self.rng = random.Random(rng_seed)
         self.np_rng = np.random.default_rng(rng_seed)
         self.intensity = intensity  # 0.1=保守, 0.5=激进
+        self.purpose_guided_selector = purpose_guided_selector  # v6.2: 语义引导选择器
 
     def mutate(self, source: str, target_functions: List[str],
-               mutation_type: Optional[str] = None) -> Tuple[str, str]:
+               mutation_type: Optional[str] = None,
+               purpose_vector: Optional[np.ndarray] = None) -> Tuple[str, str]:
         """
-        对源码进行一次变异（加权函数选择）
+        对源码进行一次变异（加权函数选择 + v6.2语义引导变异类型选择）
+
+        Args:
+            source: 目标源码
+            target_functions: 目标函数名列表
+            mutation_type: 强制指定变异类型（None则自动选择）
+            purpose_vector: 目的向量（v6.2新增，用于语义引导变异类型选择）
 
         Returns:
             (mutated_source, mutation_type_applied)
@@ -182,7 +350,7 @@ class ASTMutator:
                 target_func = fn
                 break
 
-        # 选择变异类型（结构级变异有更高权重）
+        # 选择变异类型（v6.2：语义引导 or 随机）
         if mutation_type is None:
             mutation_candidates = [
                 'constant_tweak', 'condition_flip',
@@ -192,11 +360,20 @@ class ASTMutator:
             if self.intensity > 0.2:
                 mutation_candidates += [
                     'epsilon_tune', 'weight_hardcode',
+                    'action_insert',
                 ]
             if self.intensity > 0.4:
-                mutation_candidates += ['branch_inject']
+                mutation_candidates += ['action_shuffle', 'branch_inject']
 
-            mutation_type = self.rng.choice(mutation_candidates)
+            # v6.2: 语义引导选择（如果已注入选择器且有目的向量）
+            if (self.purpose_guided_selector is not None
+                    and purpose_vector is not None):
+                mutation_type = self.purpose_guided_selector.select_mutation_type(
+                    purpose_vector, mutation_candidates, self.rng
+                )
+            else:
+                # v6.1退化：均匀随机
+                mutation_type = self.rng.choice(mutation_candidates)
 
         mutated_tree = copy.deepcopy(tree)
         target_in_copy = self._find_target_functions(mutated_tree, [target_func.name])
@@ -864,13 +1041,31 @@ class SelfModificationEngine:
     6. 记录演化历史
     """
 
-    VERSION = "6.1.0-dev"
+    VERSION = "6.2.0-dev"
 
     def __init__(self, config: SMEConfig = None, project_root: str = None):
         self.config = config or SMEConfig()
         self.project_root = Path(project_root or self._find_project_root())
 
-        self.mutator = ASTMutator(intensity=self.config.mutation_intensity)
+        # v6.2: 初始化语义引导选择器
+        if self.config.enable_semantic_guidance:
+            self._purpose_guided_selector = PurposeGuidedSelector(
+                temperature=self.config.semantic_temperature,
+                exploration_bonus=self.config.semantic_exploration_bonus
+            )
+            logger.info(
+                f"[SME] PurposeGuidedSelector enabled "
+                f"(temperature={self.config.semantic_temperature:.1f}, "
+                f"exploration_bonus={self.config.semantic_exploration_bonus:.2f})"
+            )
+        else:
+            self._purpose_guided_selector = None
+            logger.info("[SME] PurposeGuidedSelector disabled (v6.1 fallback mode)")
+
+        self.mutator = ASTMutator(
+            intensity=self.config.mutation_intensity,
+            purpose_guided_selector=self._purpose_guided_selector
+        )
         self.sandbox = CodeSandbox(
             str(self.project_root),
             timeout=self.config.sandbox_timeout
@@ -1014,11 +1209,22 @@ class SelfModificationEngine:
         candidates = []
         mutation_types_tried = []
 
+        # v6.2: 输出语义引导对齐报告（每代首次）
+        if (self.config.enable_semantic_guidance
+                and purpose_vector is not None
+                and self._purpose_guided_selector is not None):
+            avail = ['constant_tweak', 'condition_flip', 'weight_shift', 'threshold_mutate',
+                     'epsilon_tune', 'weight_hardcode', 'action_insert', 'action_shuffle']
+            logger.debug(self._purpose_guided_selector.get_alignment_report(
+                purpose_vector, avail
+            ))
+
         # 生成变异候选
         for i in range(self.config.population_size):
             mutated_source, mut_type = self.mutator.mutate(
                 self.current_source,
-                self.config.target_functions
+                self.config.target_functions,
+                purpose_vector=purpose_vector  # v6.2: 传入目的向量
             )
             mutation_types_tried.append(mut_type)
 
