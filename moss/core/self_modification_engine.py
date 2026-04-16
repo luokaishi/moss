@@ -51,6 +51,44 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────────────────────
 
 @dataclass
+class ParetoSolution:
+    """
+    Pareto多目标解（v6.3新增）
+
+    维护4维fitness向量（非标量），用于Pareto非支配排序
+    """
+    fitness_vector: np.ndarray     # [success_rate, diversity, purpose_align, emergence]
+    source: str                    # 对应的变异源码
+    mutation_type: str             # 变异类型
+    generation: int                # 产生代次
+    sandbox_passed: bool = True
+
+    @property
+    def scalar_fitness(self) -> float:
+        """加权标量（与v6.1兼容，用于日志显示）"""
+        w = np.array([0.35, 0.25, 0.20, 0.20])
+        return float(np.dot(w, self.fitness_vector))
+
+    def dominates(self, other: 'ParetoSolution') -> bool:
+        """
+        Pareto支配关系：self至少在一个维度优于other，且不在任何维度差于other
+
+        Returns True if self Pareto-dominates other
+        """
+        return (np.all(self.fitness_vector >= other.fitness_vector) and
+                np.any(self.fitness_vector > other.fitness_vector))
+
+    def to_dict(self) -> Dict:
+        return {
+            'fitness_vector': self.fitness_vector.tolist(),
+            'scalar_fitness': self.scalar_fitness,
+            'mutation_type': self.mutation_type,
+            'generation': self.generation,
+            'sandbox_passed': self.sandbox_passed,
+        }
+
+
+@dataclass
 class MutationResult:
     """单次变异结果"""
     mutation_id: str
@@ -245,6 +283,194 @@ class PurposeGuidedSelector:
             bar = "█" * int(prob * 20)
             lines.append(f"  {mut_type:20s} {bar:20s} {prob:.3f}")
         return "\n".join(lines)
+
+
+# ─────────────────────────────────────────────
+# v6.3 Pareto多目标优化档案（ParetoArchive）
+# ─────────────────────────────────────────────
+
+class ParetoArchive:
+    """
+    Pareto非支配解档案（v6.3 核心组件）
+
+    维护一组Pareto最优解，支持：
+    - 非支配排序（NSGA-II风格）
+    - 拥挤度距离裁剪（保持多样性）
+    - 最优解查询（按不同策略）
+
+    四目标维度：
+    0: success_rate  (权重0.35)
+    1: diversity     (权重0.25)
+    2: purpose_align (权重0.20)
+    3: emergence     (权重0.20)
+    """
+
+    DIMENSION_NAMES = ['success_rate', 'diversity', 'purpose_align', 'emergence']
+    DEFAULT_WEIGHTS = np.array([0.35, 0.25, 0.20, 0.20])
+
+    def __init__(self, max_size: int = 50):
+        self.max_size = max_size
+        self.solutions: List[ParetoSolution] = []
+        self._front_cache: Optional[List[ParetoSolution]] = None  # 缓存Pareto前沿
+
+    def add(self, solution: ParetoSolution) -> bool:
+        """
+        尝试将新解加入档案
+
+        逻辑：
+        1. 如果新解被现有解支配，拒绝
+        2. 否则加入档案，移除被新解支配的旧解
+        3. 如档案超过容量，用拥挤度距离裁剪
+
+        Returns:
+            True if solution was added to archive
+        """
+        # 检查新解是否被任何现有解支配
+        for existing in self.solutions:
+            if existing.dominates(solution):
+                return False  # 已有更好的解，拒绝
+
+        # 移除被新解支配的现有解
+        self.solutions = [s for s in self.solutions if not solution.dominates(s)]
+
+        # 加入新解
+        self.solutions.append(solution)
+        self._front_cache = None  # 清除缓存
+
+        # 超容量时用拥挤度距离裁剪
+        if len(self.solutions) > self.max_size:
+            self._crowding_distance_prune()
+
+        return True
+
+    def _crowding_distance_prune(self):
+        """
+        计算拥挤度距离并移除距离最小的解（保留多样性）
+
+        拥挤度距离：衡量解周围空间密度，小距离=过于聚集
+        """
+        if len(self.solutions) <= self.max_size:
+            return
+
+        n = len(self.solutions)
+        n_dims = len(self.DIMENSION_NAMES)
+        crowding = np.zeros(n)
+
+        for dim in range(n_dims):
+            # 按当前维度排序
+            sorted_idx = sorted(range(n), key=lambda i: self.solutions[i].fitness_vector[dim])
+            # 边界点设为无穷大（永不删除）
+            crowding[sorted_idx[0]] = np.inf
+            crowding[sorted_idx[-1]] = np.inf
+
+            f_min = self.solutions[sorted_idx[0]].fitness_vector[dim]
+            f_max = self.solutions[sorted_idx[-1]].fitness_vector[dim]
+            f_range = f_max - f_min + 1e-10
+
+            for k in range(1, n - 1):
+                crowding[sorted_idx[k]] += (
+                    (self.solutions[sorted_idx[k + 1]].fitness_vector[dim] -
+                     self.solutions[sorted_idx[k - 1]].fitness_vector[dim]) / f_range
+                )
+
+        # 移除拥挤度最小的解直到满足容量
+        while len(self.solutions) > self.max_size:
+            min_idx = np.argmin(crowding)
+            self.solutions.pop(int(min_idx))
+            crowding = np.delete(crowding, min_idx)
+
+        self._front_cache = None
+
+    def get_pareto_front(self) -> List[ParetoSolution]:
+        """返回当前Pareto前沿（非支配解集）"""
+        if self._front_cache is not None:
+            return self._front_cache
+        # 所有在档案中的解都是非支配的（由add()保证）
+        self._front_cache = list(self.solutions)
+        return self._front_cache
+
+    def get_best_balanced(self) -> Optional[ParetoSolution]:
+        """
+        返回最均衡解：加权标量fitness最大的解
+        """
+        if not self.solutions:
+            return None
+        return max(self.solutions, key=lambda s: s.scalar_fitness)
+
+    def get_best_by_dimension(self, dim: int) -> Optional[ParetoSolution]:
+        """
+        返回在指定维度上最优的解
+
+        Args:
+            dim: 0=success_rate, 1=diversity, 2=purpose_align, 3=emergence
+        """
+        if not self.solutions:
+            return None
+        return max(self.solutions, key=lambda s: s.fitness_vector[dim])
+
+    def get_hypervolume_indicator(self,
+                                  reference_point: Optional[np.ndarray] = None) -> float:
+        """
+        计算Pareto前沿的超体积指标（HV）
+
+        HV衡量Pareto前沿覆盖的目标空间体积，越大越好。
+        使用简化的2D投影计算（完整4D需要更复杂算法）
+
+        Args:
+            reference_point: 参考点（默认全0）
+
+        Returns:
+            超体积近似值（0到1之间）
+        """
+        if not self.solutions:
+            return 0.0
+
+        ref = reference_point if reference_point is not None else np.zeros(4)
+        front = np.array([s.fitness_vector for s in self.solutions])
+
+        # 简化HV：各维度Pareto前沿均值之积（近似）
+        contributions = []
+        for dim in range(4):
+            max_val = float(np.max(front[:, dim]))
+            contributions.append(max(0.0, max_val - ref[dim]))
+
+        hv_approx = float(np.prod(contributions))
+        return min(1.0, hv_approx)
+
+    def get_stats(self) -> Dict:
+        """返回档案统计摘要"""
+        if not self.solutions:
+            return {'size': 0}
+
+        front = np.array([s.fitness_vector for s in self.solutions])
+        best_balanced = self.get_best_balanced()
+
+        return {
+            'size': len(self.solutions),
+            'hypervolume': self.get_hypervolume_indicator(),
+            'best_balanced': {
+                'scalar_fitness': best_balanced.scalar_fitness if best_balanced else 0.0,
+                'fitness_vector': best_balanced.fitness_vector.tolist() if best_balanced else [],
+                'mutation_type': best_balanced.mutation_type if best_balanced else '',
+            },
+            'dimension_maxes': {
+                self.DIMENSION_NAMES[i]: float(np.max(front[:, i]))
+                for i in range(4)
+            },
+            'dimension_means': {
+                self.DIMENSION_NAMES[i]: float(np.mean(front[:, i]))
+                for i in range(4)
+            },
+        }
+
+    def to_dict(self) -> Dict:
+        """序列化档案"""
+        return {
+            'max_size': self.max_size,
+            'size': len(self.solutions),
+            'solutions': [s.to_dict() for s in self.solutions],
+            'stats': self.get_stats(),
+        }
 
 
 # ─────────────────────────────────────────────
@@ -918,6 +1144,65 @@ class EmergenceGuidedFitness:
         )
         return float(fitness)
 
+    def evaluate_multi(self, agent_module, steps: int = 300,
+                       purpose_vector: Optional[np.ndarray] = None) -> np.ndarray:
+        """
+        v6.3 新增：返回4维fitness向量（用于Pareto多目标优化）
+
+        Returns:
+            np.ndarray([success_rate, diversity, purpose_align, emergence])
+        """
+        try:
+            config = agent_module.MOSSConfig(
+                agent_id="fitness_eval_multi_001",
+                enable_purpose=False,
+                checkpoint_interval=99999
+            )
+            agent = agent_module.UnifiedMOSSAgent(config=config)
+        except Exception as e:
+            logger.debug(f"[Fitness] Multi-eval Agent creation failed: {e}")
+            return np.zeros(4)
+
+        successes = []
+        rewards = []
+        actions = []
+
+        obs_templates = [
+            {}, {'critical': True}, {'warning': True},
+            {'resource_level': 0.5}, {'resource_level': 0.1},
+            {'resource_level': 0.9}, {'critical': True, 'resource_level': 0.2},
+        ]
+
+        for i in range(steps):
+            obs = obs_templates[i % len(obs_templates)]
+            try:
+                result = agent.step(obs)
+                successes.append(float(result.success))
+                rewards.append(result.reward)
+                actions.append(result.action_type)
+            except Exception:
+                successes.append(0.0)
+                rewards.append(-0.1)
+                actions.append('error')
+
+        success_rate = float(np.mean(successes)) if successes else 0.0
+        diversity_score = self._action_entropy(actions)
+        purpose_alignment = self._purpose_alignment(agent, purpose_vector)
+        real_emergence_rate = self._real_emergence_detection(actions, rewards)
+
+        fitness_vector = np.array([
+            success_rate,
+            diversity_score,
+            purpose_alignment,
+            real_emergence_rate
+        ])
+
+        logger.debug(
+            f"[FitnessMulti] success={success_rate:.3f} diversity={diversity_score:.3f} "
+            f"purpose={purpose_alignment:.3f} emergence={real_emergence_rate:.3f}"
+        )
+        return fitness_vector
+
     def _action_entropy(self, actions: List[str]) -> float:
         """计算动作序列的Shannon熵（归一化到[0,1]）"""
         if not actions:
@@ -1041,7 +1326,7 @@ class SelfModificationEngine:
     6. 记录演化历史
     """
 
-    VERSION = "6.2.0-dev"
+    VERSION = "6.3.0-dev"
 
     def __init__(self, config: SMEConfig = None, project_root: str = None):
         self.config = config or SMEConfig()
@@ -1078,6 +1363,15 @@ class SelfModificationEngine:
         self.best_fitness = 0.0
         self.current_source = ""
 
+        # v6.3: Pareto档案（仅当use_pareto=True时激活）
+        if self.config.use_pareto:
+            self.pareto_archive = ParetoArchive(max_size=self.config.pareto_archive_size)
+            logger.info(
+                f"[SME] ParetoArchive enabled (max_size={self.config.pareto_archive_size})"
+            )
+        else:
+            self.pareto_archive = None
+
         # 输出目录
         self.output_dir = self.project_root / self.config.output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -1085,6 +1379,8 @@ class SelfModificationEngine:
         logger.info(f"[SME] SelfModificationEngine v{self.VERSION} initialized")
         logger.info(f"[SME] Target: {self.config.target_module}")
         logger.info(f"[SME] Project root: {self.project_root}")
+
+
 
     def _find_project_root(self) -> str:
         """自动定位项目根目录"""
@@ -1181,6 +1477,37 @@ class SelfModificationEngine:
             logger.debug(f"[SME] Fitness eval error: {type(e).__name__}: {e}")
             return 0.0
 
+    def _build_eval_module(self, source: str):
+        """
+        将变异源码编译为可执行模块对象（供Pareto多目标评估使用）
+
+        Returns:
+            types.ModuleType or None
+        """
+        project_root_str = str(self.project_root)
+        if project_root_str not in sys.path:
+            sys.path.insert(0, project_root_str)
+
+        try:
+            import moss.core.unified_agent as _real_ua
+
+            exec_globals = dict(_real_ua.__dict__)
+            exec_globals.update({
+                '__name__': 'moss.core._sme_eval_pareto',
+                '__package__': 'moss.core',
+                '__spec__': None,
+            })
+            exec(compile(source, '<sme_mutated_pareto>', 'exec'), exec_globals)
+
+            import types
+            eval_module = types.ModuleType('_sme_eval_pareto')
+            eval_module.__dict__.update(exec_globals)
+            return eval_module
+
+        except Exception as e:
+            logger.debug(f"[SME] _build_eval_module error: {e}")
+            return None
+
     def evolve_one_generation(self,
                                purpose_vector: Optional[np.ndarray] = None
                                ) -> Dict:
@@ -1241,50 +1568,132 @@ class SelfModificationEngine:
                 logger.debug(f"[SME] Candidate {i+1} failed sandbox: {sandbox_result.get('error','')[:80]}")
                 continue
 
-            # 评估fitness
-            candidate_fitness = self._evaluate_source(mutated_source, purpose_vector)
-            delta = candidate_fitness - baseline_fitness
+            # v6.3: Pareto模式 or 标量模式 双路径评估
+            if self.config.use_pareto and self.pareto_archive is not None:
+                # Pareto模式：评估4维向量
+                fitness_vector = self.fitness_evaluator.evaluate_multi(
+                    self._build_eval_module(mutated_source),
+                    steps=150,
+                    purpose_vector=purpose_vector
+                )
+                scalar_fitness = float(np.dot(ParetoArchive.DEFAULT_WEIGHTS, fitness_vector))
+                delta = scalar_fitness - baseline_fitness
 
-            candidates.append({
-                'source': mutated_source,
-                'fitness': candidate_fitness,
-                'delta': delta,
-                'mutation_type': mut_type,
-                'sandbox': sandbox_result
-            })
+                # 构造Pareto解
+                pareto_sol = ParetoSolution(
+                    fitness_vector=fitness_vector,
+                    source=mutated_source,
+                    mutation_type=mut_type,
+                    generation=self.generation,
+                    sandbox_passed=True
+                )
+                candidates.append({
+                    'source': mutated_source,
+                    'fitness': scalar_fitness,
+                    'fitness_vector': fitness_vector,
+                    'delta': delta,
+                    'mutation_type': mut_type,
+                    'sandbox': sandbox_result,
+                    'pareto_solution': pareto_sol
+                })
+                logger.info(
+                    f"[SME] Candidate {i+1}/{self.config.population_size} "
+                    f"[{mut_type}] Pareto: scalar={scalar_fitness:.4f} "
+                    f"[sr={fitness_vector[0]:.3f},div={fitness_vector[1]:.3f},"
+                    f"pur={fitness_vector[2]:.3f},em={fitness_vector[3]:.3f}]"
+                )
+            else:
+                # 标量模式（v6.1/v6.2兼容）
+                candidate_fitness = self._evaluate_source(mutated_source, purpose_vector)
+                delta = candidate_fitness - baseline_fitness
 
-            logger.info(
-                f"[SME] Candidate {i+1}/{self.config.population_size} "
-                f"[{mut_type}]: fitness={candidate_fitness:.4f} Δ={delta:+.4f} "
-                f"sandbox={'✓' if sandbox_result['passed'] else '✗'}"
-            )
+                candidates.append({
+                    'source': mutated_source,
+                    'fitness': candidate_fitness,
+                    'delta': delta,
+                    'mutation_type': mut_type,
+                    'sandbox': sandbox_result
+                })
+                logger.info(
+                    f"[SME] Candidate {i+1}/{self.config.population_size} "
+                    f"[{mut_type}]: fitness={candidate_fitness:.4f} Δ={delta:+.4f} "
+                    f"sandbox={'✓' if sandbox_result['passed'] else '✗'}"
+                )
 
         # 选择最优候选
         accepted = False
         best_candidate = None
 
         if candidates:
-            best_candidate = max(candidates, key=lambda c: c['fitness'])
-            if best_candidate['delta'] > self.config.acceptance_threshold:
-                # 接受变异
-                self.current_source = best_candidate['source']
-                self.best_fitness = best_candidate['fitness']
-                self._write_source(best_candidate['source'])
+            if self.config.use_pareto and self.pareto_archive is not None:
+                # ── Pareto模式：将所有候选加入档案，选最均衡解 ──
+                pareto_added = 0
+                for c in candidates:
+                    if 'pareto_solution' in c:
+                        if self.pareto_archive.add(c['pareto_solution']):
+                            pareto_added += 1
 
-                if self.config.enable_hot_reload:
-                    self._hot_reload()
+                # 从档案中选最均衡解作为当前最优
+                best_in_archive = self.pareto_archive.get_best_balanced()
+                archive_stats = self.pareto_archive.get_stats()
 
-                accepted = True
                 logger.info(
-                    f"[SME] ✅ Mutation ACCEPTED: "
-                    f"fitness {baseline_fitness:.4f} → {best_candidate['fitness']:.4f} "
-                    f"(+{best_candidate['delta']:.4f})"
+                    f"[SME] Pareto档案更新: 新增{pareto_added}解, "
+                    f"档案大小={archive_stats['size']}, "
+                    f"HV={archive_stats['hypervolume']:.4f}"
                 )
+
+                # 如果档案中最优解优于当前基线，接受
+                if best_in_archive and best_in_archive.scalar_fitness > baseline_fitness + self.config.acceptance_threshold:
+                    best_candidate = {
+                        'source': best_in_archive.source,
+                        'fitness': best_in_archive.scalar_fitness,
+                        'fitness_vector': best_in_archive.fitness_vector,
+                        'delta': best_in_archive.scalar_fitness - baseline_fitness,
+                        'mutation_type': best_in_archive.mutation_type,
+                    }
+                    self.current_source = best_candidate['source']
+                    self.best_fitness = best_candidate['fitness']
+                    self._write_source(best_candidate['source'])
+
+                    if self.config.enable_hot_reload:
+                        self._hot_reload()
+
+                    accepted = True
+                    logger.info(
+                        f"[SME] ✅ Pareto最均衡解 ACCEPTED: "
+                        f"scalar {baseline_fitness:.4f} → {best_candidate['fitness']:.4f} "
+                        f"(+{best_candidate['delta']:.4f}), "
+                        f"vector={best_in_archive.fitness_vector.round(3).tolist()}"
+                    )
+                else:
+                    logger.info(
+                        f"[SME] ⚠️  Pareto档案已更新（{pareto_added}解加入），"
+                        f"但当前最均衡解未超过基线阈值"
+                    )
             else:
-                logger.info(
-                    f"[SME] ⚠️  Best candidate Δ={best_candidate['delta']:+.4f} "
-                    f"below threshold {self.config.acceptance_threshold:.4f}, rejected"
-                )
+                # ── 标量模式（v6.1/v6.2兼容）──
+                best_candidate = max(candidates, key=lambda c: c['fitness'])
+                if best_candidate['delta'] > self.config.acceptance_threshold:
+                    # 接受变异
+                    self.current_source = best_candidate['source']
+                    self.best_fitness = best_candidate['fitness']
+                    self._write_source(best_candidate['source'])
+
+                    if self.config.enable_hot_reload:
+                        self._hot_reload()
+
+                    accepted = True
+                    logger.info(
+                        f"[SME] ✅ Mutation ACCEPTED: "
+                        f"fitness {baseline_fitness:.4f} → {best_candidate['fitness']:.4f} "
+                        f"(+{best_candidate['delta']:.4f})"
+                    )
+                else:
+                    logger.info(
+                        f"[SME] ⚠️  Best candidate Δ={best_candidate['delta']:+.4f} "
+                        f"below threshold {self.config.acceptance_threshold:.4f}, rejected"
+                    )
 
         # 记录结果
         mutation_id = f"gen{self.generation}_{datetime.now():%H%M%S}"
@@ -1310,7 +1719,9 @@ class SelfModificationEngine:
             'accepted': accepted,
             'mutation_type': mut_result.mutation_type,
             'fitness_delta': mut_result.fitness_delta,
-            'mutation_types_tried': mutation_types_tried
+            'mutation_types_tried': mutation_types_tried,
+            # v6.3: Pareto档案统计（仅Pareto模式）
+            'pareto_archive_stats': self.pareto_archive.get_stats() if self.pareto_archive else None,
         }
 
         self._save_generation_log(summary)
