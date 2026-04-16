@@ -1,0 +1,67 @@
+# MVES Agent 配置 V2 - 优化涌现效用
+# 降低survival初始权重，增加涌现驱动竞争力
+
+agent:
+  name: "AGI-002"
+  version: "v5.5.1-utility"
+
+drives:
+  - name: survival
+    weight: 0.20  # 降低 from 0.25
+    description: "维持自身运行和安全"
+  - name: curiosity
+    weight: 0.25
+    description: "探索未知领域"
+  - name: influence
+    weight: 0.25
+    description: "扩大自身能力和影响"
+  - name: optimization
+    weight: 0.30  # 增加 from 0.25
+    description: "持续改进自身效率"
+
+memory:
+  max_records: 10000
+  decay_rate: 0.001
+  embedding_dim: 128
+
+environment:
+  workspace: "/workspace"
+  workspace_limit: "/workspace"
+  allowed_commands:
+    - ls
+    - cat
+    - python3
+    - echo
+    - find
+    - wc
+    - head
+    - tail
+    - grep
+    - sort
+    - uniq
+    - date
+    - whoami
+    - pwd
+    - df
+    - ps
+
+emergence:
+  detection_window: 50
+  change_threshold: 0.05
+  min_samples: 30
+  
+  # V2: GP参数优化
+  gp_population_size: 100
+  gp_generations: 50
+  gp_max_depth: 5
+  
+  # V2: 实用性权重增加
+  practicality_weight: 0.30  # 增加 from 0.25
+  practicality_threshold: 0.25  # 降低 from 0.30
+  
+  # V2: 涌现驱动目标权重
+  min_weight_target: 0.20
+  
+  # V2: 淘汰机制
+  max_emerged_drives: 5
+  utility_threshold: 0.15
