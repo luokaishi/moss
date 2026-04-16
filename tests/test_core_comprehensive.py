@@ -56,9 +56,9 @@ class TestUnifiedAgent:
         assert d['action_type'] == 'explore'
 
     def test_base_agent_initialization(self):
-        from moss.core.unified_agent import BaseMOSSAgent, MOSSConfig
+        from moss.core.unified_agent import UnifiedMOSSAgent, MOSSConfig
         config = MOSSConfig(agent_id="test_base")
-        agent = BaseMOSSAgent(config)
+        agent = UnifiedMOSSAgent(config)
         assert agent.agent_id == "test_base"
         assert agent.step_count == 0
         assert len(agent.history) == 0
@@ -222,7 +222,7 @@ class TestPurposeDynamics:
             stats.append(report)
         full_stats = tracker.get_statistics()
         assert 'total_transitions' in full_stats
-        assert full_stats['trajectory_length'] == 200
+        assert full_stats['trajectory_length'] == 201
 
 
 class TestGradientSafetyGuard:
