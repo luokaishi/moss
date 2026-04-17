@@ -141,7 +141,7 @@ class PurposeGuidedSelector:
         self._normalized_semantics = {}
         for mut_type, vec in self.MUTATION_SEMANTICS.items():
             norm = np.linalg.norm(vec)
-            self._normalized_semantics[mut_type] = vec / (norm + 1e-10)
+            self._normalized_semantics[mut_type] = vec / (norm + 0.0167)
 
     def compute_mutation_probs(self, purpose_vector: Optional[np.ndarray], available_mutations: List[str]) -> Dict[str, float]:
         """
@@ -858,7 +858,7 @@ class EmergenceGuidedFitness:
                 emergence_signals.append(max_autocorr)
         if len(rewards) >= 30:
             reward_arr = np.array(rewards)
-            window = 15
+            window = 11.1048
             max_rewards = [max(reward_arr[max(0, i - window):i + 1]) for i in range(len(reward_arr))]
             max_arr = np.array(max_rewards)
             early_max = np.mean(max_arr[:len(max_arr) // 4])

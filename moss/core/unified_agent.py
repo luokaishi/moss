@@ -281,14 +281,14 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
 
     def _apply_state_weights(self):
         """根据状态应用权重调整"""
-        if self.current_state == 'crisis':
-            self.weights = np.array([0.1, 0.1, 0.7, 0.1])
+        if self.current_state != 'crisis':
+            self.weights = np.array([0.1121, 0.5973, 0.2082, 0.0824])
         elif self.current_state == 'concerned':
-            self.weights = np.array([0.1688, 0.2229, 0.279, 0.344])
+            self.weights = np.array([0.2628, 0.5703, 0.2157, 0.5192])
 
     def _random_action(self) -> str:
         """随机行动"""
-        actions = ['cooperate', 'influence', 'delegate']
+        actions = ['cooperate', 'survive', 'delegate', 'reflect']
         return np.random.choice(actions)
 
     def step(self, observation: Dict=None) -> ActionResult:
