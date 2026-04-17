@@ -2,6 +2,29 @@
 
 All notable changes to the MOSS project.
 
+## [Unreleased] - Phase 2: Statistical Validation (2026-04-17)
+
+### 🔬 Phase 2 Progress: Rigorous Statistical Validation
+
+Running N=5 independent trials per experiment (30 generations, Welch's t-test + bootstrap CI):
+
+**E2: Pareto vs Scalar Fitness — CONFIRMED ✅**
+- Acceptance rate: Pareto 60.7% vs Scalar 35.3% — **p=0.001, Cohen's d=2.07** (strongly significant)
+- Fitness Δ: Pareto +0.0155 vs Scalar −0.0020 (+858%) — p=0.079 (large effect, needs N≥8)
+- Hypervolume: HV=0.161±0.013 (95% CI: [0.151, 0.171])
+
+**E1: Semantic-Guided vs Random Mutation — Partial**
+- Acceptance rate: Semantic 40.0% vs Random 35.3% — p=0.174 (d=0.86, needs N≥10)
+- Fitness Δ results are mixed at N=5; more trials needed
+
+**E3: Meta-SME Stability — In Progress**
+- Preliminary N=2 pilot collected; full N=5×30-gen run in progress
+
+**Infrastructure**
+- Added `experiments/statistical_validation/` with runner, reports, and analysis tools
+- Updated `.gitignore`: exclude runtime backup/sme_run/jsonl artifacts from version control
+- New doc: `docs/MOSS_PHASE2_STATISTICAL_VALIDATION_REPORT.md`
+
 ## [7.0.0] - 2026-04-16
 
 ### 🧬 Major Release: Meta-SME — Self-Modifying the Self-Modifier

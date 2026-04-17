@@ -79,3 +79,16 @@ SYNC_IMPLEMENTATION_PLAN.md
 
 # Experiment backups (auto-generated, archived)
 experiments/_archive/backups/
+
+# Runtime experiment artifacts (auto-generated per run, not version-controlled)
+experiments/meta_sme/backups/
+experiments/meta_sme/meta_sme_run_*.json
+experiments/meta_sme/eval/backup_gen*.py
+experiments/meta_sme/eval/sme_run_*.json
+experiments/meta_sme/mini_test/backup_gen*.py
+experiments/meta_sme/mini_test/sme_run_*.json
+experiments/self_modification/sme_run_*.json
+experiments/self_modification/backup_gen*.py
+experiments/meta_sme/eval/evolution_log.jsonl
+experiments/meta_sme/mini_test/evolution_log.jsonl
+experiments/self_modification/evolution_log.jsonl
