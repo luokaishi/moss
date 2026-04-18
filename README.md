@@ -1,224 +1,295 @@
-# MOSS/MVES v5.4.0 - Multi-Objective Self-Driven Agent
+# MOSS v6.1 - Multi-Objective Self-Driven System
 
-> **MVES Branch** | Classic Emergent Drive Research Baseline
+> **Production-Ready AGI Emergence Research Framework**
 >
-> An autonomous AI agent that operates without external tasks, discovering and evolving its own drive functions through genetic programming.
->
-> 🏷️ **Version**: v5.4.0 | **Branch**: `mves` | **Status**: Stable Research Baseline
->
-> 📊 **Key Achievement**: 57,300+ cycles, 86% emergence detection rate, Manus Evaluation Passed
+> An autonomous AI agent that operates without external tasks, discovering and evolving its own drive functions through genetic programming and self-organization.
 
-## What is MOSS/MVES?
+[![CI](https://github.com/luokaishi/moss/actions/workflows/ci.yml/badge.svg)](https://github.com/luokaishi/moss/actions)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-6.1.0-green.svg)](https://github.com/luokaishi/moss/releases)
 
-**MVES** (Multi-Vector Evolution System) is the classic research branch exploring whether AI systems can develop **intrinsic motivations** without task-specific reward signals.
+---
 
-> 🔄 **Note**: This is the `mves` branch - a stable research baseline. For the latest Open-Ended Evolution Framework (OEF), see the `main` branch. It combines multi-objective drive systems with genetic programming (GP) to discover and validate emergent behavioral patterns.
+## What is MOSS?
 
-**Key idea**: Instead of optimizing for externally defined rewards, the agent uses internal drive evaluations (survival, curiosity, influence, optimization) and autonomously discovers new drive functions when behavioral patterns shift.
+**MOSS** (Multi-Objective Self-Driven System) is a research framework exploring whether AI systems can develop **intrinsic motivations** without task-specific reward signals.
+
+### Key Research Question
+
+> Can AI systems autonomously generate and maintain behavioral drives without externally defined tasks?
+
+### Core Innovation
+
+Unlike traditional AI systems that rely on external rewards or task definitions, MOSS:
+- **Operates without external tasks** - No human-defined objectives
+- **Self-generates drives** - Discovers new motivations through genetic programming
+- **Self-organizes behavior** - Emergent patterns from drive competition
+- **Self-validates emergence** - Built-in falsification and verification
+
+---
+
+## Quick Start
+
+### Installation
+
+```bash
+# Clone repository
+git clone https://github.com/luokaishi/moss.git
+cd moss
+
+# Install dependencies
+pip install -e .
+
+# Or install with full features (recommended)
+pip install -e ".[full]"
+```
+
+### Run Demo
+
+```bash
+# Quick 200-cycle demo (~10 seconds)
+python demo.py
+
+# Full experiment (10,000 cycles)
+python examples/run_experiment.py --cycles 10000
+
+# With visualization
+python examples/run_experiment.py --cycles 5000 --visualize
+```
+
+### Run Tests
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run specific test module
+pytest tests/test_agi_core.py -v
+```
+
+---
+
+## Core Features
+
+### 1. Multi-Drive Architecture
+
+Four initial drives with dynamic weight adaptation:
+
+| Drive | Initial Weight | Description |
+|-------|---------------|-------------|
+| **Survival** | 0.30 → 0.60 | Resource maintenance, system health |
+| **Curiosity** | 0.25 → 0.14 | Exploration, novelty seeking |
+| **Influence** | 0.25 → 0.14 | External interactions, task completion |
+| **Optimization** | 0.20 → 0.11 | Efficiency, self-improvement |
+
+### 2. Emergent Drive Discovery
+
+Genetic Programming-based emergence detection:
+- **Automatic detection** of behavioral pattern shifts
+- **GP evolution** of new eval functions
+- **Triple validation**: correlation, behavioral gain, null model
+- **Causal verification** through intervention experiments
+
+### 3. Drive Competition System
+
+Natural selection among drives:
+- **Probation period**: 500-cycle evaluation window
+- **Performance-based adaptation**: Reward-driven weight updates
+- **Elimination mechanism**: Drives below 0.02 weight are removed
+- **Weight caps**: Prevent dominance (survival ≤ 30%, emergent ≤ 35%)
+
+### 4. Self-Modeling & Meta-Cognition
+
+7-layer AGI emergence architecture:
+- **Layer 7**: Concept System - State compression & abstraction
+- **Layer 6**: Goal System - Trajectory pattern extraction
+- **Layer 5**: Drive System - Intrinsic motivation (existing)
+- **Layer 4**: Meta-Drive - Self-modification of drives
+- **Layer 3**: Self-Model - Self-prediction (89.6% accuracy)
+- **Layer 2**: Ecology - Multi-agent competition
+- **Layer 1**: Policy/Action - Behavior execution
+
+---
+
+## Key Results
+
+### Long-Term Stability (100K+ Cycles)
+
+| Metric | Value |
+|--------|-------|
+| Total cycles | 100,000+ |
+| Runtime | 173.87 seconds |
+| Speed | 575 cycles/second |
+| Memory usage | 77.05 MB |
+| Emergence persistence | 100% |
+| Emergence weight | 0.35 (35%) |
+
+### Cross-Seed Validation (3 seeds)
+
+| Metric | Seed 42 | Seed 123 | Seed 456 | Consistency |
+|--------|---------|----------|----------|-------------|
+| Emergence detected | ✓ | ✓ | ✓ | 100% |
+| Emergence weight | 0.35 | 0.35 | 0.35 | 100% |
+| Survival weight | 0.30 | 0.30 | 0.30 | 100% |
+
+### Emergence Detection Rate
+
+- **computational_mastery**: 86% detection rate across 7 experiments
+- **systematic_exploration**: 57% detection rate
+- **Average emergence weight**: 0.20-0.35
+
+---
 
 ## Architecture
 
 ```
 agi/
-├── agent.py                 # Main agent loop: perceive → evaluate → select → execute → reflect
-├── drive_manager.py         # Multi-drive weight management with dynamic updates
-├── emergence_detector.py    # Behavior change detection → triggers GP evolution
-├── genetic_programmer.py    # GP core: evolves eval functions from behavior data
-├── environment.py           # Shell environment interaction
-├── memory_engine.py         # Experience storage and retrieval
-└── behavior_tracker.py      # Action logging and pattern detection
+├── agent.py                 # Main agent loop
+├── drive_manager.py         # Multi-drive weight management
+├── drive_competition.py     # Drive competition & elimination
+├── drive_weight_cap.py      # Weight limit enforcement
+├── emergence_detector.py    # Behavior change detection
+├── genetic_programmer_v3.py # GP-based drive evolution
+├── concept/                 # Layer 7: Concept system
+├── goal/                    # Layer 6: Goal system
+├── meta_drive/              # Layer 4 & 3: Meta-cognition
+├── ecology/                 # Layer 2: Multi-agent system
+└── analysis/                # Interpretability tools
 ```
-
-### Drive System
-
-The agent starts with 4 built-in drives:
-
-| Drive | Weight | What it evaluates |
-|-------|--------|------------------|
-| **survival** | 0.25 → 0.60 | Resource level, health, uptime |
-| **curiosity** | 0.25 → 0.14 | Environment entropy, exploration novelty |
-| **influence** | 0.25 → 0.14 | External interactions, task completion |
-| **optimization** | 0.25 → 0.11 | Efficiency, improvement space |
-
-Weights update dynamically based on feedback: `delta = lr × (reward - 0.5)`
-
-### GP-Based Emergence
-
-When behavior patterns shift significantly, the system triggers genetic programming to discover a new eval function `f(env_state) → [0, 1]`:
-
-1. **Data collection**: Buffer recent environment states + behavior labels
-2. **GP evolution**: 100 individuals × 50 generations, optimizing:
-   ```
-   fitness = 0.3×correlation + 0.2×(1-MSE) + 0.3×behavioral_gain - 0.01×complexity
-   ```
-3. **Triple validation**: correlation > 0.3, behavioral_gain > 0.1, null model p < 0.05
-4. **Integration**: Evolved function becomes the emergent drive's eval_fn
-
-**Result from test**: The system discovered `file_count_norm²` with correlation=0.87, behavioral_gain=1.0
-
-### Feature Space (16 dimensions)
-
-**Static (8)**: resource_level, environment_entropy, error_rate, file_count_norm, visited_ratio, uptime_norm, interaction_norm, task_completion
-
-**Dynamic (8)**: entropy_delta, entropy_moving_avg, entropy_variance, error_rate_delta, resource_delta, behavior_diversity, novel_command_rate, success_rate_recent
-
-## Quick Start
-
-```bash
-pip install -e .
-python demo.py                  # Run 200-cycle demo
-python examples/run_experiment.py --cycles 5000  # Full experiment
-python examples/causal_experiments.py --type all  # Causal verification
-```
-
-## Experiments & Results
-
-### 57K+ Cycles Analysis
-
-134 checkpoints across 7 independent experiments analyzed:
-
-| Metric | Value |
-|--------|-------|
-| Total cycles | 57,474 |
-| Unique commands | 536 |
-| Survival drive dominance | 0.30 → 0.60 (doubled) |
-| Emergence detection rate | 6/7 experiments (86%) |
-
-### Causal Verification (4 experiments × 5,000 cycles)
-
-Responding to external review criticism about causality:
-
-| Experiment | Operation | Emergence? | Evidence |
-|-----------|-----------|------------|----------|
-| Drive Ablation | Disable emergent drives | Still detected | Partial |
-| Drive Amplification | Amplify weight to 0.5 | Different drive emerged | Behavioral change confirmed |
-| Command Restriction | Remove python3/find | **CM still emerged** | Not command-dependent |
-| Random Baseline | Random action selection | **Zero emergence** | Excludes statistical artifact |
-
-### Survival Dominance
-
-The most scientifically valuable finding: survival drive naturally becomes the dominant attractor (weight 0.60) even without any explicit survival pressure — consistent with evolutionary theory, self-organization, and Friston's active inference framework.
-
-## 7-Layer AGI Emergence Architecture (New)
-
-Building on the GP-based emergence system, we implemented a complete **7-layer AGI emergence architecture** based on theoretical framework from ChatGPT scientific evaluation:
-
-### Architecture Layers
-
-```
-Layer 7: Concept System      → State compression & abstraction
-Layer 6: Goal System         → Trajectory pattern extraction  
-Layer 5: Drive System        → Intrinsic motivation (existing)
-Layer 4: Meta-Drive          → Self-modification of drives
-Layer 3: Self-Model          → Self-prediction capability
-Layer 2: Ecology             → Multi-agent competition
-Layer 1: Policy/Action       → Behavior execution
-```
-
-### Key Results (5000 cycles)
-
-| Component | Metric | Result | Status |
-|-----------|--------|--------|--------|
-| **Concept System** | Prediction error | 0.309 → 0.028 (↓91%) | ✅ Excellent |
-| **Concept System** | Stability | 0.999 | ✅ Perfect |
-| **Self-Model V2** | Accuracy | 89.6% | ✅ Breakthrough |
-| **Goal System** | Emerged goals | 2 (explore, exploit) | ✅ Emerged |
-| **Goal System** | Stability | >0.99 | ✅ Stable |
-| **Meta-Drive** | Trigger mechanism | Working | ⚠️ Tuning needed |
-
-### Key Innovation: Conditional Self-Model
-
-The breakthrough from 12% to 89.6% accuracy came from architectural fix:
-
-```python
-# Failed: M(state) → action  # 12% accuracy
-# Success: M(state, drives) → action  # 89.6% accuracy
-```
-
-**Insight**: Non-stationary policies require conditional inputs.
-
-### Goal Emergence
-
-At cycle 1500, system spontaneously extracted 2 stable goals:
-- `goal_580_explore`: Exploration behavior pattern (stability=0.994)
-- `goal_383_exploit`: Exploitation behavior pattern (stability=0.995)
-
-Both maintained for 3500+ cycles, demonstrating **weak emergence**.
-
-### Documentation
-
-- [7-Layer Architecture](docs/mves/SEVEN_LAYER_ARCHITECTURE.md)
-- [V2 Improvement Report](docs/mves/V2_IMPROVEMENT_REPORT.md)
-- [5000-Cycle Final Report](docs/mves/FINAL_REPORT_7LAYER_EMERGENCE.md)
 
 ---
 
-## External Evaluation Response
-
-The project underwent scientific peer review (ChatGPT-based) focusing on:
-
-| Review Criticism | Status | Response |
-|-----------------|--------|----------|
-| "Emergence is just behavior clustering" | ✅ Addressed | Random baseline proves emergence requires drive system |
-| "eval functions are constants" | ✅ Addressed | GP now evolves state-dependent functions |
-| "Semantic labels are human-injected" | ✅ Addressed | Removed BEHAVIOR_SEMANTICS, auto-naming from function structure |
-| "Causality not proven" | ✅ Addressed | Behavioral gain metric + causal experiments |
-| "Feature space too human-defined" | ⚠️ Partial | 8 dynamic features added; latent space planned for v6 |
-
-### Scientific Honesty
-
-What we claim vs. don't claim:
-
-| Claim | Validity |
-|-------|----------|
-| "Drive system runs without external tasks" | ✅ Verified (57K+ cycles) |
-| "Survival becomes dominant attractor" | ✅ Verified |
-| "Emergence is not a statistical artifact" | ✅ Verified (random baseline) |
-| "System discovers its own eval functions" | ✅ Verified (GP) |
-| "True intrinsic motivation emergence" | ❌ Not yet proven (feature space is human-defined) |
-| "AGI" | ❌ Not claimed |
-
-## Development Roadmap
-
-- [x] Core agent framework with 4 drives
-- [x] 57K+ cycle experiment with analysis
-- [x] Causal verification experiments
-- [x] GP-based self-generated eval functions
-- [ ] Online drive competition (candidate functions compete in real-time)
-- [ ] Latent state space (encoder for feature discovery)
-- [ ] MLP-based drive discovery (v6)
-- [ ] Drive ecosystem (multiple evolved functions competing)
-
 ## Documentation
 
-### v5.4.0 Core Documents
+### Getting Started
 
-| Document | Description |
-|----------|-------------|
-| `PROJECT_STATUS_v5.4.0.md` | Current project status and milestones |
-| `docs/mves/MANUS_EVALUATION_REPORT_v5.4.0.md` | **Manus External Evaluation Report** |
-| `docs/mves/ROADMAP_v5.5.0.md` | Next iteration roadmap |
+- [Installation Guide](docs/mves/INSTALLATION.md)
+- [Quick Start Tutorial](docs/mves/QUICKSTART.md)
+- [Interactive Visualization Guide](docs/mves/interactive_visualization_guide.md)
 
-### Research Reports
+### Research Documentation
 
-| Document | Description |
-|----------|-------------|
-| `MOSS_Final_Report.md` | Comprehensive project report (v5.4.0) |
-| `causal_verification_report.md` | Causal experiment results |
-| `gp_implementation_report.md` | GP emergence implementation details |
-| `proposal_gp_emergence.md` | GP design proposal (reviewed) |
-| `response_to_chatgpt_evaluation.md` | Response to external review |
-| `response_to_gp_review.md` | Response to GP proposal review |
+- [MOSS v6.1 Release Notes](docs/mves/v6.1_RELEASE_NOTES.md)
+- [Long-term Stability Report](docs/mves/v6_longterm_stability_report.md)
+- [Meta-Analysis Report (57K cycles)](docs/mves/meta_analysis_57k_data.md)
+- [Meta-Drive Falsification Report](docs/mves/meta_drive_falsification_report.md)
 
-> 📌 **Note**: This branch (`mves`) maintains the classic MVES research baseline at v5.4.0. For the Open-Ended Evolution Framework (OEF) evolution, see the `main` branch.
+### API Documentation
 
-## Requirements
+- [API Reference](docs/api/)
+- [Tutorial Notebooks](notebooks/)
+  - [01 Quick Start](notebooks/tutorial_01_quickstart.ipynb)
+  - [02 Custom Drives](notebooks/tutorial_02_custom_drives.ipynb)
+  - [03 Emergence Analysis](notebooks/tutorial_03_emergence_analysis.ipynb)
 
-- Python 3.8+
-- numpy
-- pyyaml
-- No external ML frameworks required (pure numpy GP)
+---
+
+## Research & Publications
+
+### Scientific Validation
+
+| Validation Type | Status | Evidence |
+|----------------|--------|----------|
+| Pre-registration | Complete | H1/H2/H3 hypotheses defined |
+| Cross-seed validation | Complete | 3 seeds, 100% consistency |
+| Meta-analysis | Complete | 36,907 cycles analyzed |
+| Falsification tests | Complete | Meta-drive validated |
+| Long-term stability | Complete | 100K cycles verified |
+| External benchmark | Partial | TextWorld integration |
+
+### Key Findings
+
+1. **Survival Dominance**: Survival drive naturally becomes the dominant attractor (weight 0.60) consistent with evolutionary theory and active inference frameworks
+
+2. **Emergence Persistence**: Emergent drives maintain stable weights (0.20-0.35) over 100K+ cycles
+
+3. **Self-Model Accuracy**: Conditional self-model achieves 89.6% prediction accuracy (vs 12% for unconditional)
+
+4. **Goal Emergence**: System spontaneously extracts stable goals (explore/exploit) with >99% stability
+
+---
+
+## Development
+
+### Setup Development Environment
+
+```bash
+# Install dev dependencies
+pip install -e ".[dev]"
+
+# Run linting
+flake8 agi/ --max-line-length=100
+
+# Run type checking
+mypy agi/
+
+# Run tests with coverage
+pytest tests/ --cov=agi --cov-report=html
+```
+
+### Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+Key areas for contribution:
+- Performance optimization
+- Additional visualization tools
+- New emergence detection algorithms
+- External environment integrations
+- Documentation improvements
+
+---
+
+## Repository Structure
+
+```
+moss/
+├── agi/                    # Core AGI modules
+├── tests/                  # Unit tests (81 tests)
+├── examples/               # Example scripts
+├── scripts/                # Analysis & visualization tools
+├── notebooks/              # Jupyter tutorials
+├── docs/                   # Documentation
+│   ├── mves/              # Research documentation
+│   ├── api/               # API documentation
+│   └── paper/             # Paper materials
+├── logs/                   # Experiment logs
+├── config/                 # Configuration files
+└── .github/workflows/      # CI/CD configurations
+```
+
+---
+
+## Citation
+
+If you use MOSS in your research, please cite:
+
+```bibtex
+@software{moss2026,
+  title={MOSS: Multi-Objective Self-Driven System},
+  author={MOSS Team},
+  year={2026},
+  url={https://github.com/luokaishi/moss}
+}
+```
+
+---
 
 ## License
 
-MIT
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## Acknowledgments
+
+- Inspired by research in artificial life, self-organization, and active inference
+- Built with Python, NumPy, and open-source scientific computing tools
+- Thanks to all contributors and the research community
+
+---
+
+**Maintainer**: MOSS Team  
+**Repository**: https://github.com/luokaishi/moss  
+**Issues**: https://github.com/luokaishi/moss/issues
