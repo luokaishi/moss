@@ -1,0 +1,144 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: moss-api
+  namespace: default
+  labels:
+    app: moss
+    component: api
+spec:
+  type: ClusterIP
+  selector:
+    app: moss
+    component: api
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moss-training
+  namespace: default
+  labels:
+    app: moss
+    component: training
+spec:
+  type: ClusterIP
+  selector:
+    app: moss
+    component: training
+  ports:
+  - name: grpc
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moss-worker
+  namespace: default
+  labels:
+    app: moss
+    component: worker
+spec:
+  type: ClusterIP
+  selector:
+    app: moss
+    component: worker
+  ports:
+  - name: grpc
+    port: 8081
+    targetPort: 8081
+    protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: moss-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - api.moss.ai
+    secretName: moss-tls-secret
+  rules:
+  - host: api.moss.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: moss-api
+            port:
+              number: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: moss-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: moss
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8000
+  - from:
+    - podSelector:
+        matchLabels:
+          app: moss
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8081
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: moss
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 5432
+    - protocol: TCP
+      port: 6379

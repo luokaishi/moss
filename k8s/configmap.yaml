@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moss-config
+  namespace: default
+data:
+  # 应用配置
+  MOSS_ENV: "production"
+  MOSS_LOG_LEVEL: "INFO"
+  MOSS_WORKERS: "4"
+  MOSS_MAX_EPISODES: "1000"
+  MOSS_CHECKPOINT_INTERVAL: "100"
+  
+  # 训练配置
+  TRAINING_BATCH_SIZE: "32"
+  TRAINING_LEARNING_RATE: "0.001"
+  TRAINING_MAX_STEPS: "10000"
+  
+  # 环境配置
+  ENV_TYPE: "textworld"
+  ENV_MAX_STEPS: "100"
+  
+  # 数据库配置 (使用外部服务)
+  DB_HOST: "moss-db"
+  DB_PORT: "5432"
+  DB_NAME: "moss_production"
+  
+  # 缓存配置
+  REDIS_HOST: "moss-redis"
+  REDIS_PORT: "6379"
+  
+  # 监控配置
+  METRICS_ENABLED: "true"
+  METRICS_PORT: "9090"
+  
+  # Python 配置
+  PYTHONUNBUFFERED: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moss-training-config
+  namespace: default
+data:
+  # 训练超参数
+  config.yaml: |
+    training:
+      algorithm: "ppo"
+      total_timesteps: 1000000
+      learning_rate: 0.0003
+      n_steps: 2048
+      batch_size: 64
+      n_epochs: 10
+      gamma: 0.99
+      gae_lambda: 0.95
+      clip_range: 0.2
+      ent_coef: 0.01
+      vf_coef: 0.5
+      max_grad_norm: 0.5
+    
+    environment:
+      type: "textworld"
+      game_files:
+        - "games/simple.z8"
+        - "games/cooking.z8"
+      max_steps: 100
+      reward_scale: 1.0
+    
+    model:
+      architecture: "seven_layer"
+      hidden_dims: [256, 128, 64]
+      activation: "relu"
+      dropout: 0.2
+    
+    checkpointing:
+      save_interval: 10000
+      max_checkpoints: 5
+      keep_best: true
+    
+    evaluation:
+      eval_interval: 50000
+      eval_episodes: 100
+      success_threshold: 0.7

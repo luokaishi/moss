@@ -1,0 +1,283 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moss-api
+  namespace: default
+  labels:
+    app: moss
+    component: api
+    version: v6.4
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: moss
+      component: api
+  template:
+    metadata:
+      labels:
+        app: moss
+        component: api
+        version: v6.4
+    spec:
+      containers:
+      - name: moss-api
+        image: moss/moss:v6.4
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: moss-config
+        env:
+        - name: MOSS_MODE
+          value: "api"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+          readOnly: true
+        - name: data
+          mountPath: /app/data
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: config
+        configMap:
+          name: moss-training-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: moss-data-pvc
+      - name: logs
+        emptyDir: {}
+      nodeSelector:
+        workload-type: general
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "moss"
+        effect: "NoSchedule"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moss-training
+  namespace: default
+  labels:
+    app: moss
+    component: training
+    version: v6.4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moss
+      component: training
+  template:
+    metadata:
+      labels:
+        app: moss
+        component: training
+        version: v6.4
+    spec:
+      containers:
+      - name: moss-training
+        image: moss/moss:v6.4
+        imagePullPolicy: Always
+        command: ["python", "-m", "examples.train_textworld_rl"]
+        args:
+        - "--config=/app/config/config.yaml"
+        - "--output=/app/data/models"
+        envFrom:
+        - configMapRef:
+            name: moss-config
+        env:
+        - name: MOSS_MODE
+          value: "training"
+        - name: CUDA_VISIBLE_DEVICES
+          value: "0"
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "2000m"
+            nvidia.com/gpu: "1"
+          limits:
+            memory: "16Gi"
+            cpu: "8000m"
+            nvidia.com/gpu: "1"
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+          readOnly: true
+        - name: data
+          mountPath: /app/data
+        - name: logs
+          mountPath: /app/logs
+        - name: dshm
+          mountPath: /dev/shm
+      volumes:
+      - name: config
+        configMap:
+          name: moss-training-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: moss-data-pvc
+      - name: logs
+        emptyDir: {}
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 2Gi
+      nodeSelector:
+        workload-type: gpu
+      tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Exists"
+        effect: "NoSchedule"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moss-worker
+  namespace: default
+  labels:
+    app: moss
+    component: worker
+    version: v6.4
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: moss
+      component: worker
+  template:
+    metadata:
+      labels:
+        app: moss
+        component: worker
+        version: v6.4
+    spec:
+      containers:
+      - name: moss-worker
+        image: moss/moss:v6.4
+        imagePullPolicy: Always
+        command: ["python", "-m", "agi.distributed_trainer"]
+        args:
+        - "--mode=worker"
+        - "--master=moss-training:8080"
+        envFrom:
+        - configMapRef:
+            name: moss-config
+        env:
+        - name: MOSS_MODE
+          value: "worker"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "4000m"
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: moss-data-pvc
+      nodeSelector:
+        workload-type: compute
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: moss-api-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: moss-api
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: moss-worker-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: moss-worker
+  minReplicas: 5
+  maxReplicas: 20
+  metrics:
+  - type: Pods
+    pods:
+      metric:
+        name: moss_queue_depth
+      target:
+        type: AverageValue
+        averageValue: "10"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+      - type: Pods
+        value: 5
+        periodSeconds: 30
