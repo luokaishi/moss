@@ -53,10 +53,25 @@ def train(args):
     # 创建环境
     print("Creating environment...")
     try:
-        env = TextWorldAdapter(game_type='simple', difficulty='easy')
+        # 使用预设游戏或创建简单游戏
+        import textworld
+        from textworld.generator import compile_game
+        from textworld import GameOptions
+        
+        # 创建一个简单的 TextWorld 游戏
+        game_options = GameOptions()
+        game_options.nb_rooms = 3
+        game_options.nb_objects = 5
+        game_options.quest_length = 3
+        
+        # 生成游戏
+        game_file = textworld.generator.make_game(game_options)
+        env = TextWorldAdapter(game_file, mode="tw")
     except Exception as e:
         print(f"Error creating environment: {e}")
         print("Make sure TextWorld is installed: pip install textworld")
+        import traceback
+        traceback.print_exc()
         return
     
     # 创建 Agent
@@ -246,4 +261,11 @@ def main():
     
     result = train(args)
     
-    if result and result['
+    if result and result.get('success_rate', 0) > 0.5:
+        print(f"\n✓ Training successful! Success rate: {result['success_rate']:.2%}")
+    
+    return result
+
+
+if __name__ == '__main__':
+    main()

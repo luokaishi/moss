@@ -242,4 +242,289 @@ class V61Agent:
     
     def __init__(self, seed: int = 42):
         self.rng = random.Random(seed)
-        self.inventory =
+        self.inventory = []
+        self.visited_rooms = set()
+        self.target_sequence = ['take key', 'go east', 'open chest']
+        self.step_idx = 0
+    
+    def act(self, observation: str, info: dict) -> str:
+        """基于规则选择动作"""
+        commands = info.get('admissible_commands', ['look'])
+        
+        # 简单的规则：按目标序列执行
+        if self.step_idx < len(self.target_sequence):
+            target = self.target_sequence[self.step_idx]
+            if target in commands:
+                self.step_idx += 1
+                return target
+        
+        # 否则随机选择
+        return self.rng.choice(commands)
+    
+    def reset(self):
+        """重置智能体状态"""
+        self.inventory = []
+        self.visited_rooms = set()
+        self.step_idx = 0
+
+
+class V62Agent:
+    """MOSS v6.2 智能体 (改进版) - 更智能的探索策略"""
+    
+    def __init__(self, seed: int = 42):
+        self.rng = random.Random(seed)
+        self.inventory = []
+        self.visited_rooms = set()
+        self.room_visits = {}
+        self.object_priority = {'key': 10, 'coin': 5, 'knife': 3, 'flower': 2}
+    
+    def act(self, observation: str, info: dict) -> str:
+        """智能选择动作"""
+        commands = info.get('admissible_commands', ['look'])
+        location = info.get('location', 'unknown')
+        
+        # 记录访问
+        self.visited_rooms.add(location)
+        self.room_visits[location] = self.room_visits.get(location, 0) + 1
+        
+        # 优先拿取高价值物品
+        take_commands = [c for c in commands if c.startswith('take ')]
+        if take_commands:
+            # 按优先级排序
+            def priority(cmd):
+                obj = cmd.replace('take ', '')
+                return self.object_priority.get(obj, 1)
+            take_commands.sort(key=priority, reverse=True)
+            return take_commands[0]
+        
+        # 如果有钥匙，尝试打开宝箱
+        if 'open chest' in commands:
+            return 'open chest'
+        
+        # 探索未访问的房间
+        go_commands = [c for c in commands if c.startswith('go ')]
+        if go_commands:
+            unvisited = [c for c in go_commands 
+                        if c.replace('go ', '') not in self.visited_rooms]
+            if unvisited:
+                return self.rng.choice(unvisited)
+            # 否则选择访问次数最少的房间
+            go_commands.sort(key=lambda c: self.room_visits.get(c.replace('go ', ''), 0))
+            return go_commands[0]
+        
+        # 默认动作
+        if 'look' in commands:
+            return 'look'
+        return self.rng.choice(commands)
+    
+    def reset(self):
+        """重置智能体状态"""
+        self.inventory = []
+        self.visited_rooms = set()
+        self.room_visits = {}
+
+
+class RLAgent:
+    """RL 训练后的智能体"""
+    
+    def __init__(self, model_path: str = None, seed: int = 42):
+        self.rng = random.Random(seed)
+        self.model_path = model_path
+        self.q_table = {}
+        self.epsilon = 0.1  # 测试时使用低探索率
+        
+        # 加载模型
+        if model_path and os.path.exists(model_path):
+            try:
+                import pickle
+                with open(model_path, 'rb') as f:
+                    data = pickle.load(f)
+                    self.q_table = data.get('q_table', {})
+                    self.epsilon = data.get('epsilon', 0.1)
+                print(f"Loaded RL model from {model_path}")
+            except Exception as e:
+                print(f"Failed to load model: {e}")
+    
+    def _get_state_key(self, observation: str, info: dict) -> str:
+        """生成状态键"""
+        location = info.get('location', 'unknown')
+        inventory = tuple(sorted(info.get('inventory', [])))
+        return f"{location}:{inventory}"
+    
+    def act(self, observation: str, info: dict) -> str:
+        """使用 Q-table 选择动作"""
+        commands = info.get('admissible_commands', ['look'])
+        state_key = self._get_state_key(observation, info)
+        
+        # Epsilon-greedy
+        if self.rng.random() < self.epsilon:
+            return self.rng.choice(commands)
+        
+        # 选择 Q 值最高的动作
+        if state_key in self.q_table:
+            q_values = self.q_table[state_key]
+            best_action = max(commands, key=lambda a: q_values.get(a, 0))
+            return best_action
+        
+        # 默认随机
+        return self.rng.choice(commands)
+    
+    def reset(self):
+        """重置智能体状态"""
+        pass
+
+
+def run_experiment(mode: str, episodes: int, output_dir: str, model_path: str = None, seed: int = 42):
+    """运行实验"""
+    print(f"\n{'='*70}")
+    print(f"TextWorld Experiment - Mode: {mode}")
+    print(f"Episodes: {episodes}")
+    print(f"Seed: {seed}")
+    print(f"{'='*70}\n")
+    
+    # 创建环境
+    env = MockTextWorldEnv(seed=seed)
+    
+    # 创建智能体
+    if mode == 'random':
+        agent = RandomAgent(seed=seed)
+    elif mode == 'v6.1':
+        agent = V61Agent(seed=seed)
+    elif mode == 'v6.2':
+        agent = V62Agent(seed=seed)
+    elif mode == 'rl':
+        agent = RLAgent(model_path=model_path, seed=seed)
+    else:
+        raise ValueError(f"Unknown mode: {mode}")
+    
+    # 运行实验
+    results = []
+    successes = 0
+    total_reward = 0
+    total_steps = 0
+    
+    for episode in range(episodes):
+        obs, info = env.reset()
+        agent.reset()
+        
+        done = False
+        episode_reward = 0
+        steps = 0
+        command_history = []
+        
+        start_time = time.time()
+        
+        while not done and steps < env.max_steps:
+            action = agent.act(obs, info)
+            command_history.append(action)
+            
+            obs, reward, done, info = env.step(action)
+            episode_reward += reward
+            steps += 1
+        
+        duration = time.time() - start_time
+        success = info.get('won', False)
+        if success:
+            successes += 1
+        
+        total_reward += episode_reward
+        total_steps += steps
+        
+        result = EpisodeResult(
+            episode=episode,
+            success=success,
+            steps=steps,
+            total_reward=episode_reward,
+            max_score=info.get('max_score', 10.0),
+            achieved_score=info.get('score', 0.0),
+            duration=duration,
+            command_history=command_history
+        )
+        results.append(result)
+        
+        if (episode + 1) % 10 == 0:
+            current_sr = successes / (episode + 1)
+            print(f"Episode {episode + 1}/{episodes} - Success Rate: {current_sr:.2%}")
+    
+    # 计算统计
+    success_rate = successes / episodes
+    avg_reward = total_reward / episodes
+    avg_steps = total_steps / episodes
+    
+    print(f"\n{'='*70}")
+    print(f"Results Summary")
+    print(f"{'='*70}")
+    print(f"Success Rate: {success_rate:.2%}")
+    print(f"Avg Reward: {avg_reward:.2f}")
+    print(f"Avg Steps: {avg_steps:.2f}")
+    print(f"{'='*70}")
+    
+    # 保存结果
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    
+    summary = {
+        'mode': mode,
+        'episodes': episodes,
+        'seed': seed,
+        'success_rate': success_rate,
+        'avg_reward': avg_reward,
+        'avg_steps': avg_steps,
+        'successes': successes,
+        'timestamp': datetime.now().isoformat()
+    }
+    
+    with open(output_path / 'summary.json', 'w') as f:
+        json.dump(summary, f, indent=2)
+    
+    # 保存详细结果
+    detailed = [
+        {
+            'episode': r.episode,
+            'success': r.success,
+            'steps': r.steps,
+            'total_reward': r.total_reward,
+            'max_score': r.max_score,
+            'achieved_score': r.achieved_score,
+            'duration': r.duration
+        }
+        for r in results
+    ]
+    
+    with open(output_path / 'detailed.json', 'w') as f:
+        json.dump(detailed, f, indent=2)
+    
+    print(f"\nResults saved to {output_path}")
+    
+    return summary
+
+
+def main():
+    parser = argparse.ArgumentParser(description='TextWorld Experiment v6.3')
+    parser.add_argument('--mode', type=str, required=True,
+                        choices=['random', 'v6.1', 'v6.2', 'rl'],
+                        help='Agent mode to test')
+    parser.add_argument('--episodes', type=int, default=100,
+                        help='Number of episodes')
+    parser.add_argument('--output', type=str, required=True,
+                        help='Output directory')
+    parser.add_argument('--model', type=str, default=None,
+                        help='RL model path (for rl mode)')
+    parser.add_argument('--seed', type=int, default=42,
+                        help='Random seed')
+    
+    args = parser.parse_args()
+    
+    result = run_experiment(
+        mode=args.mode,
+        episodes=args.episodes,
+        output_dir=args.output,
+        model_path=args.model,
+        seed=args.seed
+    )
+    
+    return result
+
+
+if __name__ == '__main__':
+    main()
