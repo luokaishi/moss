@@ -4,7 +4,7 @@ MOSS Benchmarks - 外部锚点适配器模块
 提供 TextWorld 等外部环境的适配器，用于验证 MOSS Agent 的涌现行为。
 """
 
-__version__ = "6.0.0"
+__version__ = "6.2.0"
 __author__ = "MOSS Team"
 
 # 核心组件
@@ -24,6 +24,22 @@ from .reward_mapping import (
     RewardContext,
 )
 
+from .task_parser import (
+    TaskState,
+    TextWorldTaskParser,
+)
+
+from .adaptive_action_selector import (
+    ActionScore,
+    AdaptiveActionSelector,
+)
+
+from .reward_aligner import (
+    AlignedReward,
+    RewardAligner,
+    MultiObjectiveRewardAligner,
+)
+
 __all__ = [
     # TextWorld 适配器
     'TextWorldAdapter',
@@ -38,6 +54,19 @@ __all__ = [
     'AdaptiveRewardMapper',
     'DriveReward',
     'RewardContext',
+    
+    # 任务解析
+    'TaskState',
+    'TextWorldTaskParser',
+    
+    # 动作选择
+    'ActionScore',
+    'AdaptiveActionSelector',
+    
+    # 奖励对齐
+    'AlignedReward',
+    'RewardAligner',
+    'MultiObjectiveRewardAligner',
 ]
 
 # 版本信息
@@ -69,5 +98,8 @@ def get_info():
             'TextWorldAdapter',
             'TextWorldRewardMapper',
             'AdaptiveRewardMapper',
+            'TextWorldTaskParser',
+            'AdaptiveActionSelector',
+            'RewardAligner',
         ],
     }
