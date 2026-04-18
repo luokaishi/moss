@@ -5,7 +5,7 @@ BabyAI Adapter - MOSS v6.2 多环境训练
 """
 
 import numpy as np
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Optional, Any, Union
 from dataclasses import dataclass, field
 from pathlib import Path
 
