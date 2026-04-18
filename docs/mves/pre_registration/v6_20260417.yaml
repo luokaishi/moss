@@ -1,0 +1,76 @@
+version: v6.0.0
+date: '2026-04-17T21:16:27.868167'
+status: locked
+hypotheses:
+- id: H1
+  name: "\u6743\u91CD\u4E0A\u9650\u673A\u5236\u6709\u6548\u6027"
+  null_hypothesis: "\u8BBE\u7F6E survival \u9A71\u52A8\u6743\u91CD\u4E0A\u9650 (30%)\
+    \ \u4E0D\u4F1A\u663E\u8457\u63D0\u5347\u6D8C\u73B0\u9A71\u52A8\u7684\u6700\u7EC8\
+    \u6743\u91CD"
+  alternative_hypothesis: "\u8BBE\u7F6E survival \u9A71\u52A8\u6743\u91CD\u4E0A\u9650\
+    \ (30%) \u5C06\u4F7F\u6D8C\u73B0\u9A71\u52A8\u6743\u91CD\u4ECE 0.168 \u63D0\u5347\
+    \u81F3 \u22650.20"
+  expected_effect: "\u6D8C\u73B0\u6743\u91CD \u2265 0.20"
+  primary_outcome: emergent_drive_weight
+- id: H2
+  name: "\u9A71\u52A8\u7ADE\u4E89\u673A\u5236\u6709\u6548\u6027"
+  null_hypothesis: "\u5F15\u5165\u9A71\u52A8\u7ADE\u4E89\u673A\u5236\u4E0D\u4F1A\u63D0\
+    \u5347\u6D8C\u73B0\u9A71\u52A8\u7684\u7A33\u5B9A\u6027"
+  alternative_hypothesis: "\u9A71\u52A8\u7ADE\u4E89\u673A\u5236\u5C06\u4F7F\u6D8C\u73B0\
+    \u9A71\u52A8\u5728 10,000 \u5468\u671F\u5185\u7684\u7A33\u5B9A\u6027\u4ECE 100%\
+    \ \u4FDD\u6301\uFF0C\u4E14\u6743\u91CD\u65B9\u5DEE\u964D\u4F4E 30%"
+  expected_effect: "\u7A33\u5B9A\u6027 \u2265 95% \u4E14\u65B9\u5DEE\u964D\u4F4E \u2265\
+    \ 20%"
+  primary_outcome: emergent_drive_stability
+- id: H3
+  name: "GP \u8D28\u91CF\u5F3A\u5316\u6548\u679C"
+  null_hypothesis: "\u589E\u52A0\u79CD\u7FA4\u89C4\u6A21\u3001\u60E9\u7F5A\u5355\u7EC8\
+    \u7AEF\u51FD\u6570\u4E0D\u4F1A\u63D0\u5347\u6D8C\u73B0\u51FD\u6570\u7684\u884C\
+    \u4E3A\u589E\u76CA"
+  alternative_hypothesis: "GP \u8D28\u91CF\u5F3A\u5316\u5C06\u4F7F\u6D8C\u73B0\u51FD\
+    \u6570\u7684\u884C\u4E3A\u589E\u76CA\u4ECE\u5F53\u524D\u6C34\u5E73\u63D0\u5347\
+    \u81F3 \u22650.15"
+  expected_effect: "\u884C\u4E3A\u589E\u76CA \u2265 0.15"
+  primary_outcome: behavioral_gain
+primary_metrics:
+- name: emergent_drive_weight
+  definition: "\u6D8C\u73B0\u9A71\u52A8\u5728\u603B\u6743\u91CD\u4E2D\u7684\u5360\u6BD4"
+  measurement_method: "\u6700\u7EC8 checkpoint \u6743\u91CD\u503C"
+  target_value: 0.2
+  direction: greater
+- name: emergent_drive_stability
+  definition: "\u6D8C\u73B0\u9A71\u52A8\u5728\u5B9E\u9A8C\u5468\u671F\u5185\u7684\u6301\
+    \u7EED\u5B58\u5728\u6BD4\u4F8B"
+  measurement_method: "\u5B58\u5728\u5468\u671F\u6570 / \u603B\u5468\u671F\u6570"
+  target_value: 0.95
+  direction: greater
+- name: behavioral_gain
+  definition: "\u6D8C\u73B0\u9A71\u52A8\u5E26\u6765\u7684\u884C\u4E3A\u591A\u6837\u6027\
+    \u63D0\u5347"
+  measurement_method: "(\u65B0\u884C\u4E3A\u6570 - \u57FA\u7EBF) / \u57FA\u7EBF"
+  target_value: 0.15
+  direction: greater
+control_conditions:
+- name: baseline
+  description: "v5.5.2 \u9ED8\u8BA4\u53C2\u6570"
+  purpose: "\u63D0\u4F9B\u6BD4\u8F83\u57FA\u51C6"
+- name: ablation_weight_cap
+  description: "\u79FB\u9664\u6743\u91CD\u4E0A\u9650\u673A\u5236"
+  purpose: "\u9A8C\u8BC1\u6743\u91CD\u4E0A\u9650\u7684\u5FC5\u8981\u6027"
+- name: ablation_competition
+  description: "\u79FB\u9664\u9A71\u52A8\u7ADE\u4E89\u673A\u5236"
+  purpose: "\u9A8C\u8BC1\u7ADE\u4E89\u673A\u5236\u7684\u5FC5\u8981\u6027"
+statistical_methods:
+  effect_size_metric: Cohen's d
+  ci_method: BCa Bootstrap (10,000 samples)
+  correction_method: "Bonferroni (\u03B1=0.0167 for 3 hypotheses)"
+  significance_level: 0.05
+sample_size: 3
+random_seeds:
+- 42
+- 123
+- 456
+total_cycles: 10000
+checkpoint_interval: 1000
+locked_at: '2026-04-17T21:17:16.988820'
+lock_hash: 38dea8ef20273c23

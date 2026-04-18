@@ -11,6 +11,13 @@ from datetime import datetime
 if TYPE_CHECKING:
     from .environment import EnvState
 
+# v6.0: 导入权重上限模块
+try:
+    from .drive_weight_cap import DriveWeightCapManager, WeightCapConfig, get_preset
+    WEIGHT_CAP_AVAILABLE = True
+except ImportError:
+    WEIGHT_CAP_AVAILABLE = False
+
 
 def _to_native(obj):
     """将 numpy 类型转为 Python 原生类型，确保 JSON 可序列化"""
@@ -68,13 +75,24 @@ class DriveManager:
     # 内置评估器
     EVALUATORS = {}
 
-    def __init__(self, drives_config: List[Dict]):
+    def __init__(self, drives_config: List[Dict], weight_cap_config: Optional[Dict] = None):
         self.drives: Dict[str, Drive] = {}
         self._evaluators: Dict[str, Callable] = {}
         self._register_builtin_evaluators()
 
         for cfg in drives_config:
             self._add_drive_from_config(cfg)
+        
+        # v6.0: 初始化权重上限管理器
+        self._weight_cap_manager = None
+        if WEIGHT_CAP_AVAILABLE and weight_cap_config is not None:
+            if isinstance(weight_cap_config, str):
+                # 使用预设名称
+                cap_config = get_preset(weight_cap_config)
+            else:
+                # 使用自定义配置
+                cap_config = WeightCapConfig(**weight_cap_config)
+            self._weight_cap_manager = DriveWeightCapManager(self, cap_config)
 
     def _register_builtin_evaluators(self):
         """注册内置驱动力评估器"""
@@ -246,10 +264,30 @@ class DriveManager:
         }
 
     def update_weight_from_feedback(self, drive_name: str, reward: float, lr: float = 0.1):
-        """根据反馈更新驱动权重"""
-        if drive_name in self.drives:
-            delta = lr * (reward - 0.5)  # reward>0.5则增强
-            self.drives[drive_name].weight = float(np.clip(
-                self.drives[drive_name].weight + delta, 0.05, 0.6
-            ))
-            self._normalize_weights()
+        """根据反馈更新驱动权重（v6.0: 集成权重上限）"""
+        if drive_name not in self.drives:
+            return
+        
+        delta = lr * (reward - 0.5)  # reward>0.5则增强
+        
+        # v6.0: 应用权重上限
+        if self._weight_cap_manager:
+            delta = self._weight_cap_manager.apply_weight_update(drive_name, delta)
+        
+        self.drives[drive_name].weight = float(np.clip(
+            self.drives[drive_name].weight + delta, 0.05, 0.6
+        ))
+        self._normalize_weights()
+        
+        # v6.0: 再次应用上限归一化
+        if self._weight_cap_manager:
+            capped_weights = self._weight_cap_manager.normalize_with_caps()
+            for name, weight in capped_weights.items():
+                if name in self.drives:
+                    self.drives[name].weight = weight
+    
+    def get_weight_cap_stats(self) -> Optional[Dict]:
+        """获取权重上限统计（v6.0）"""
+        if self._weight_cap_manager:
+            return self._weight_cap_manager.get_stats()
+        return None
