@@ -1,27 +1,16 @@
-# MOSS 7层AGI涌现架构 - Docker容器
+FROM python:3.8-slim
 
-FROM python:3.11-slim
-
-# 设置工作目录
 WORKDIR /app
 
-# 安装系统依赖
-RUN apt-get update && apt-get install -y \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+# 安装依赖
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# 复制项目文件
-COPY . /app/
+# 复制代码
+COPY . .
 
-# 安装Python依赖
-RUN pip install --no-cache-dir -r requirements.txt || \
-    pip install --no-cache-dir numpy pyyaml pytest flake8 scikit-learn
+# 暴露端口
+EXPOSE 8000
 
-# 设置Python路径
-ENV PYTHONPATH=/app
-
-# 创建实验输出目录
-RUN mkdir -p /app/experiments/output
-
-# 默认命令
-CMD ["python", "experiment_7layer_v2_5000.py"]
+# 启动命令
+CMD ["python", "api/server.py"]
