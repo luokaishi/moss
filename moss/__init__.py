@@ -14,7 +14,7 @@ Core Modules:
 - dimensions: Social dimensions (D5-D8): Coherence, Valence, OtherModeling, NormInternalization
 """
 
-__version__ = "5.2.0"
+__version__ = "7.1.0-dev"
 __author__ = "Cash, Fuxi"
 
 from moss.core import (

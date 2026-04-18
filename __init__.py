@@ -9,9 +9,10 @@ Usage:
     from moss import CausalPurposeGenerator, GradientSafetyGuard
 """
 
-__version__ = "5.2.0"
+__version__ = "7.1.0-dev"
 __author__ = "Cash, Fuxi"
 
+# Re-export from the actual moss.core package
 from moss.core import (
     UnifiedMOSSAgent,
     MOSSConfig,

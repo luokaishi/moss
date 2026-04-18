@@ -19,11 +19,11 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any
 import numpy as np
 
-# 添加v3到路径
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'v3'))
+# Path setup — use moss package imports instead of hardcoded v3 path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-# 复用现有集成
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'integration'))
+# Reuse integration module
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'integration'))
 
 logger = logging.getLogger(__name__)
 

@@ -1,0 +1,59 @@
+{
+  "phase": "Phase 2 Statistical Validation",
+  "timestamp": "2026-04-17T16:40:01.144937",
+  "experiments": {
+    "E3_meta_sme_stability": {
+      "n_trials": 5,
+      "max_gen": 30,
+      "analysis": {
+        "meta_fitness_improvement": {
+          "stats": {
+            "mean": -0.05213129430959216,
+            "std": 0.06625602536599678,
+            "min": -0.14999999999999997,
+            "max": 0.01267230475667544,
+            "n": 5
+          },
+          "bootstrap_ci": {
+            "mean": -0.05213129430959216,
+            "std": 0.06625602536599678,
+            "ci_lower": -0.10455205606822933,
+            "ci_upper": -0.0032325969947417875,
+            "median": -0.03428478792656853,
+            "min": -0.14999999999999997,
+            "max": 0.01267230475667544,
+            "n": 5
+          },
+          "one_sample_ttest": {
+            "t_stat": -1.7593738409053497,
+            "p_value": 0.07851403206893584,
+            "significant_005": false
+          },
+          "positive_rate": 0.2
+        },
+        "meta_acceptance_rate": {
+          "stats": {
+            "mean": 0.13333333333333333,
+            "std": 0.040824829046386304,
+            "min": 0.1,
+            "max": 0.2,
+            "n": 5
+          },
+          "bootstrap_ci": {
+            "mean": 0.13333333333333333,
+            "std": 0.040824829046386304,
+            "ci_lower": 0.10666666666666666,
+            "ci_upper": 0.16666666666666669,
+            "median": 0.13333333333333333,
+            "min": 0.1,
+            "max": 0.2,
+            "n": 5
+          }
+        }
+      }
+    }
+  },
+  "conclusions": [
+    "⚠️ E3: Meta-fitness提升不稳定 (p=0.079, positive rate=20%)"
+  ]
+}

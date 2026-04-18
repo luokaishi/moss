@@ -22,10 +22,34 @@ class TestUnifiedAgent:
     def test_config_defaults(self):
         from moss.core.unified_agent import MOSSConfig
         config = MOSSConfig()
-        assert config.version == "5.0.0"
+        assert config.version == "7.1.0-dev"
         assert config.enable_survival is True
         assert config.enable_purpose is True
         assert config.purpose_interval == 2000
+
+    def test_state_weights_sum_to_one(self):
+        """Verify that all state weights sum to 1.0 (regression test for Bug #1)"""
+        from moss.core.unified_agent import UnifiedMOSSAgent, MOSSConfig
+        config = MOSSConfig()
+        agent = UnifiedMOSSAgent(config)
+
+        for state in ['normal', 'crisis', 'concerned', 'growth']:
+            agent.current_state = state
+            agent._apply_state_weights()
+            assert abs(agent.weights.sum() - 1.0) < 1e-9, \
+                f"State '{state}' weights sum to {agent.weights.sum()}, expected 1.0"
+
+    def test_concerned_state_executes(self):
+        """Verify that 'concerned' state is reachable and applies correct weights (Bug #1)"""
+        from moss.core.unified_agent import UnifiedMOSSAgent, MOSSConfig
+        config = MOSSConfig()
+        agent = UnifiedMOSSAgent(config)
+
+        agent._update_state({'warning': True})
+        assert agent.current_state == 'concerned'
+        agent._apply_state_weights()
+        # Concerned: Survival 35%, Curiosity 35%, Influence 20%, Optimization 10%
+        np.testing.assert_allclose(agent.weights, [0.35, 0.35, 0.20, 0.10])
 
     def test_config_serialization(self):
         from moss.core.unified_agent import MOSSConfig
@@ -523,7 +547,7 @@ class TestPackageImports:
     def test_root_import(self):
         import moss
         assert hasattr(moss, '__version__')
-        assert moss.__version__ == "5.2.0"
+        assert moss.__version__ == "7.1.0-dev"
 
     def test_core_import(self):
         from moss.core import UnifiedMOSSAgent, MOSSConfig

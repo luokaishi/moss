@@ -1,0 +1,96 @@
+{
+  "phase": "Phase 2 Statistical Validation",
+  "timestamp": "2026-04-17T09:21:28.567092",
+  "experiments": {
+    "E1_v62_semantic_vs_random": {
+      "n_trials": 3,
+      "max_gen": 10,
+      "analysis": {
+        "fitness": {
+          "random": {
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "n": 3
+          },
+          "semantic": {
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "n": 3
+          },
+          "relative_improvement_pct": 0.0,
+          "welch_ttest": {
+            "t_stat": 0.0,
+            "df": 0.0,
+            "p_value": 1.0,
+            "cohens_d": 0.0,
+            "mean_a": 0.0,
+            "mean_b": 0.0,
+            "std_a": 0.0,
+            "std_b": 0.0,
+            "n_a": 3,
+            "n_b": 3,
+            "significant_005": false,
+            "significant_01": false
+          },
+          "bootstrap_ci": {
+            "mean": 0.0,
+            "std": 0.0,
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "n": 3
+          }
+        },
+        "acceptance_rate": {
+          "random": {
+            "mean": 0.6,
+            "std": 0.09999999999999998,
+            "min": 0.5,
+            "max": 0.7,
+            "n": 3
+          },
+          "semantic": {
+            "mean": 0.6666666666666666,
+            "std": 0.2081665999466133,
+            "min": 0.5,
+            "max": 0.9,
+            "n": 3
+          },
+          "welch_ttest": {
+            "t_stat": 0.49999999999999617,
+            "df": 2.876404494355843,
+            "p_value": 0.6170750774519765,
+            "cohens_d": 0.40824829046386046,
+            "mean_a": 0.6666666666666666,
+            "mean_b": 0.6,
+            "std_a": 0.2081665999466133,
+            "std_b": 0.09999999999999998,
+            "n_a": 3,
+            "n_b": 3,
+            "significant_005": false,
+            "significant_01": false
+          },
+          "bootstrap_ci": {
+            "mean": 0.6666666666666666,
+            "std": 0.2081665999466133,
+            "ci_lower": 0.5,
+            "ci_upper": 0.9,
+            "median": 0.6,
+            "min": 0.5,
+            "max": 0.9,
+            "n": 3
+          }
+        }
+      }
+    }
+  },
+  "conclusions": [
+    "⚠️ E1: 语义引导变异部分显著 (fitness p=1.000, accept p=0.617)"
+  ]
+}

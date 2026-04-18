@@ -1,8 +1,8 @@
 # MOSS Project Handover Guide
 
-> **Version**: v7.0.0 (Phase 2 Statistical Validation)  
+> **Version**: v7.1.0-dev (Phase 2 Statistical Validation — **Completed**)  
 > **Last updated**: 2026-04-17  
-> **Status**: Active research — Phase 2 in progress
+> **Status**: Phase 2 complete — E1 N=10, E2 N=8, E3 N=5 done. Ready for Phase 3.
 
 ---
 
@@ -88,9 +88,9 @@ We are running **N=5–10 independent replications** of each experiment to obtai
 
 | Exp | Comparison | N | Result |
 |-----|-----------|---|--------|
-| **E1** | v6.2 Semantic vs v6.1 Random | 5 | Accept rate: 40% vs 35% (p=0.174, n.s.); fitness direction reversed (N too small) |
-| **E2** | v6.3 Pareto vs Scalar fitness | 5 | Accept rate: 60.7% vs 35.3% **p=0.001, d=2.07** ✅ |
-| **E3** | v7.0 Meta-SME stability | 5 | In progress / see `experiments/statistical_validation/` |
+| **E1** | v6.2 Semantic vs v6.1 Random | **10** | Fitness Δ: +18.9% (p=0.522, n.s.); Accept: 35.3% vs 33.7% (p=0.650, n.s.) ❌ |
+| **E2** | v6.3 Pareto vs Scalar fitness | **8** | **Accept rate: 54.6% vs 32.5% (p<0.001, d=2.39)** ✅; Fitness Δ p=0.096 |
+| **E3** | v7.0 Meta-SME stability | **5** | Meta-fitness Δ: -5.2% (p=0.079, n.s.); Positive rate: 20% ⚠️ |
 
 ### How to Run More Trials
 
@@ -134,10 +134,10 @@ Results JSON structure:
 
 ## 6. Next Steps (Phase 2 → Phase 3)
 
-### Phase 2 Remaining (1–2 weeks)
-- [ ] **E1 N=10**: Re-run with more trials to check if semantic guidance effect is real
-- [ ] **E2 N=8**: Get fitness Δ to p<0.05 (currently p=0.079)
-- [ ] **E3 complete**: Analyze Meta-SME stability results
+### Phase 2 Completed ✅
+- [x] **E1 N=10**: Semantic guidance shows +18.9% fitness improvement but **not statistically significant** (p=0.522)
+- [x] **E2 N=8**: **Pareto acceptance rate significantly better** (p<0.001, d=2.39) — paper-ready result
+- [x] **E3 N=5**: Meta-SME **unstable** (only 20% trials positive) — needs engineering improvements
 - [ ] **LaTeX figures**: Generate fitness evolution curves and Pareto frontier scatter plots
   - Script stub: `paper/generate_figures.py`
 

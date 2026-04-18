@@ -2,7 +2,7 @@
 MOSS Unified Core Package
 =========================
 
-Unified core architecture integrating v0.3-v5.1 best practices.
+Unified core architecture integrating v0.3-v7.0 best practices.
 
 Usage:
     from moss.core import UnifiedMOSSAgent, MOSSConfig
@@ -11,6 +11,12 @@ Usage:
     from moss.core.causal_purpose import CausalPurposeGenerator
     from moss.core.gradient_safety_guard import GradientSafetyGuard
     from moss.core.moss_mathematical_framework import MOSSMultiObjectiveFramework
+
+Purpose System Note:
+    - PurposeGenerator (v5.0): Behavior-derived purpose generation
+      Used by UnifiedMOSSAgent by default.
+    - CausalPurposeGenerator (v5.1): Independent purpose evolution
+      Advanced feature for causal architecture experiments.
 """
 
 from .unified_agent import (

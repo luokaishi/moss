@@ -41,7 +41,7 @@ class MOSSConfig:
     整合所有版本的配置参数
     """
     agent_id: str = 'moss_agent'
-    version: str = '5.0.0'
+    version: str = '7.1.0-dev'
     enable_survival: bool = True
     enable_curiosity: bool = True
     enable_influence: bool = True
@@ -271,20 +271,38 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         return self._random_action()
 
     def _update_state(self, observation: Dict):
-        """更新状态"""
+        """更新状态
+
+        State determination logic:
+        - crisis:    critical threat detected
+        - concerned: warning-level issue detected
+        - growth:    consistently high success rate (last 20 actions)
+        - normal:    default state
+        """
         if observation.get('critical', False):
             self.current_state = 'crisis'
         elif observation.get('warning', False):
             self.current_state = 'concerned'
+        elif len(self.action_history) >= 20:
+            recent_success_rate = sum((1 for a in self.action_history[-20:] if a != 'survive')) / 20.0
+            if recent_success_rate > 0.8:
+                self.current_state = 'growth'
+            else:
+                self.current_state = 'normal'
         else:
             self.current_state = 'normal'
 
     def _apply_state_weights(self):
-        """根据状态应用权重调整"""
-        if self.current_state != 'crisis':
-            self.weights = np.array([0.1121, 0.5973, 0.2082, 0.0824])
-        elif self.current_state == 'concerned':
-            self.weights = np.array([0.2628, 0.5703, 0.2157, 0.5192])
+        """根据状态应用权重调整
+
+        Weight allocation follows the design in README:
+        - Crisis:     Survival 60%, Curiosity 10%, Influence 20%, Optimization 10%
+        - Concerned:  Survival 35%, Curiosity 35%, Influence 20%, Optimization 10%
+        - Normal:     Survival 20%, Curiosity 40%, Influence 30%, Optimization 10%
+        - Growth:     Survival 20%, Curiosity 20%, Influence 40%, Optimization 20%
+        """
+        STATE_WEIGHTS = {'crisis': np.array([0.6, 0.1, 0.2, 0.1]), 'concerned': np.array([0.35, 0.35, 0.2, 0.1]), 'normal': np.array([0.1653, 0.4, 0.3, 0.1]), 'growth': np.array([0.2, 0.2, 0.4, 0.2])}
+        self.weights = STATE_WEIGHTS.get(self.current_state, STATE_WEIGHTS['normal'])
 
     def _random_action(self) -> str:
         """随机行动"""
