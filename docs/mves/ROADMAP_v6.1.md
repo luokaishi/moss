@@ -63,58 +63,63 @@
 
 ### P0: 关键路径 (必须完成)
 
-#### 1. 长周期稳定性验证
+#### 1. 长周期稳定性验证 ✅ 已完成
 **目标**: 100,000 周期无中断运行
 
 **任务**:
-- [ ] 运行 100,000 周期实验
-- [ ] 监控内存使用 (< 2GB)
-- [ ] 验证涌现持久性
-- [ ] 生成长期稳定性报告
+- [x] 运行 100,000 周期实验
+- [x] 监控内存使用 (< 2GB)
+- [x] 验证涌现持久性
+- [x] 生成长期稳定性报告
 
 **交付物**:
-- `logs/experiment_v6_100k/` - 实验数据
-- `docs/mves/v6_longterm_stability_report.md` - 稳定性报告
+- ✅ `logs/experiment_v6_longrun_*/` - 实验数据
+- ✅ `docs/mves/v6_longterm_stability_report.md` - 稳定性报告
 
-**预计工时**: 3 天 (运行时间 16+ 小时)
+**实际结果**:
+- 运行时间: 173.87 秒
+- 平均速度: 575.1 周期/秒
+- 内存使用: 77.05 MB
+- 涌现持久率: 100%
 
 ---
 
-#### 2. TextWorld 对比实验
+#### 2. TextWorld 对比实验 ✅ 已完成
 **目标**: 验证 MOSS 在外部环境中的性能
 
 **任务**:
-- [ ] 安装 TextWorld (`pip install textworld`)
-- [ ] 运行随机策略基线 (100 episodes)
-- [ ] 运行 MOSS 驱动策略 (100 episodes)
-- [ ] 对比成功率、平均步数、奖励
-- [ ] 生成对比报告
+- [x] 安装 TextWorld (`pip install textworld`)
+- [x] 运行随机策略基线 (100 episodes)
+- [x] 运行 MOSS 驱动策略 (100 episodes)
+- [x] 对比成功率、平均步数、奖励
+- [x] 生成对比报告
 
 **交付物**:
-- `logs/textworld_baseline/` - 基线数据
-- `logs/textworld_moss/` - MOSS 数据
-- `docs/mves/textworld_comparison_report.md` - 对比报告
+- ✅ `logs/textworld_baseline/` - 基线数据 (成功率 44%)
+- ✅ `logs/textworld_moss/` - MOSS 数据 (成功率 0%)
+- ✅ `docs/mves/textworld_comparison_report.md` - 对比报告
 
-**预计工时**: 2 天
+**关键发现**:
+- 随机策略成功率: 44%
+- MOSS 策略成功率: 0%
+- 揭示迁移问题，需改进动作选择和奖励对齐
 
 ---
 
-#### 3. 论文就绪文档
+#### 3. 论文就绪文档 ✅ 已完成
 **目标**: 完整的学术论文支持材料
 
 **任务**:
-- [ ] 撰写实验方法章节
-- [ ] 生成所有图表 (权重演化、涌现检测、统计检验)
-- [ ] 整理补充材料 (代码、数据、配置)
-- [ ] 撰写结果与讨论章节
+- [x] 撰写实验方法章节
+- [x] 生成所有图表 (权重演化、涌现检测、统计检验)
+- [x] 整理补充材料 (代码、数据、配置)
+- [x] 撰写结果与讨论章节
 
 **交付物**:
-- `docs/paper/methods.md` - 方法章节
-- `docs/paper/results.md` - 结果章节
-- `docs/paper/figures/` - 所有图表
-- `docs/paper/supplementary/` - 补充材料
-
-**预计工时**: 4 天
+- ✅ `docs/paper/methods.md` - 方法章节 (171 行)
+- ✅ `docs/paper/results.md` - 结果章节 (156 行)
+- ✅ `docs/paper/figures/` - 5 个图表
+- ✅ `docs/paper/supplementary/` - 补充材料
 
 ---
 
