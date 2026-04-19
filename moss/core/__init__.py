@@ -53,6 +53,11 @@ from .moss_mathematical_framework import MOSSMultiObjectiveFramework
 from .state_decision_model import StateDecisionModel, SystemState as SystemStateLevel
 from .purpose_dynamics import PurposeDynamics, PurposeDynamicsTracker
 
+# v8.0: LLM-guided mutation components
+from .llm_backend import LLMBackend, LLMConfig, LLMResponse, create_llm_backend
+from .llm_mutator import LLMMutator, LLMMutationResult
+from .hybrid_mutation import HybridMutationStrategy, HybridStrategyConfig
+
 __all__ = [
     # Agent
     'BaseMOSSAgent',
@@ -74,6 +79,15 @@ __all__ = [
     'CausalPurposeState',
     'PurposeDynamics',
     'PurposeDynamicsTracker',
+    # v8.0 LLM Mutation
+    'LLMBackend',
+    'LLMConfig',
+    'LLMResponse',
+    'create_llm_backend',
+    'LLMMutator',
+    'LLMMutationResult',
+    'HybridMutationStrategy',
+    'HybridStrategyConfig',
     # Dimensions
     'CoherenceModule',
     'ValenceModule',

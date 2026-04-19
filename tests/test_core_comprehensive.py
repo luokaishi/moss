@@ -22,7 +22,7 @@ class TestUnifiedAgent:
     def test_config_defaults(self):
         from moss.core.unified_agent import MOSSConfig
         config = MOSSConfig()
-        assert config.version == "7.1.0-dev"
+        assert config.version == "8.0.0-dev"
         assert config.enable_survival is True
         assert config.enable_purpose is True
         assert config.purpose_interval == 2000
@@ -547,7 +547,7 @@ class TestPackageImports:
     def test_root_import(self):
         import moss
         assert hasattr(moss, '__version__')
-        assert moss.__version__ == "7.1.0-dev"
+        assert moss.__version__ == "8.0.0-dev"
 
     def test_core_import(self):
         from moss.core import UnifiedMOSSAgent, MOSSConfig

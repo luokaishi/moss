@@ -137,6 +137,19 @@ class SMEConfig:
     # ── v6.3 预留：Pareto多目标优化 ──
     use_pareto: bool = False                                  # 启用Pareto多目标优化（v6.3新增，默认关闭）
     pareto_archive_size: int = 50                             # Pareto档案最大容量
+    # ── v8.0 新增：LLM引导变异 ──
+    enable_llm_mutation: bool = False                         # 启用LLM引导变异（默认关闭，保持v6.x兼容）
+    llm_provider: str = "mock"                                # LLM提供商 (openai|anthropic|ark|local|mock)
+    llm_model: str = ""                                       # LLM模型名（留空自动推断）
+    llm_max_tokens: int = 2048                                # LLM最大输出token
+    llm_temperature: float = 0.3                              # LLM生成温度
+    llm_daily_token_budget: int = 100000                      # 每日LLM token预算
+    llm_daily_request_budget: int = 200                       # 每日LLM请求预算
+    llm_mutation_strategy: str = "adaptive"                   # 混合策略模式 (adaptive|scheduled|llm_only)
+    llm_consecutive_no_op_threshold: int = 3                  # 连续no_op切换LLM阈值
+    llm_consecutive_reject_threshold: int = 5                 # 连续拒绝切换LLM阈值
+    llm_fitness_plateau_window: int = 5                       # fitness平台检测窗口
+    llm_budget_fraction: float = 0.3                          # LLM变异占比上限
 
 
 # ─────────────────────────────────────────────
@@ -1326,7 +1339,7 @@ class SelfModificationEngine:
     6. 记录演化历史
     """
 
-    VERSION = "6.3.0-dev"
+    VERSION = "8.0.0-dev"
 
     def __init__(self, config: SMEConfig = None, project_root: str = None):
         self.config = config or SMEConfig()
@@ -1372,6 +1385,46 @@ class SelfModificationEngine:
         else:
             self.pareto_archive = None
 
+        # v8.0: 初始化LLM变异组件
+        if self.config.enable_llm_mutation:
+            from .llm_backend import create_llm_backend, LLMConfig
+            from .llm_mutator import LLMMutator
+            from .hybrid_mutation import HybridMutationStrategy, HybridStrategyConfig
+
+            llm_config = LLMConfig(
+                provider=self.config.llm_provider,
+                model=self.config.llm_model,
+                max_tokens=self.config.llm_max_tokens,
+                temperature=self.config.llm_temperature,
+                daily_token_budget=self.config.llm_daily_token_budget,
+                daily_request_budget=self.config.llm_daily_request_budget,
+            )
+            self._llm_backend = create_llm_backend(llm_config)
+            self._llm_mutator = LLMMutator(self._llm_backend)
+
+            hybrid_config = HybridStrategyConfig(
+                mode=self.config.llm_mutation_strategy,
+                consecutive_no_op_threshold=self.config.llm_consecutive_no_op_threshold,
+                consecutive_reject_threshold=self.config.llm_consecutive_reject_threshold,
+                fitness_plateau_window=self.config.llm_fitness_plateau_window,
+                llm_budget_fraction=self.config.llm_budget_fraction,
+            )
+            self._hybrid_strategy = HybridMutationStrategy(
+                ast_mutator=self.mutator,
+                llm_mutator=self._llm_mutator,
+                config=hybrid_config,
+            )
+            logger.info(
+                f"[SME] LLMMutator enabled "
+                f"(provider={self.config.llm_provider}, "
+                f"strategy={self.config.llm_mutation_strategy}, "
+                f"budget_fraction={self.config.llm_budget_fraction:.0%})"
+            )
+        else:
+            self._llm_backend = None
+            self._llm_mutator = None
+            self._hybrid_strategy = None
+
         # 输出目录
         self.output_dir = self.project_root / self.config.output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -1379,6 +1432,10 @@ class SelfModificationEngine:
         logger.info(f"[SME] SelfModificationEngine v{self.VERSION} initialized")
         logger.info(f"[SME] Target: {self.config.target_module}")
         logger.info(f"[SME] Project root: {self.project_root}")
+        if self.config.enable_llm_mutation:
+            logger.info(f"[SME] LLM Mutation: ENABLED ({self.config.llm_provider})")
+        else:
+            logger.info("[SME] LLM Mutation: DISABLED (AST-only mode)")
 
 
 
@@ -1408,27 +1465,30 @@ class SelfModificationEngine:
         return module_path.read_text(encoding='utf-8')
 
     def _write_source(self, source: str):
-        """将变异后的源码写回（会先备份）"""
-        module_path = self._module_to_path(self.config.target_module)
+        """将变异后的源码写入隔离目录（不再修改原始源文件）
 
-        # 备份原文件
+        v7.1 安全改进：SME运行期间绝不修改原始源文件，
+        变异代码仅写入隔离的experiments目录，防止源文件被篡改。
+        """
+        # 写入隔离目录（而非原始模块路径）
+        isolated_path = self.output_dir / f"mutated_gen{self.generation}_{datetime.now():%H%M%S}.py"
+        isolated_path.write_text(source, encoding='utf-8')
+        logger.info(f"[SME] Mutated source saved to isolated dir: {isolated_path.name}")
+
+        # 备份当前版本
         backup_path = self.output_dir / f"backup_gen{self.generation}_{datetime.now():%H%M%S}.py"
         backup_path.write_text(self.current_source, encoding='utf-8')
         logger.info(f"[SME] Backup saved: {backup_path.name}")
 
-        # 写入新版本
-        module_path.write_text(source, encoding='utf-8')
-        logger.info(f"[SME] Module updated: {module_path}")
+        logger.info(f"[SME] ⚠️  Source NOT written to original module (isolation mode)")
 
     def _hot_reload(self):
-        """热重载目标模块"""
-        try:
-            module = sys.modules.get(self.config.target_module)
-            if module:
-                importlib.reload(module)
-                logger.info(f"[SME] Hot-reloaded: {self.config.target_module}")
-        except Exception as e:
-            logger.warning(f"[SME] Hot-reload failed: {e}")
+        """热重载目标模块（隔离模式下仅日志提示，不实际重载原始模块）
+
+        v7.1 安全改进：隔离模式下不热重载原始模块，
+        变异效果仅在内存中的eval_module中生效。
+        """
+        logger.info(f"[SME] Hot-reload skipped (isolation mode - mutations in memory only)")
 
     def _evaluate_source(self, source: str,
                          purpose_vector: Optional[np.ndarray] = None) -> float:
@@ -1546,27 +1606,81 @@ class SelfModificationEngine:
                 purpose_vector, avail
             ))
 
-        # 生成变异候选
-        for i in range(self.config.population_size):
-            mutated_source, mut_type = self.mutator.mutate(
-                self.current_source,
-                self.config.target_functions,
-                purpose_vector=purpose_vector  # v6.2: 传入目的向量
+        # ── 生成变异候选 ──
+        # v8.0: 混合策略 vs 纯AST策略
+        if self._hybrid_strategy is not None:
+            # v8.0: 使用混合策略生成候选
+            self._hybrid_strategy.update_state(
+                generation=self.generation,
+                mutation_type=self.mutation_history[-1].mutation_type if self.mutation_history else "",
+                accepted=self.mutation_history[-1].accepted if self.mutation_history else False,
+                fitness=baseline_fitness,
             )
-            mutation_types_tried.append(mut_type)
-
-            if mut_type == "no_op":
-                continue
-
-            # 沙箱验证
-            sandbox_result = self.sandbox.validate(
-                mutated_source,
-                self.config.target_module.replace(".", "/") + ".py"
+            raw_candidates = self._hybrid_strategy.generate_candidates(
+                source=self.current_source,
+                target_functions=self.config.target_functions,
+                population_size=self.config.population_size,
+                purpose_vector=purpose_vector,
+                fitness_history=[m.to_dict() for m in self.mutation_history[-10:]],
+                immutable_functions=self.config.immutable_functions,
             )
 
-            if not sandbox_result['passed']:
-                logger.debug(f"[SME] Candidate {i+1} failed sandbox: {sandbox_result.get('error','')[:80]}")
-                continue
+            for mutated_source, mut_info in raw_candidates:
+                mut_type = mut_info.get('mutation_type', 'no_op')
+                mutation_types_tried.append(mut_type)
+
+                if mut_type in ("no_op", "llm_no_op"):
+                    continue
+
+                # 沙箱验证
+                sandbox_result = self.sandbox.validate(
+                    mutated_source,
+                    self.config.target_module.replace(".", "/") + ".py"
+                )
+
+                if not sandbox_result['passed']:
+                    logger.debug(f"[SME] Candidate [{mut_type}] failed sandbox: {sandbox_result.get('error','')[:80]}")
+                    continue
+
+                # 标量fitness评估
+                candidate_fitness = self._evaluate_source(mutated_source, purpose_vector)
+                delta = candidate_fitness - baseline_fitness
+
+                candidates.append({
+                    'source': mutated_source,
+                    'fitness': candidate_fitness,
+                    'delta': delta,
+                    'mutation_type': mut_type,
+                    'sandbox': sandbox_result,
+                    'mutation_source': mut_info.get('source', 'unknown'),
+                })
+                logger.info(
+                    f"[SME] Candidate [{mut_type}] from {mut_info.get('source','?')}: "
+                    f"fitness={candidate_fitness:.4f} Δ={delta:+.4f} "
+                    f"sandbox={'✓' if sandbox_result['passed'] else '✗'}"
+                )
+        else:
+            # v6.x fallback: 纯AST变异
+            for i in range(self.config.population_size):
+                mutated_source, mut_type = self.mutator.mutate(
+                    self.current_source,
+                    self.config.target_functions,
+                    purpose_vector=purpose_vector  # v6.2: 传入目的向量
+                )
+                mutation_types_tried.append(mut_type)
+
+                if mut_type == "no_op":
+                    continue
+
+                # 沙箱验证
+                sandbox_result = self.sandbox.validate(
+                    mutated_source,
+                    self.config.target_module.replace(".", "/") + ".py"
+                )
+
+                if not sandbox_result['passed']:
+                    logger.debug(f"[SME] Candidate {i+1} failed sandbox: {sandbox_result.get('error','')[:80]}")
+                    continue
 
             # v6.3: Pareto模式 or 标量模式 双路径评估
             if self.config.use_pareto and self.pareto_archive is not None:
@@ -1875,7 +1989,7 @@ class MetaSME(SelfModificationEngine):
             target_functions=self.META_TARGET_FUNCTIONS,
             population_size=4,           # Meta搜索空间较小（安全优先）
             max_generations=50,          # 更多代数（META进化较慢）
-            acceptance_threshold=-0.001, # 更严格的接受标准（META谨慎）
+            acceptance_threshold=-0.01,  # v7.1: 放宽接受标准（-0.001太严格导致E3仅20%正向率）
             enable_hot_reload=False,     # Meta不热重载（避免递归问题）
             enable_structural_mutations=False,  # 禁用结构级变异
             mutation_intensity=0.2,      # 保守强度
@@ -1901,6 +2015,9 @@ class MetaSME(SelfModificationEngine):
         # Meta评估器（评估SME引擎质量，通过让SME跑一次unified_agent改写）
         self.meta_fitness_history: List[Dict] = []
         self._original_sme_source: str = ""  # 保存最初的SME源码
+        self._generations_without_improvement: int = 0  # v7.1: 早停计数器
+        self._meta_fitness_window: List[float] = []  # v7.1: 滑动窗口fitness历史
+        self._meta_early_stop_patience: int = 10  # v7.1: 连续N代无改进则早停
 
         logger.info(f"[MetaSME] v{self.META_VERSION} initialized")
         logger.info(f"[MetaSME] Target: {meta_config.target_module}")
@@ -2019,9 +2136,9 @@ class MetaSME(SelfModificationEngine):
 
         return result
 
-    def _evaluate_sme_fitness(self, sme_source: str) -> float:
+    def _evaluate_sme_fitness_single(self, sme_source: str) -> float:
         """
-        评估变异后的SME引擎质量
+        单次评估变异后的SME引擎质量
 
         策略：用变异后的SME运行10代unified_agent改写，
         以SME带来的fitness提升作为Meta fitness指标
@@ -2073,30 +2190,60 @@ class MetaSME(SelfModificationEngine):
             meta_fitness = 0.5 * accept_rate + 0.5 * min(1.0, max(0.0, relative_gain * 5))
 
             logger.info(
-                f"[MetaSME] Meta-fitness: init={init_f:.4f} final={final_f:.4f} "
+                f"[MetaSME] Meta-fitness (single): init={init_f:.4f} final={final_f:.4f} "
                 f"accept_rate={accept_rate:.2f} meta_f={meta_fitness:.4f}"
             )
             return float(meta_fitness)
 
         except Exception as e:
-            logger.debug(f"[MetaSME] _evaluate_sme_fitness error: {e}")
+            logger.debug(f"[MetaSME] _evaluate_sme_fitness_single error: {e}")
             return 0.0
+
+    def _evaluate_sme_fitness(self, sme_source: str, n_runs: int = 3) -> float:
+        """
+        多轮评估变异后的SME引擎质量，返回中位数
+
+        v7.1 稳定性改进：单次评估随机性太大（fitness评估包含随机动作），
+        多轮取中位数可大幅减少假阳性（E3仅20%正向率的主因）。
+
+        Args:
+            sme_source: 变异后的SME源码
+            n_runs: 评估轮数（默认3）
+
+        Returns:
+            median meta_fitness (0.0 ~ 1.0)
+        """
+        scores = []
+        for run_i in range(n_runs):
+            score = self._evaluate_sme_fitness_single(sme_source)
+            scores.append(score)
+            logger.debug(f"[MetaSME] Multi-eval run {run_i+1}/{n_runs}: {score:.4f}")
+
+        median_score = float(np.median(scores))
+        logger.info(
+            f"[MetaSME] Multi-eval median: {median_score:.4f} "
+            f"(runs={scores})"
+        )
+        return median_score
 
     def _meta_write_source(self, new_sme_source: str, generation: int):
         """
-        将变异后的SME源码写回（先备份，支持回滚）
+        将变异后的SME源码写入隔离目录（不再修改原始SME源文件）
+
+        v7.1 安全改进：MetaSME运行期间绝不修改原始SME源文件，
+        变异代码仅写入隔离目录供分析，防止引擎自毁。
         """
-        sme_path = self._module_to_path("moss.core.self_modification_engine")
+        ts = datetime.now().strftime("%H%M%S")
+        isolated_path = self.meta_backup_dir / f"meta_mutated_gen{generation}_{ts}.py"
+        isolated_path.write_text(new_sme_source, encoding="utf-8")
+        logger.info(f"[MetaSME] Mutated SME saved to isolated dir: {isolated_path.name}")
 
         # 备份当前版本
-        ts = datetime.now().strftime("%H%M%S")
         backup_path = self.meta_backup_dir / f"sme_gen{generation}_{ts}.py"
         backup_path.write_text(self.current_source, encoding="utf-8")
         logger.info(f"[MetaSME] Backup saved: {backup_path.name}")
 
-        # 写入新版本
-        sme_path.write_text(new_sme_source, encoding="utf-8")
-        logger.info(f"[MetaSME] SME source updated: {sme_path}")
+        logger.info(f"[MetaSME] ⚠️  SME source NOT written to original file (isolation mode)")
 
     def _meta_rollback(self, generation: int):
         """
@@ -2146,6 +2293,13 @@ class MetaSME(SelfModificationEngine):
             gen_num = gen + 1
             logger.info(f"\n[MetaSME] ═══ Meta-Generation {gen_num}/{max_generations} ═══")
 
+            # v7.1: 早停检查
+            if self._generations_without_improvement >= self._meta_early_stop_patience:
+                logger.info(
+                    f"[MetaSME] 🛑 早停: 连续{self._generations_without_improvement}代无改进"
+                )
+                break
+
             meta_candidates = []
 
             for i in range(self.config.population_size):
@@ -2189,13 +2343,31 @@ class MetaSME(SelfModificationEngine):
 
             if meta_candidates:
                 best_meta = max(meta_candidates, key=lambda c: c["meta_fitness"])
-                if best_meta["delta"] > self.config.acceptance_threshold:
-                    # 接受：写入变异后的SME
+
+                # v7.1: 滑动窗口接受策略 + 趋势检查
+                self._meta_fitness_window.append(best_meta["meta_fitness"])
+                if len(self._meta_fitness_window) > 5:
+                    self._meta_fitness_window = self._meta_fitness_window[-5:]
+
+                # 接受条件：1) delta > threshold OR 2) 滑动窗口有上升趋势
+                window_trending_up = False
+                if len(self._meta_fitness_window) >= 3:
+                    recent = self._meta_fitness_window[-3:]
+                    window_trending_up = recent[-1] > recent[0]
+
+                accept_condition = (
+                    best_meta["delta"] > self.config.acceptance_threshold
+                    or (window_trending_up and best_meta["delta"] > self.config.acceptance_threshold * 2)
+                )
+
+                if accept_condition:
+                    # 接受：写入变异后的SME（隔离模式）
                     self._meta_write_source(best_meta["source"], gen_num)
                     self.current_source = best_meta["source"]
                     baseline_meta_fitness = best_meta["meta_fitness"]
                     meta_mutations_accepted += 1
                     accepted = True
+                    self._generations_without_improvement = 0  # 重置早停计数
 
                     logger.info(
                         f"[MetaSME] ✅ Meta变异 ACCEPTED: "
@@ -2203,9 +2375,13 @@ class MetaSME(SelfModificationEngine):
                         f"→ {best_meta['meta_fitness']:.4f} ({best_meta['delta']:+.4f})"
                     )
                 else:
+                    self._generations_without_improvement += 1
                     logger.info(
-                        f"[MetaSME] ⚠️  Best meta Δ={best_meta['delta']:+.4f} below threshold"
+                        f"[MetaSME] ⚠️  Best meta Δ={best_meta['delta']:+.4f} below threshold "
+                        f"(no-improvement: {self._generations_without_improvement}/{self._meta_early_stop_patience})"
                     )
+            else:
+                self._generations_without_improvement += 1
 
             gen_summary = {
                 "meta_generation": gen_num,

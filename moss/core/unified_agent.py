@@ -41,7 +41,7 @@ class MOSSConfig:
     整合所有版本的配置参数
     """
     agent_id: str = 'moss_agent'
-    version: str = '7.1.0-dev'
+    version: str = '8.0.0-dev'
     enable_survival: bool = True
     enable_curiosity: bool = True
     enable_influence: bool = True
@@ -301,7 +301,7 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         - Normal:     Survival 20%, Curiosity 40%, Influence 30%, Optimization 10%
         - Growth:     Survival 20%, Curiosity 20%, Influence 40%, Optimization 20%
         """
-        STATE_WEIGHTS = {'crisis': np.array([0.6, 0.1, 0.2, 0.1]), 'concerned': np.array([0.35, 0.35, 0.2, 0.1]), 'normal': np.array([0.1653, 0.4, 0.3, 0.1]), 'growth': np.array([0.2, 0.2, 0.4, 0.2])}
+        STATE_WEIGHTS = {'crisis': np.array([0.6, 0.1, 0.2, 0.1]), 'concerned': np.array([0.35, 0.35, 0.2, 0.1]), 'normal': np.array([0.2, 0.4, 0.3, 0.1]), 'growth': np.array([0.2, 0.2, 0.4, 0.2])}
         self.weights = STATE_WEIGHTS.get(self.current_state, STATE_WEIGHTS['normal'])
 
     def _random_action(self) -> str:
