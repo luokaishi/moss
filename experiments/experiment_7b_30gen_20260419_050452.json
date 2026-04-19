@@ -1,0 +1,117 @@
+[
+  {
+    "name": "AST-only 30gen (Baseline)",
+    "timestamp": "2026-04-19 05:02:57",
+    "config": {
+      "enable_llm_mutation": false,
+      "llm_provider": "mock",
+      "llm_model": "",
+      "llm_mutation_strategy": "adaptive",
+      "llm_budget_fraction": 0.3,
+      "population_size": 6,
+      "acceptance_threshold": -0.01
+    },
+    "generations": 30,
+    "initial_fitness": 0.661143446625725,
+    "final_fitness": 0.684487256137478,
+    "improvement": 0.023343809511752966,
+    "mutations_accepted": 15,
+    "mutations_rejected": 0,
+    "success_rate": 1.0,
+    "elapsed_seconds": 79.62263369560242,
+    "fitness_per_generation": [
+      0.6729920473079211,
+      0.6752977246280101,
+      0.6896025546227995,
+      0.6621296313176688,
+      0.6717904080575771,
+      0.6694741080745223,
+      0.6856957724529762,
+      0.6779976090699933,
+      0.6766488406607171,
+      0.671814997618856,
+      0.66052993949275,
+      0.6700464435809,
+      0.6725510643830538,
+      0.6724389422979217,
+      0.684487256137478
+    ],
+    "mutation_types": {
+      "condition_flip": 2,
+      "no_op": 11,
+      "weight_hardcode": 3,
+      "threshold_mutate": 5,
+      "weight_shift": 3,
+      "constant_tweak": 6
+    },
+    "llm_calls": 0
+  },
+  {
+    "name": "Hybrid 7B 30gen",
+    "timestamp": "2026-04-19 05:04:52",
+    "config": {
+      "enable_llm_mutation": true,
+      "llm_provider": "local",
+      "llm_model": "qwen2.5-coder-7b",
+      "llm_mutation_strategy": "adaptive",
+      "llm_budget_fraction": 0.3,
+      "population_size": 6,
+      "acceptance_threshold": -0.01
+    },
+    "generations": 30,
+    "initial_fitness": 0.6649219891415658,
+    "final_fitness": 0.6857526151769205,
+    "improvement": 0.020830626035354793,
+    "mutations_accepted": 17,
+    "mutations_rejected": 0,
+    "success_rate": 1.0,
+    "elapsed_seconds": 114.2728796005249,
+    "fitness_per_generation": [
+      0.6736361040507326,
+      0.6760231198816342,
+      0.6861196585356101,
+      0.6750459989677301,
+      0.6777012963041903,
+      0.6977579359640006,
+      0.6898410396012971,
+      0.6846974482592106,
+      0.691469200760302,
+      0.6838896275418218,
+      0.6937477380901943,
+      0.695352923833273,
+      0.6866974196518134,
+      0.6862102677076191,
+      0.6746579366112001,
+      0.6730002423708089,
+      0.6857526151769205
+    ],
+    "mutation_types": {
+      "no_op": 10,
+      "constant_tweak": 4,
+      "threshold_mutate": 9,
+      "weight_shift": 6,
+      "weight_hardcode": 1
+    },
+    "llm_calls": 0,
+    "llm_stats": {
+      "provider": "local",
+      "model": "qwen2.5-coder-7b",
+      "date": "2026-04-19",
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "total_requests": 0,
+      "total_cost_usd": 0.0,
+      "budget_remaining_tokens": 100000,
+      "budget_remaining_requests": 200
+    },
+    "hybrid_stats": {
+      "mode": "adaptive",
+      "current_generation": 30,
+      "consecutive_no_ops": 0,
+      "consecutive_rejects": 0,
+      "last_llm_generation": 25,
+      "llm_calls_this_generation": 0,
+      "fitness_history_length": 30
+    }
+  }
+]
