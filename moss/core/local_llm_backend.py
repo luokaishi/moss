@@ -49,7 +49,7 @@ class LocalLLMBackend:
     """
 
     SUPPORTED_MODELS = {
-        "qwen2.5-coder-7b": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "qwen2.5-coder-7b": "~/.cache/huggingface/moss/qwen2.5-coder-7b",
         "qwen2.5-coder-1.5b": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
         "deepseek-coder-6.7b": "deepseek-ai/deepseek-coder-6.7b-instruct",
         "codellama-7b": "codellama/CodeLlama-7b-Instruct-hf",
@@ -62,6 +62,18 @@ class LocalLLMBackend:
         self._tokenizer = None
         self._is_loaded = False
 
+    def _resolve_model_path(self, model_name: str) -> str:
+        """解析模型路径（支持本地路径和HF Hub名称）"""
+        # 展开用户目录
+        expanded = os.path.expanduser(model_name)
+        
+        # 如果是本地目录，使用绝对路径
+        if os.path.isdir(expanded):
+            return os.path.abspath(expanded)
+        
+        # 否则返回原始名称（HF Hub）
+        return model_name
+
     def _load_model(self):
         """延迟加载模型"""
         if self._is_loaded:
@@ -69,7 +81,7 @@ class LocalLLMBackend:
 
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
-        model_name = self.config.model_name
+        model_name = self._resolve_model_path(self.config.model_name)
         logger.info(f"[LocalLLM] Loading model: {model_name}")
         logger.info(f"[LocalLLM] This may take a few minutes on first run (downloading ~15GB)")
 

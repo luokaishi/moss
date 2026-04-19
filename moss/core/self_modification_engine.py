@@ -1682,57 +1682,56 @@ class SelfModificationEngine:
                     logger.debug(f"[SME] Candidate {i+1} failed sandbox: {sandbox_result.get('error','')[:80]}")
                     continue
 
-            # v6.3: Pareto模式 or 标量模式 双路径评估
-            if self.config.use_pareto and self.pareto_archive is not None:
-                # Pareto模式：评估4维向量
-                fitness_vector = self.fitness_evaluator.evaluate_multi(
-                    self._build_eval_module(mutated_source),
-                    steps=150,
-                    purpose_vector=purpose_vector
-                )
-                scalar_fitness = float(np.dot(ParetoArchive.DEFAULT_WEIGHTS, fitness_vector))
-                delta = scalar_fitness - baseline_fitness
+                # v6.3: Pareto模式 or 标量模式 双路径评估
+                if self.config.use_pareto and self.pareto_archive is not None:
+                    # Pareto模式：评估4维向量
+                    fitness_vector = self.fitness_evaluator.evaluate_multi(
+                        self._build_eval_module(mutated_source),
+                        steps=150,
+                        purpose_vector=purpose_vector
+                    )
+                    scalar_fitness = float(np.dot(ParetoArchive.DEFAULT_WEIGHTS, fitness_vector))
+                    delta = scalar_fitness - baseline_fitness
 
-                # 构造Pareto解
-                pareto_sol = ParetoSolution(
-                    fitness_vector=fitness_vector,
-                    source=mutated_source,
-                    mutation_type=mut_type,
-                    generation=self.generation,
-                    sandbox_passed=True
-                )
-                candidates.append({
-                    'source': mutated_source,
-                    'fitness': scalar_fitness,
-                    'fitness_vector': fitness_vector,
-                    'delta': delta,
-                    'mutation_type': mut_type,
-                    'sandbox': sandbox_result,
-                    'pareto_solution': pareto_sol
-                })
-                logger.info(
-                    f"[SME] Candidate {i+1}/{self.config.population_size} "
-                    f"[{mut_type}] Pareto: scalar={scalar_fitness:.4f} "
-                    f"[sr={fitness_vector[0]:.3f},div={fitness_vector[1]:.3f},"
-                    f"pur={fitness_vector[2]:.3f},em={fitness_vector[3]:.3f}]"
-                )
-            else:
-                # 标量模式（v6.1/v6.2兼容）
-                candidate_fitness = self._evaluate_source(mutated_source, purpose_vector)
-                delta = candidate_fitness - baseline_fitness
+                    # 构造Pareto解
+                    pareto_sol = ParetoSolution(
+                        fitness_vector=fitness_vector,
+                        source=mutated_source,
+                        mutation_type=mut_type,
+                        generation=self.generation,
+                        sandbox_passed=True
+                    )
+                    candidates.append({
+                        'source': mutated_source,
+                        'fitness': scalar_fitness,
+                        'fitness_vector': fitness_vector,
+                        'delta': delta,
+                        'mutation_type': mut_type,
+                        'sandbox': sandbox_result,
+                        'pareto_solution': pareto_sol
+                    })
+                    logger.info(
+                        f"[SME] Candidate [{mut_type}] Pareto: scalar={scalar_fitness:.4f} "
+                        f"[sr={fitness_vector[0]:.3f},div={fitness_vector[1]:.3f},"
+                        f"pur={fitness_vector[2]:.3f},em={fitness_vector[3]:.3f}]"
+                    )
+                else:
+                    # 标量模式（v6.1/v6.2兼容）
+                    candidate_fitness = self._evaluate_source(mutated_source, purpose_vector)
+                    delta = candidate_fitness - baseline_fitness
 
-                candidates.append({
-                    'source': mutated_source,
-                    'fitness': candidate_fitness,
-                    'delta': delta,
-                    'mutation_type': mut_type,
-                    'sandbox': sandbox_result
-                })
-                logger.info(
-                    f"[SME] Candidate {i+1}/{self.config.population_size} "
-                    f"[{mut_type}]: fitness={candidate_fitness:.4f} Δ={delta:+.4f} "
-                    f"sandbox={'✓' if sandbox_result['passed'] else '✗'}"
-                )
+                    candidates.append({
+                        'source': mutated_source,
+                        'fitness': candidate_fitness,
+                        'delta': delta,
+                        'mutation_type': mut_type,
+                        'sandbox': sandbox_result,
+                    })
+                    logger.info(
+                        f"[SME] Candidate {i+1} [{mut_type}]: "
+                        f"fitness={candidate_fitness:.4f} Δ={delta:+.4f} "
+                        f"sandbox={'✓' if sandbox_result['passed'] else '✗'}"
+                    )
 
         # 选择最优候选
         accepted = False
