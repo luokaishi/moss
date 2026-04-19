@@ -71,6 +71,12 @@ class TestLLMBackend:
         assert config.api_key_env == "OPENAI_API_KEY"
         assert config.model == "gpt-4o-mini"
 
+    def test_bailian_config_auto_infer(self):
+        from moss.core.llm_backend import LLMConfig
+        config = LLMConfig(provider="bailian")
+        assert config.api_key_env == "DASHSCOPE_API_KEY"
+        assert config.model == "qwen-coder-plus"
+
 
 # ─────────────────────────────────────────────
 # LLMMutator Tests

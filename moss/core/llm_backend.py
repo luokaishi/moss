@@ -62,6 +62,7 @@ class LLMConfig:
                 "openai": "OPENAI_API_KEY",
                 "anthropic": "ANTHROPIC_API_KEY",
                 "ark": "ARK_API_KEY",
+                "bailian": "DASHSCOPE_API_KEY",
             }
             self.api_key_env = env_map.get(self.provider, "")
         # 自动推断 model
@@ -70,6 +71,7 @@ class LLMConfig:
                 "openai": "gpt-4o-mini",
                 "anthropic": "claude-sonnet-4-20250514",
                 "ark": "doubao-pro-32k",
+                "bailian": "qwen-coder-plus",  # 代码生成模型
                 "local": "llama3",
                 "mock": "mock-v1",
             }
@@ -533,6 +535,88 @@ class ARKBackend(LLMBackend):
 
 
 # ─────────────────────────────────────────────
+# Bailian Backend (阿里云百炼 / DashScope)
+# ─────────────────────────────────────────────
+
+class BailianBackend(LLMBackend):
+    """
+    阿里云百炼 (DashScope) 后端
+
+    支持模型:
+    - qwen-max (最强性能)
+    - qwen-plus (平衡)
+    - qwen-turbo (快速)
+    - qwen-coder-plus (代码生成)
+    - qwen-long (长文本)
+
+    环境变量: DASHSCOPE_API_KEY (从 https://dashscope.aliyun.com 获取)
+
+    国内访问稳定，适合 MOSS 在国内部署场景。
+    """
+
+    def __init__(self, config: LLMConfig):
+        super().__init__(config)
+        api_key = os.getenv(self.config.api_key_env, "")
+        if not api_key:
+            raise ValueError(
+                f"DashScope API key not found. Set {self.config.api_key_env} environment variable. "
+                f"Get your key from: https://dashscope.aliyun.com"
+            )
+        self._api_key = api_key
+        # 百炼兼容 OpenAI 接口
+        self._base_url = config.base_url or "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+    def _get_client(self):
+        """延迟初始化 OpenAI 客户端（百炼兼容模式）"""
+        if self._client is None:
+            try:
+                from openai import OpenAI
+                self._client = OpenAI(
+                    api_key=self._api_key,
+                    base_url=self._base_url,
+                )
+            except ImportError:
+                raise ImportError(
+                    "openai package not installed. Run: pip install openai"
+                )
+        return self._client
+
+    def _call_api(self, system_prompt: str, user_prompt: str) -> LLMResponse:
+        client = self._get_client()
+        response = client.chat.completions.create(
+            model=self.config.model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            max_tokens=self.config.max_tokens,
+            temperature=self.config.temperature,
+            timeout=self.config.timeout,
+        )
+
+        content = response.choices[0].message.content or ""
+        usage = response.usage
+
+        input_tokens = usage.prompt_tokens if usage else 0
+        output_tokens = usage.completion_tokens if usage else 0
+        # 百炼价格参考（以 qwen-plus 为例，实际请以官网为准）
+        # 输入: ¥0.004/1K tokens, 输出: ¥0.012/1K tokens
+        # 转换为 USD (约 7.2 汇率)
+        cost = (input_tokens / 1000 * 0.004 +
+                output_tokens / 1000 * 0.012) / 7.2
+
+        return LLMResponse(
+            content=content,
+            model=self.config.model,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            latency_ms=0.0,
+            cost_usd=cost,
+            provider="bailian",
+        )
+
+
+# ─────────────────────────────────────────────
 # 工厂函数
 # ─────────────────────────────────────────────
 
@@ -555,6 +639,7 @@ def create_llm_backend(config: LLMConfig) -> LLMBackend:
         "anthropic": AnthropicBackend,
         "local": LocalBackend,
         "ark": ARKBackend,
+        "bailian": BailianBackend,
     }
 
     provider = config.provider.lower()
