@@ -366,9 +366,9 @@ def main():
     print("MOSS v7.1 - Meta-SME Statistical Analysis")
     print("=" * 60)
     
-    # 分析结果
-    results_dir = 'experiments/meta_sme_validation/results'
-    output_path = 'experiments/meta_sme_validation/analysis_report.json'
+    # 分析结果 - 全规模实验
+    results_dir = 'experiments/meta_sme_validation/results_full'
+    output_path = 'experiments/meta_sme_validation/analysis_report_full.json'
     
     analyzer = StatisticalAnalyzer(results_dir)
     report = analyzer.generate_report(output_path)

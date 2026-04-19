@@ -283,20 +283,26 @@ def main():
     print("MOSS v7.1 - Meta-SME Validation Experiment")
     print("=" * 60)
     
-    # 实验配置
+    # 实验配置 - 全规模实验
     EXPERIMENT_CONFIG = {
-        'num_cycles': 5000,  # 预实验使用 5K，全实验用 50K
+        'num_cycles': 50000,      # 全实验: 50K 周期
         'checkpoint_interval': 500,
-        'output_dir': 'experiments/meta_sme_validation/results'
+        'output_dir': 'experiments/meta_sme_validation/results_full'
     }
     
     output_dir = EXPERIMENT_CONFIG['output_dir']
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     
-    # 定义实验组
+    print("\n" + "=" * 60)
+    print("FULL SCALE EXPERIMENT - N=45, 50K cycles")
+    print("=" * 60)
+    print(f"Estimated runtime: ~45 runs × 30s = ~22 minutes")
+    print("=" * 60 + "\n")
+    
+    # 定义实验组 - 全规模
     groups = {
-        'E': {  # 实验组
-            'num_runs': 3,  # 预实验用 3，全实验用 15
+        'E': {  # 实验组: 15 runs
+            'num_runs': 15,
             'base_seed': 1000,
             'config': {
                 'meta_sme_enabled': True,
@@ -307,8 +313,8 @@ def main():
                 'checkpoint_interval': EXPERIMENT_CONFIG['checkpoint_interval']
             }
         },
-        'C1': {  # 对照组1: 禁用 Meta-SME
-            'num_runs': 2,  # 预实验用 2，全实验用 10
+        'C1': {  # 对照组1: 10 runs
+            'num_runs': 10,
             'base_seed': 2000,
             'config': {
                 'meta_sme_enabled': False,
@@ -316,8 +322,8 @@ def main():
                 'checkpoint_interval': EXPERIMENT_CONFIG['checkpoint_interval']
             }
         },
-        'C2': {  # 对照组2: 随机权重调整
-            'num_runs': 2,
+        'C2': {  # 对照组2: 10 runs
+            'num_runs': 10,
             'base_seed': 3000,
             'config': {
                 'meta_sme_enabled': False,
@@ -326,8 +332,8 @@ def main():
                 'checkpoint_interval': EXPERIMENT_CONFIG['checkpoint_interval']
             }
         },
-        'C3': {  # 对照组3: GP-only
-            'num_runs': 2,
+        'C3': {  # 对照组3: 10 runs
+            'num_runs': 10,
             'base_seed': 4000,
             'config': {
                 'meta_sme_enabled': False,
