@@ -64,6 +64,13 @@ class LocalLLMBackend:
 
     def _resolve_model_path(self, model_name: str) -> str:
         """解析模型路径（支持本地路径和HF Hub名称）"""
+        # 首先检查是否为预设模型名
+        if model_name in self.SUPPORTED_MODELS:
+            resolved = self.SUPPORTED_MODELS[model_name]
+            expanded = os.path.expanduser(resolved)
+            if os.path.isdir(expanded):
+                return os.path.abspath(expanded)
+        
         # 展开用户目录
         expanded = os.path.expanduser(model_name)
         
@@ -95,9 +102,10 @@ class LocalLLMBackend:
 
         # 加载配置
         load_kwargs = {
-            "torch_dtype": torch.float16 if device == "cuda" else torch.float32,
-            "device_map": "auto" if device == "cuda" else None,
+            "torch_dtype": torch.float32,  # CPU 使用 float32
+            "device_map": None,  # CPU 不使用 device_map
             "trust_remote_code": True,
+            "low_cpu_mem_usage": True,  # 减少内存峰值
         }
 
         if self.config.load_in_8bit:
@@ -105,16 +113,18 @@ class LocalLLMBackend:
         if self.config.load_in_4bit:
             load_kwargs["load_in_4bit"] = True
 
-        # 加载 tokenizer
+        # 加载 tokenizer (使用本地路径)
         self._tokenizer = AutoTokenizer.from_pretrained(
             model_name,
             trust_remote_code=True,
-            padding_side="left"
+            padding_side="left",
+            local_files_only=True,
         )
 
-        # 加载模型
+        # 加载模型 (使用本地路径)
         self._model = AutoModelForCausalLM.from_pretrained(
             model_name,
+            local_files_only=True,
             **load_kwargs
         )
 

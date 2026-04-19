@@ -456,17 +456,82 @@ class AnthropicBackend(LLMBackend):
 
 
 # ─────────────────────────────────────────────
-# Local Backend (Ollama / vLLM)
+# Local Backend (HuggingFace Transformers / Ollama / vLLM)
 # ─────────────────────────────────────────────
 
 class LocalBackend(LLMBackend):
-    """本地LLM后端（Ollama兼容）"""
+    """
+    本地LLM后端
+
+    支持两种模式:
+    1. HuggingFace Transformers (默认): 直接加载本地模型
+    2. Ollama API: 通过 HTTP 调用本地 Ollama 服务
+    """
 
     def __init__(self, config: LLMConfig):
         super().__init__(config)
-        self._base_url = config.base_url or "http://localhost:11434"
+        # 检测模型类型
+        self._use_transformers = self._is_transformers_model(config.model)
+        self._transformers_backend = None
+
+        if self._use_transformers:
+            # 使用 HuggingFace Transformers
+            from .local_llm_backend import LocalLLMBackend, LocalModelConfig
+            local_config = LocalModelConfig(
+                model_name=config.model,
+                temperature=config.temperature,
+                max_length=config.max_tokens,
+            )
+            self._transformers_backend = LocalLLMBackend(local_config)
+            self._base_url = None
+        else:
+            # 使用 Ollama API
+            self._base_url = config.base_url or "http://localhost:11434"
+
+    def _is_transformers_model(self, model_name: str) -> bool:
+        """判断是否为 Transformers 本地模型"""
+        import os
+        from .local_llm_backend import LocalLLMBackend
+
+        # 检查是否为预设模型名
+        if model_name in LocalLLMBackend.SUPPORTED_MODELS:
+            resolved = LocalLLMBackend.SUPPORTED_MODELS[model_name]
+            expanded = os.path.expanduser(resolved)
+            if os.path.isdir(expanded):
+                return True
+
+        # 如果是路径或包含特定关键词，使用 transformers
+        expanded = os.path.expanduser(model_name)
+        return (
+            os.path.isdir(expanded) or
+            model_name.startswith('~')
+        )
 
     def _call_api(self, system_prompt: str, user_prompt: str) -> LLMResponse:
+        if self._transformers_backend:
+            # 使用 Transformers
+            t0 = time.time()
+            content = self._transformers_backend.complete(system_prompt, user_prompt)
+            latency = (time.time() - t0) * 1000
+
+            input_tokens = len(user_prompt) // 4
+            output_tokens = len(content) // 4
+
+            return LLMResponse(
+                content=content,
+                model=self.config.model,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                latency_ms=latency,
+                cost_usd=0.0,
+                provider="local",
+            )
+        else:
+            # 使用 Ollama API
+            return self._call_ollama_api(system_prompt, user_prompt)
+
+    def _call_ollama_api(self, system_prompt: str, user_prompt: str) -> LLMResponse:
+        """调用 Ollama API"""
         import requests as http_requests
 
         url = f"{self._base_url}/api/chat"
@@ -490,7 +555,6 @@ class LocalBackend(LLMBackend):
         data = resp.json()
 
         content = data.get("message", {}).get("content", "")
-        # Ollama 不总是返回 token 统计
         eval_count = data.get("eval_count", len(content) // 4)
         prompt_eval_count = data.get("prompt_eval_count", len(user_prompt) // 4)
 
@@ -500,7 +564,7 @@ class LocalBackend(LLMBackend):
             input_tokens=prompt_eval_count,
             output_tokens=eval_count,
             latency_ms=0.0,
-            cost_usd=0.0,  # 本地推理无成本
+            cost_usd=0.0,
             provider="local",
         )
 
