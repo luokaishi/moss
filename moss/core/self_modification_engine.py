@@ -1341,9 +1341,10 @@ class SelfModificationEngine:
 
     VERSION = "8.0.0-dev"
 
-    def __init__(self, config: SMEConfig = None, project_root: str = None):
+    def __init__(self, config: SMEConfig = None, project_root: str = None, hybrid_config: 'HybridStrategyConfig' = None):
         self.config = config or SMEConfig()
         self.project_root = Path(project_root or self._find_project_root())
+        self._custom_hybrid_config = hybrid_config  # v8.0: 允许传入自定义hybrid配置
 
         # v6.2: 初始化语义引导选择器
         if self.config.enable_semantic_guidance:
@@ -1402,13 +1403,18 @@ class SelfModificationEngine:
             self._llm_backend = create_llm_backend(llm_config)
             self._llm_mutator = LLMMutator(self._llm_backend)
 
-            hybrid_config = HybridStrategyConfig(
-                mode=self.config.llm_mutation_strategy,
-                consecutive_no_op_threshold=self.config.llm_consecutive_no_op_threshold,
-                consecutive_reject_threshold=self.config.llm_consecutive_reject_threshold,
-                fitness_plateau_window=self.config.llm_fitness_plateau_window,
-                llm_budget_fraction=self.config.llm_budget_fraction,
-            )
+            # v8.0: 使用自定义hybrid配置（如果提供）
+            if self._custom_hybrid_config:
+                hybrid_config = self._custom_hybrid_config
+                logger.info(f"[SME] Using custom HybridStrategyConfig (mode={hybrid_config.mode})")
+            else:
+                hybrid_config = HybridStrategyConfig(
+                    mode=self.config.llm_mutation_strategy,
+                    consecutive_no_op_threshold=self.config.llm_consecutive_no_op_threshold,
+                    consecutive_reject_threshold=self.config.llm_consecutive_reject_threshold,
+                    fitness_plateau_window=self.config.llm_fitness_plateau_window,
+                    llm_budget_fraction=self.config.llm_budget_fraction,
+                )
             self._hybrid_strategy = HybridMutationStrategy(
                 ast_mutator=self.mutator,
                 llm_mutator=self._llm_mutator,

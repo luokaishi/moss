@@ -1,0 +1,55 @@
+[
+  {
+    "name": "AST-only (Baseline)",
+    "config": {
+      "enable_llm_mutation": false,
+      "llm_provider": "mock",
+      "llm_model": "",
+      "llm_mutation_strategy": "adaptive",
+      "population_size": 4
+    },
+    "generations": 5,
+    "initial_fitness": 0.6755668510163355,
+    "final_fitness": 0.6849271483206206,
+    "improvement": 0.009360297304285115,
+    "mutations_accepted": 3,
+    "mutations_rejected": 0,
+    "elapsed_seconds": 7.468392372131348,
+    "fitness_per_generation": [
+      0.6694099702338978,
+      0.6655091419385206,
+      0.6849271483206206
+    ]
+  },
+  {
+    "name": "Hybrid AST+LLM (1.5B local)",
+    "config": {
+      "enable_llm_mutation": true,
+      "llm_provider": "local",
+      "llm_model": "qwen2.5-coder-1.5b",
+      "llm_mutation_strategy": "adaptive",
+      "population_size": 4
+    },
+    "generations": 5,
+    "initial_fitness": 0.661374292553138,
+    "final_fitness": 0.6634480562697399,
+    "improvement": 0.0020737637166019507,
+    "mutations_accepted": 1,
+    "mutations_rejected": 0,
+    "elapsed_seconds": 5.192734718322754,
+    "fitness_per_generation": [
+      0.6634480562697399
+    ],
+    "llm_stats": {
+      "provider": "local",
+      "model": "qwen2.5-coder-1.5b",
+      "date": "2026-04-19",
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "total_requests": 0,
+      "total_cost_usd": 0.0,
+      "budget_remaining_tokens": 100000,
+      "budget_remaining_requests": 200
+    }
+  }
+]
