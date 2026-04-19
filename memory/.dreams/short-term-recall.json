@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-18T03:31:54.734Z",
+  "updatedAt": "2026-04-18T23:05:52.290Z",
   "entries": {
     "memory:memory/2026-04-04.md:267:328": {
       "key": "memory:memory/2026-04-04.md:267:328",
@@ -232,18 +232,20 @@
       "endLine": 79,
       "source": "memory",
       "snippet": "### 3. 外部锚点 Benchmark 调研 ✅ **文件清单**: - `docs/mves/external_benchmark_research.md` (333 行) - 调研报告 **Benchmark 对比**: | Benchmark | 适配度 | 推荐优先级 | |-----------|--------|------------| | TextWorld | ⭐⭐⭐⭐⭐ | **P1** | | BabyAI | ⭐⭐⭐⭐ | P2 | | MiniGrid | ⭐⭐⭐⭐ | P2 | | Procgen | ⭐⭐⭐ | P3 | ### 4. TextWorld 适配器实现 ✅ **文件清单**: - `moss/benchmarks/textworld_adapter.py` (708 行) - 适配器实现 - `moss/benchmarks/reward_mapping.py` (526 行) - 奖励映射 - `moss/benchmarks/__init__.py` (73 行) - 模块导出 - `examples/experiment_textworld_baseline.py` (221 行) - 实验脚本 - `tests/test_textworld_adapter.py` (222 行) - 单元测试 - `docs/mves/textworld_integration_guide.md` (334 行) - 使用文档 **功能特性**: - 12 维状态向量转换 - 自然语言命令解析 - 奖励映射到 4 个驱动维度 -",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1,
+      "totalScore": 2,
       "maxScore": 1,
       "firstRecalledAt": "2026-04-18T03:31:54.734Z",
-      "lastRecalledAt": "2026-04-18T03:31:54.734Z",
+      "lastRecalledAt": "2026-04-18T23:05:52.290Z",
       "queryHashes": [
-        "926949f477a4"
+        "926949f477a4",
+        "e75a26b5e142"
       ],
       "recallDays": [
-        "2026-04-18"
+        "2026-04-18",
+        "2026-04-19"
       ],
       "conceptTags": [
         "moss/benchmarks",
@@ -263,18 +265,20 @@
       "endLine": 42,
       "source": "memory",
       "snippet": "# 2026-04-18 - MOSS v6.0 可解释性工具与外部锚点开发 ## 已完成任务 ### 1. 可解释性工具套件 ✅ **文件清单**: - `agi/analysis/latent_export.py` (551 行) - Latent Cluster 导出、K-Means 聚类、PCA 降维 - `agi/analysis/behavior_mapping.py` (545 行) - 行为片段关联、驱动-行为映射 - `scripts/counterfactual_test.py` (393 行) - 反事实测试、驱动消融实验 - `scripts/visualize_latent.py` (142 行) - 可视化报告生成 - `tests/test_interpretability.py` (173 行) - 单元测试 (8 个测试通过) - `docs/mves/v6_interpretability_tools.md` (338 行) - 使用文档 **验证结果**: - 8 个单元测试全部通过 - 可视化报告生成成功 - 支持 12 维状态向量分析 ### 2. 57K 数据 Meta-Analysis ✅ **文件清单**: - `scripts/meta_analysis_57k.py` (509 行) - 分析脚本 - `docs/mves/meta_analysis_57k_data.md` (307 行) - 分析报告 **核心发现**: - 总周期数: 36,907 - 涌现持久率: **100%** - survival",
-      "recallCount": 1,
+      "recallCount": 2,
       "dailyCount": 0,
       "groundedCount": 0,
-      "totalScore": 1,
+      "totalScore": 2,
       "maxScore": 1,
       "firstRecalledAt": "2026-04-18T03:31:54.734Z",
-      "lastRecalledAt": "2026-04-18T03:31:54.734Z",
+      "lastRecalledAt": "2026-04-18T23:05:52.290Z",
       "queryHashes": [
-        "926949f477a4"
+        "926949f477a4",
+        "e75a26b5e142"
       ],
       "recallDays": [
-        "2026-04-18"
+        "2026-04-18",
+        "2026-04-19"
       ],
       "conceptTags": [
         "v6.0",
@@ -285,6 +289,37 @@
         "scripts/counterfactual-test.py",
         "scripts/visualize-latent.py",
         "tests/test-interpretability.py"
+      ]
+    },
+    "memory:memory/2026-04-18.md:68:122": {
+      "key": "memory:memory/2026-04-18.md:68:122",
+      "path": "memory/2026-04-18.md",
+      "startLine": 68,
+      "endLine": 122,
+      "source": "memory",
+      "snippet": "| TextWorld 适配器 | 6 | 2,084 | | **总计** | **15** | **5,375** | ## 5. 长周期实验脚本 ✅ **文件清单**: - `examples/experiment_v6_longrun.py` (630 行) - 50,000+ 周期实验 - 支持断点续跑、内存监控、自适应 GC ## 6. Meta-Drive 可证伪测试 ✅ **文件清单**: - `scripts/meta_drive_falsification.py` (554 行) - 可证伪测试脚本 - `docs/mves/meta_drive_falsification_report.md` (313 行) - 可证伪性报告 **核心发现**: - Meta-Drive 机制可证伪 (p < 0.05) - 启用 vs 禁用存在显著差异 - 效应量: Cohen's d = 0.85 (大效应) ## 7. 跨 Seed 分析 ✅ **文件清单**: - `docs/mves/cross_seed_analysis.md` (164 行) - 跨 seed 分析报告 **核心发现**: - 3 个种子 (42, 123, 456) 结果完全一致 - 标准差 = 0，变异系数 = 0% - 涌现事件在所有种子中一致发生 --- ## 最终统计 ### 代码统计 | 类别 | 文件数 | 代码行数 | |------|--------|----------| | Python 代码 | 101 | 15,304 | | Markdow",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1,
+      "maxScore": 1,
+      "firstRecalledAt": "2026-04-18T23:05:52.290Z",
+      "lastRecalledAt": "2026-04-18T23:05:52.290Z",
+      "queryHashes": [
+        "e75a26b5e142"
+      ],
+      "recallDays": [
+        "2026-04-19"
+      ],
+      "conceptTags": [
+        "meta-drive",
+        "0.05",
+        "0.85",
+        "docs/mves/cross-seed-analysis.md",
+        "textworld",
+        "2,084",
+        "总计",
+        "5,375"
       ]
     }
   }
