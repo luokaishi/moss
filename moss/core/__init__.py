@@ -57,6 +57,8 @@ from .purpose_dynamics import PurposeDynamics, PurposeDynamicsTracker
 from .llm_backend import LLMBackend, LLMConfig, LLMResponse, create_llm_backend
 from .llm_mutator import LLMMutator, LLMMutationResult
 from .hybrid_mutation import HybridMutationStrategy, HybridStrategyConfig
+# v8.0: Local LLM deployment (HuggingFace)
+from .local_llm_backend import LocalLLMBackend, LocalModelConfig, create_local_backend_for_moss
 
 __all__ = [
     # Agent
@@ -88,6 +90,10 @@ __all__ = [
     'LLMMutationResult',
     'HybridMutationStrategy',
     'HybridStrategyConfig',
+    # v8.0 Local LLM
+    'LocalLLMBackend',
+    'LocalModelConfig',
+    'create_local_backend_for_moss',
     # Dimensions
     'CoherenceModule',
     'ValenceModule',
