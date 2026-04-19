@@ -1,13 +1,14 @@
-# MOSS v6.6 - Multi-Objective Self-Driven System
+# MOSS v7.1 - Meta-SME Integration
 
-> **Production-Ready AGI Emergence Research Framework**
+> **Production-Ready AGI with Self-Modification**
 >
-> An autonomous AI agent that operates without external tasks, discovering and evolving its own drive functions through genetic programming and self-organization.
+> An autonomous AI agent that operates without external tasks, featuring code-level self-modification capabilities validated through large-scale statistical experiments.
 
 [![CI](https://github.com/luokaishi/moss/actions/workflows/ci.yml/badge.svg)](https://github.com/luokaishi/moss/actions)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-6.6.0-green.svg)](https://github.com/luokaishi/moss/releases)
+[![Version](https://img.shields.io/badge/version-7.1.0-green.svg)](https://github.com/luokaishi/moss/releases)
+[![Validation](https://img.shields.io/badge/validation-N%3D45%2C%20p%3C0.0001-blue.svg)](docs/mves/PHASE2_FINAL_REPORT.md)
 
 ---
 
@@ -66,11 +67,51 @@ pytest tests/ -v
 
 # Run specific test module
 pytest tests/test_agi_core.py -v
+
+# Run Meta-SME tests (NEW in v7.1)
+python tests/test_meta_sme.py
+```
+
+### Run Meta-SME Validation
+
+```bash
+# Full validation experiment (N=45, 50K cycles)
+python experiments/meta_sme_validation.py
+
+# Statistical analysis
+python experiments/meta_sme_analysis.py
 ```
 
 ---
 
 ## Core Features
+
+### NEW in v7.1: Meta-SME (Meta Self-Modification Engine)
+
+**Code-level self-modification with statistical validation**
+
+```python
+from agi.meta_sme import MetaSME, ModificationType
+from agi.meta_sme_integration import MetaSMEDriveIntegration
+
+# Create Meta-SME
+meta_sme = MetaSME(
+    enable_auto_modify=False,      # Safety first
+    require_human_approval=True      # Human oversight
+)
+
+# Integrate with drive system
+integration = MetaSMEDriveIntegration(
+    meta_sme=meta_sme,
+    drive_manager=drive_manager
+)
+
+# Record performance and propose adjustments
+integration.record_drive_performance('curiosity', ...)
+proposals = integration.propose_weight_adjustments()
+```
+
+**Validation Results**: N=45, p<0.0001, Cohen's d=206, +19.6% performance
 
 ### 1. Multi-Drive Architecture
 
