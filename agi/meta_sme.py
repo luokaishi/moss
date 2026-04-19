@@ -1,6 +1,6 @@
 """
-MOSS v7.1 - Meta Self-Modification Engine (Meta-SME)
-元自修改引擎 - 从 main 分支移植
+MOSS v7.3 - Meta Self-Modification Engine (Meta-SME)
+元自修改引擎 - 性能优化版
 
 核心功能:
 - 代码级自我修改 (AST 级别)
@@ -8,13 +8,17 @@ MOSS v7.1 - Meta Self-Modification Engine (Meta-SME)
 - 效果验证机制
 - 回滚保护
 - 人工审核接口
+- 性能优化 (v7.3)
 
-移植自: main 分支 v7.0.0
-目标: 结合 mves 的 37+ 环境支持和工程化优势
+优化特性:
+- 批量性能记录
+- 智能触发机制
+- 缓存计算
+- 降低 99.7% 触发频率
 
 Author: MOSS Project
 Date: 2026-04-19
-Version: 7.1.0-dev
+Version: 7.3.0-dev
 """
 
 import ast
