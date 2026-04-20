@@ -1,0 +1,82 @@
+{
+  "name": "Coding Plan LLM 30gen v3 (Forced Scheduled, No Budget Limit)",
+  "timestamp": "2026-04-21 01:23:01",
+  "config": {
+    "llm_provider": "bailian",
+    "llm_model": "qwen3-coder-plus",
+    "llm_base_url": "https://coding.dashscope.aliyuncs.com/v1",
+    "population_size": 6,
+    "schedule_pattern": [
+      "ast",
+      "ast",
+      "llm"
+    ],
+    "cooldown": 0,
+    "force_llm_calls": true,
+    "llm_daily_token_budget": 500000,
+    "llm_budget_fraction": 0.5
+  },
+  "generations": 30,
+  "initial_fitness": 0.665116849778537,
+  "final_fitness": 0.6736946557309651,
+  "improvement": 0.008577805952428075,
+  "mutations_accepted": 25,
+  "elapsed_seconds": 2622.9915568828583,
+  "fitness_per_generation": [
+    0.6871008845714754,
+    0.6751391853934283,
+    0.673665943183606,
+    0.6522257133223591,
+    0.6714616933787928,
+    0.6539459297294234,
+    0.670589128471028,
+    0.6784750693830541,
+    0.6673468886442601,
+    0.6491096515972166,
+    0.6593624448307108,
+    0.6545822049391982,
+    0.6625206214496587,
+    0.6933510434262892,
+    0.6752077508483062,
+    0.6861431952865406,
+    0.6818961428708863,
+    0.6812766387723143,
+    0.6770311988943063,
+    0.6842665980238035,
+    0.6953866219616918,
+    0.6580708508648738,
+    0.6599585651814889,
+    0.6573981439406932,
+    0.6736946557309651
+  ],
+  "mutation_types": {
+    "constant_tweak": 6,
+    "llm_guided": 13,
+    "threshold_mutate": 4,
+    "weight_shift": 2,
+    "action_insert": 1,
+    "no_op": 2,
+    "condition_flip": 2
+  },
+  "llm_calls": 0,
+  "llm_stats": {
+    "provider": "bailian",
+    "model": "qwen3-coder-plus",
+    "date": "2026-04-21",
+    "total_input_tokens": 267211,
+    "total_output_tokens": 235354,
+    "total_requests": 59,
+    "total_cost_usd": 0.5407,
+    "budget_remaining_tokens": 0,
+    "budget_remaining_requests": 141
+  },
+  "hybrid_stats": {
+    "mode": "scheduled",
+    "current_generation": 30,
+    "consecutive_no_ops": 0,
+    "consecutive_rejects": 0,
+    "last_llm_generation": 30,
+    "llm_calls_this_generation": 2,
+    "fitness_history_length": 30
+  }
+}
