@@ -1,0 +1,60 @@
+{
+  "name": "Coding Plan LLM 30gen",
+  "timestamp": "2026-04-20 07:43:34",
+  "config": {
+    "llm_provider": "bailian",
+    "llm_model": "qwen-coder-plus",
+    "llm_base_url": "https://coding.dashscope.aliyuncs.com/v1",
+    "population_size": 6
+  },
+  "generations": 30,
+  "initial_fitness": 0.6998458851275847,
+  "final_fitness": 0.6842057289031119,
+  "improvement": -0.01564015622447279,
+  "mutations_accepted": 12,
+  "elapsed_seconds": 381.0767641067505,
+  "fitness_per_generation": [
+    0.6835629876133815,
+    0.6751718692075992,
+    0.68996823210579,
+    0.6769176114634597,
+    0.6694526970203529,
+    0.6616264398896134,
+    0.6903055572128357,
+    0.6756668293047181,
+    0.6905659182284835,
+    0.6869716114615709,
+    0.6753329924044367,
+    0.6842057289031119
+  ],
+  "mutation_types": {
+    "llm_guided": 14,
+    "weight_shift": 3,
+    "action_insert": 1,
+    "weight_hardcode": 3,
+    "constant_tweak": 3,
+    "threshold_mutate": 5,
+    "condition_flip": 1
+  },
+  "llm_calls": 0,
+  "llm_stats": {
+    "provider": "bailian",
+    "model": "qwen3-coder-plus",
+    "date": "2026-04-20",
+    "total_input_tokens": 87391,
+    "total_output_tokens": 13484,
+    "total_requests": 47,
+    "total_cost_usd": 0.071,
+    "budget_remaining_tokens": 0,
+    "budget_remaining_requests": 153
+  },
+  "hybrid_stats": {
+    "mode": "scheduled",
+    "current_generation": 30,
+    "consecutive_no_ops": 0,
+    "consecutive_rejects": 0,
+    "last_llm_generation": 24,
+    "llm_calls_this_generation": 0,
+    "fitness_history_length": 30
+  }
+}
