@@ -50,7 +50,7 @@ class LocalLLMBackend:
 
     SUPPORTED_MODELS = {
         "qwen2.5-coder-7b": "~/.cache/huggingface/moss/qwen2.5-coder-7b",
-        "qwen2.5-coder-1.5b": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+        "qwen2.5-coder-1.5b": "~/.cache/huggingface/moss/qwen2.5-coder-1.5b",
         "deepseek-coder-6.7b": "deepseek-ai/deepseek-coder-6.7b-instruct",
         "codellama-7b": "codellama/CodeLlama-7b-Instruct-hf",
         "phi-4": "microsoft/Phi-4",

@@ -493,12 +493,9 @@ class LocalBackend(LLMBackend):
         import os
         from .local_llm_backend import LocalLLMBackend
 
-        # 检查是否为预设模型名
+        # 检查是否为预设模型名（无论本地是否存在，都使用Transformers）
         if model_name in LocalLLMBackend.SUPPORTED_MODELS:
-            resolved = LocalLLMBackend.SUPPORTED_MODELS[model_name]
-            expanded = os.path.expanduser(resolved)
-            if os.path.isdir(expanded):
-                return True
+            return True
 
         # 如果是路径或包含特定关键词，使用 transformers
         expanded = os.path.expanduser(model_name)
