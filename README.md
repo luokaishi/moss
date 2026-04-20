@@ -1,4 +1,13 @@
 # MOSS v7.1 - Meta-SME Integration
+> ⚠️ **当前版本：v8.0.0-beta-beta** ⚠️
+>
+> 此版本为预览版，核心组件验证进行中。
+> 详见 [状态公告](docs/mves_status_announcement.md)。
+>
+> 如需稳定版本，请使用 [main 分支](https://github.com/luokaishi/moss/tree/main)。
+>
+> ---
+>
 
 > **Production-Ready AGI with Self-Modification**
 >
