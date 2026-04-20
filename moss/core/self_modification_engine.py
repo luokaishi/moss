@@ -155,6 +155,11 @@ class SMEConfig:
     enable_elitism: bool = False                              # 启用精英保留
     elitism_threshold: float = 0.95                           # 精英保留阈值（低于最佳fitness的95%拒绝）
     elitism_keep_source: bool = True                          # 保留精英源代码快照
+    # ── v8.1 新增：动态接受阈值 ──
+    enable_adaptive_threshold: bool = False                   # 启用动态接受阈值
+    adaptive_threshold_start: float = -0.01                   # 初始阈值（早期宽松）
+    adaptive_threshold_end: float = -0.005                    # 最终阈值（后期严格）
+    adaptive_threshold_generations: int = 30                  # 阈值调整周期（代）
 
 
 # ─────────────────────────────────────────────
@@ -1827,7 +1832,9 @@ class SelfModificationEngine:
                         )
                         elite_rejected = True
 
-                if not elite_rejected and best_candidate['delta'] > self.config.acceptance_threshold:
+                # v8.1: 使用动态阈值
+                current_threshold = self._get_adaptive_threshold()
+                if not elite_rejected and best_candidate['delta'] > current_threshold:
                     # 接受变异
                     self.current_source = best_candidate['source']
                     self.best_fitness = best_candidate['fitness']
@@ -1838,7 +1845,7 @@ class SelfModificationEngine:
 
                     accepted = True
                     logger.info(
-                        f"[SME] ✅ Mutation ACCEPTED: "
+                        f"[SME] ✅ Mutation ACCEPTED (threshold={current_threshold:.4f}): "
                         f"fitness {baseline_fitness:.4f} → {best_candidate['fitness']:.4f} "
                         f"(+{best_candidate['delta']:.4f})"
                     )
@@ -1941,6 +1948,27 @@ class SelfModificationEngine:
         log_path = self.output_dir / "evolution_log.jsonl"
         with open(log_path, 'a', encoding='utf-8') as f:
             f.write(json.dumps(summary, ensure_ascii=False) + '\n')
+
+    def _get_adaptive_threshold(self) -> float:
+        """
+        计算动态接受阈值（v8.1）
+        
+        早期宽松（探索），后期严格（精细调整）
+        线性插值：从 start 渐变到 end
+        """
+        if not self.config.enable_adaptive_threshold:
+            return self.config.acceptance_threshold
+        
+        # 计算进度比例（0.0 ~ 1.0）
+        progress = min(1.0, self.generation / self.config.adaptive_threshold_generations)
+        
+        # 线性插值
+        threshold = (
+            self.config.adaptive_threshold_start * (1 - progress) +
+            self.config.adaptive_threshold_end * progress
+        )
+        
+        return threshold
 
     def _print_summary(self, report: Dict):
         """打印运行摘要"""
