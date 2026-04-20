@@ -325,12 +325,10 @@ class HybridMutationStrategy:
             mode = pattern[i % len(pattern)]
 
             if mode == "llm":
-                # 冷却+预算检查
-                gens_since_llm = self._current_generation - self._last_llm_generation
+                # Scheduled模式：强制按pattern执行，忽略冷却，只检查预算
                 budget_ok = (self.llm_mutator.llm_backend and
                              self.llm_mutator.llm_backend.check_budget())
-                if (gens_since_llm >= self.config.llm_cooldown_generations
-                        and budget_ok):
+                if budget_ok:
                     try:
                         mutated, result = self.llm_mutator.mutate(
                             source, target_functions,
