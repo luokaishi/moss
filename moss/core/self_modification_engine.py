@@ -160,6 +160,10 @@ class SMEConfig:
     adaptive_threshold_start: float = -0.01                   # 初始阈值（早期宽松）
     adaptive_threshold_end: float = -0.005                    # 最终阈值（后期严格）
     adaptive_threshold_generations: int = 30                  # 阈值调整周期（代）
+    # ── v8.1 新增：多轮评估减少随机性 ──
+    enable_multi_eval: bool = False                           # 启用多轮评估
+    multi_eval_runs: int = 3                                  # 评估轮数
+    multi_eval_steps: int = 150                               # 每轮步数
 
 
 # ─────────────────────────────────────────────
@@ -1608,9 +1612,12 @@ class SelfModificationEngine:
         if not self.current_source:
             self.current_source = self._load_source()
 
-        # 评估当前fitness
-        baseline_fitness = self._evaluate_source(self.current_source, purpose_vector)
-        logger.info(f"[SME] Baseline fitness: {baseline_fitness:.4f}")
+        # 评估当前fitness（v8.1: 使用多轮评估减少随机性）
+        baseline_fitness, baseline_std = self._evaluate_source_robust(self.current_source, purpose_vector)
+        if self.config.enable_multi_eval:
+            logger.info(f"[SME] Baseline fitness: {baseline_fitness:.4f} (±{baseline_std:.4f})")
+        else:
+            logger.info(f"[SME] Baseline fitness: {baseline_fitness:.4f}")
 
         if self.best_fitness == 0.0:
             self.best_fitness = baseline_fitness
@@ -1664,8 +1671,8 @@ class SelfModificationEngine:
                     logger.debug(f"[SME] Candidate [{mut_type}] failed sandbox: {sandbox_result.get('error','')[:80]}")
                     continue
 
-                # 标量fitness评估
-                candidate_fitness = self._evaluate_source(mutated_source, purpose_vector)
+                # 标量fitness评估（v8.1: 使用多轮评估）
+                candidate_fitness, candidate_std = self._evaluate_source_robust(mutated_source, purpose_vector)
                 delta = candidate_fitness - baseline_fitness
 
                 candidates.append({
@@ -1969,6 +1976,36 @@ class SelfModificationEngine:
         )
         
         return threshold
+
+    def _evaluate_source_robust(self, source: str,
+                                 purpose_vector: Optional[np.ndarray] = None) -> Tuple[float, float]:
+        """
+        多轮评估取平均，减少随机性（v8.1）
+        
+        Returns:
+            (mean_fitness, std_fitness)
+        """
+        if not self.config.enable_multi_eval:
+            # 单轮评估（兼容模式）
+            fitness = self._evaluate_source(source, purpose_vector)
+            return fitness, 0.0
+        
+        # 多轮评估
+        fitnesses = []
+        for run in range(self.config.multi_eval_runs):
+            fitness = self._evaluate_source(source, purpose_vector)
+            fitnesses.append(fitness)
+        
+        mean_fitness = float(np.mean(fitnesses))
+        std_fitness = float(np.std(fitnesses))
+        
+        logger.debug(
+            f"[SME] Multi-eval ({self.config.multi_eval_runs} runs): "
+            f"mean={mean_fitness:.4f}, std={std_fitness:.4f}, "
+            f"range=[{min(fitnesses):.4f}, {max(fitnesses):.4f}]"
+        )
+        
+        return mean_fitness, std_fitness
 
     def _print_summary(self, report: Dict):
         """打印运行摘要"""
