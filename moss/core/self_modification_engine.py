@@ -151,6 +151,10 @@ class SMEConfig:
     llm_fitness_plateau_window: int = 5                       # fitness平台检测窗口
     llm_budget_fraction: float = 0.3                          # LLM变异占比上限
     llm_base_url: str = ""                                    # LLM自定义base_url（用于Coding Plan等）
+    # ── v8.1 新增：精英保留机制 ──
+    enable_elitism: bool = False                              # 启用精英保留
+    elitism_threshold: float = 0.95                           # 精英保留阈值（低于最佳fitness的95%拒绝）
+    elitism_keep_source: bool = True                          # 保留精英源代码快照
 
 
 # ─────────────────────────────────────────────
@@ -1378,6 +1382,11 @@ class SelfModificationEngine:
         self.best_fitness = 0.0
         self.current_source = ""
 
+        # v8.1: 精英保留机制
+        self._elite_fitness = 0.0          # 历史最佳fitness
+        self._elite_source = ""            # 历史最佳源代码
+        self._elite_generation = 0         # 历史最佳产生代数
+
         # v6.3: Pareto档案（仅当use_pareto=True时激活）
         if self.config.use_pareto:
             self.pareto_archive = ParetoArchive(max_size=self.config.pareto_archive_size)
@@ -1777,6 +1786,16 @@ class SelfModificationEngine:
                     self.best_fitness = best_candidate['fitness']
                     self._write_source(best_candidate['source'])
 
+                    # v8.1: 更新精英记录
+                    if self.best_fitness > self._elite_fitness:
+                        self._elite_fitness = self.best_fitness
+                        self._elite_generation = self.generation
+                        if self.config.elitism_keep_source:
+                            self._elite_source = best_candidate['source']
+                        logger.info(
+                            f"[SME] 👑 New elite record: fitness {self._elite_fitness:.4f} at Gen {self.generation}"
+                        )
+
                     if self.config.enable_hot_reload:
                         self._hot_reload()
 
@@ -1795,7 +1814,20 @@ class SelfModificationEngine:
             else:
                 # ── 标量模式（v6.1/v6.2兼容）──
                 best_candidate = max(candidates, key=lambda c: c['fitness'])
-                if best_candidate['delta'] > self.config.acceptance_threshold:
+
+                # v8.1: 精英保留检查
+                elite_rejected = False
+                if self.config.enable_elitism and self._elite_fitness > 0:
+                    elite_threshold = self._elite_fitness * self.config.elitism_threshold
+                    if best_candidate['fitness'] < elite_threshold:
+                        logger.info(
+                            f"[SME] 🛡️  Elite protection: candidate fitness {best_candidate['fitness']:.4f} "
+                            f"below elite threshold {elite_threshold:.4f} "
+                            f"(elite={self._elite_fitness:.4f} from Gen {self._elite_generation})"
+                        )
+                        elite_rejected = True
+
+                if not elite_rejected and best_candidate['delta'] > self.config.acceptance_threshold:
                     # 接受变异
                     self.current_source = best_candidate['source']
                     self.best_fitness = best_candidate['fitness']
@@ -1811,10 +1843,11 @@ class SelfModificationEngine:
                         f"(+{best_candidate['delta']:.4f})"
                     )
                 else:
-                    logger.info(
-                        f"[SME] ⚠️  Best candidate Δ={best_candidate['delta']:+.4f} "
-                        f"below threshold {self.config.acceptance_threshold:.4f}, rejected"
-                    )
+                    if not elite_rejected:
+                        logger.info(
+                            f"[SME] ⚠️  Best candidate Δ={best_candidate['delta']:+.4f} "
+                            f"below threshold {self.config.acceptance_threshold:.4f}, rejected"
+                        )
 
         # 记录结果
         mutation_id = f"gen{self.generation}_{datetime.now():%H%M%S}"
