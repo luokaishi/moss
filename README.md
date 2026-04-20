@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v7.0.0-green.svg)](https://github.com/luokaishi/moss/releases/tag/v7.0.0)
+[![Version](https://img.shields.io/badge/version-v8.0.0-dev-green.svg)](https://github.com/luokaishi/moss/releases/tag/v8.0.0-dev)
 
 > **Self-driven motivation is the key missing ingredient for AI autonomous evolution.**
 
@@ -12,17 +12,18 @@ MOSS is a theoretical framework that endows AI agents with four parallel intrins
 
 ---
 
-## MOSS v7.0.0 — Meta-SME: Self-Modifying the Self-Modifier
+## MOSS v8.0.0-dev — LLM-Guided Self-Modification
 
-MOSS v7.0 implements **code-level self-modification** — agents modify not just parameters, but source code, and ultimately the self-modification engine itself.
+MOSS v8.0 introduces **LLM-guided mutation** — combining the creativity of Large Language Models with the safety of AST mutations for autonomous code evolution.
 
-### Four-Layer Self-Modification Architecture
+### Five-Layer Self-Modification Architecture
 
 ```
 v6.1 Code Self-Modification  →  AST mutation + sandbox verification + fitness evaluation
 v6.2 Semantic Guidance       →  Purpose vector guides mutation direction
 v6.3 Pareto Optimization     →  4-D non-dominated frontier, multi-objective tradeoff
 v7.0 Meta-SME                →  Engine rewrites itself (dual sandbox + rollback protection)
+v8.0 LLM-Guided Mutation     →  Hybrid AST+LLM with elite protection & adaptive threshold
 ```
 
 ### Key Results
@@ -33,10 +34,14 @@ v7.0 Meta-SME                →  Engine rewrites itself (dual sandbox + rollbac
 | **v6.2** | Semantic guidance (PurposeGuidedSelector) | Acceptance 25%→41% (+60%) |
 | **v6.3** | Pareto multi-objective (ParetoArchive) | Δfitness +144%, acceptance 62%, HV=0.176 |
 | **v7.0** | Meta-SME (triple safety mechanism) | 50-gen meta-evolution, Meta-fitness +26.3% |
+| **v8.0** | LLM-guided hybrid mutation | 30-gen, fitness +0.86%, 59 LLM calls, elite protection |
 
 ### Technical Highlights
 
 - **9 AST mutation types**: constant_tweak, condition_flip, weight_shift, threshold_mutate, action_insert, epsilon_tune, weight_hardcode, action_shuffle, branch_inject
+- **LLM-guided mutation**: Integration with OpenAI, Anthropic, Aliyun Bailian (Coding Plan), and local models
+- **Hybrid Strategy**: Scheduled/adaptive switching between AST (low cost) and LLM (high quality)
+- **v8.1 Stability Features**: Elite protection, adaptive threshold, multi-run evaluation
 - **4-D Fitness**: success_rate(0.35) + diversity(0.25) + purpose_align(0.20) + emergence(0.20)
 - **Pareto non-dominated frontier**: maintains ≤50 non-dominated solutions with crowding distance
 - **Meta-SME safety**: immutable function whitelist + dual sandbox verification + auto-rollback
@@ -141,7 +146,7 @@ moss/
 
 | Version | Date | Key Changes |
 |---------|------|-------------|
-| **v7.0.0** | 2026-04-16 | Meta-SME, paper v3.0 |
+| **v8.0.0-dev** | 2026-04-16 | Meta-SME, paper v3.0 |
 | v6.3.0 | 2026-04-15 | Pareto multi-objective, Δfitness+144% |
 | v6.2.0 | 2026-04-14 | Semantic-guided mutation, acceptance +60% |
 | v6.1.0 | 2026-04-13 | Code self-modification engine, fitness +6.3% |

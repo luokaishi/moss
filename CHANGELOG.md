@@ -489,7 +489,7 @@ Three independent long-running experiments (2,880,000 steps each) validating Pur
 
 ## Version History
 
-- **v7.0.0** (2026-04-16) - Meta-SME, code self-modification ultimate form, paper v3.0
+- **v8.0.0-dev** (2026-04-16) - Meta-SME, code self-modification ultimate form, paper v3.0
 - **v6.3.0** (2026-04-15) - Pareto multi-objective optimization
 - **v6.2.0** (2026-04-14) - Semantic-guided mutation
 - **v6.1.0** (2026-04-13) - Code self-modification engine
