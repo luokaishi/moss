@@ -1,0 +1,72 @@
+{
+  "name": "Coding Plan LLM 30gen v2 (Forced Scheduled)",
+  "timestamp": "2026-04-20 23:48:00",
+  "config": {
+    "llm_provider": "bailian",
+    "llm_model": "qwen3-coder-plus",
+    "llm_base_url": "https://coding.dashscope.aliyuncs.com/v1",
+    "population_size": 6,
+    "schedule_pattern": [
+      "ast",
+      "ast",
+      "llm"
+    ],
+    "cooldown": 0
+  },
+  "generations": 30,
+  "initial_fitness": 0.6670416665965382,
+  "final_fitness": 0.6732256569836358,
+  "improvement": 0.006183990387097604,
+  "mutations_accepted": 18,
+  "elapsed_seconds": 652.978550195694,
+  "fitness_per_generation": [
+    0.6632657447799394,
+    0.6745202570021314,
+    0.6843940261922963,
+    0.6678796701472359,
+    0.65421232429807,
+    0.6507273087966899,
+    0.6592747355901711,
+    0.6618020653045955,
+    0.6653126076423278,
+    0.6615216808413208,
+    0.6622085287956924,
+    0.6603339133137273,
+    0.6642522183707098,
+    0.6703002360329675,
+    0.6549142752685427,
+    0.6674172108509623,
+    0.6626995379914095,
+    0.6732256569836358
+  ],
+  "mutation_types": {
+    "llm_guided": 6,
+    "no_op": 6,
+    "condition_flip": 1,
+    "weight_hardcode": 3,
+    "threshold_mutate": 2,
+    "weight_shift": 10,
+    "constant_tweak": 2
+  },
+  "llm_calls": 0,
+  "llm_stats": {
+    "provider": "bailian",
+    "model": "qwen3-coder-plus",
+    "date": "2026-04-20",
+    "total_input_tokens": 54238,
+    "total_output_tokens": 48584,
+    "total_requests": 13,
+    "total_cost_usd": 0.1111,
+    "budget_remaining_tokens": 0,
+    "budget_remaining_requests": 187
+  },
+  "hybrid_stats": {
+    "mode": "scheduled",
+    "current_generation": 30,
+    "consecutive_no_ops": 1,
+    "consecutive_rejects": 1,
+    "last_llm_generation": 7,
+    "llm_calls_this_generation": 0,
+    "fitness_history_length": 30
+  }
+}
