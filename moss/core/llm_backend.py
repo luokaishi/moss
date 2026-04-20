@@ -624,8 +624,13 @@ class BailianBackend(LLMBackend):
                 f"Get your key from: https://dashscope.aliyun.com"
             )
         self._api_key = api_key
+        self._client = None  # 延迟初始化
         # 百炼兼容 OpenAI 接口
-        self._base_url = config.base_url or "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        # 支持 Coding Plan 自定义 base_url
+        if config.base_url:
+            self._base_url = config.base_url
+        else:
+            self._base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
     def _get_client(self):
         """延迟初始化 OpenAI 客户端（百炼兼容模式）"""

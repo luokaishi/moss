@@ -172,7 +172,7 @@ class LLMMutator:
                 validation_passed=False,
             )
 
-        # 提取变异代码
+        # 提取变异代码（LLM 输出完整文件）
         mutated_source = self._clean_llm_output(response.content)
 
         # 提取变异元数据
@@ -294,6 +294,7 @@ class LLMMutator:
         parts.append(f"  Guidance: {self.STRATEGIES[strategy]}")
         parts.append("")
         parts.append(
+            "Output ONLY the modified function definition (from 'def' to end of function body). "
             "Produce the COMPLETE modified Python source code (the entire file, not just the changed function). "
             "At the END of the file, add a single comment line with mutation metadata:"
         )
@@ -454,6 +455,89 @@ class LLMMutator:
                 result[node.name] = func_source
 
         return result
+
+    def _apply_function_mutation(self,
+                                  source: str,
+                                  llm_func_code: str,
+                                  target_functions: List[str]) -> Optional[str]:
+        """
+        v8.1: 将 LLM 输出的函数替换到源文件中
+        
+        LLM 只输出修改后的函数体，此方法将其替换到原始源码中对应位置。
+        
+        Returns:
+            替换后的完整源码，如果替换失败返回 None
+        """
+        # 解析 LLM 输出中的函数名
+        try:
+            llm_tree = ast.parse(llm_func_code)
+        except SyntaxError as e:
+            logger.warning(f"[LLMMutator] LLM output has syntax error: {e}")
+            return None
+
+        # 找到 LLM 输出中的函数定义
+        llm_funcs = {}
+        for node in ast.walk(llm_tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                llm_funcs[node.name] = node
+
+        if not llm_funcs:
+            logger.warning("[LLMMutator] No function definition found in LLM output")
+            return None
+
+        # 确认修改的函数在允许列表中
+        modified_func = None
+        for fname, node in llm_funcs.items():
+            if fname in target_functions:
+                modified_func = fname
+                break
+
+        if modified_func is None:
+            # 检查是否修改了非目标函数
+            non_target = set(llm_funcs.keys()) - set(target_functions)
+            if non_target:
+                logger.warning(f"[LLMMutator] LLM modified non-target function: {non_target}")
+                return None
+            # 没有找到任何函数
+            logger.warning(f"[LLMMutator] LLM output functions {list(llm_funcs.keys())} not in targets {target_functions}")
+            return None
+
+        # 在原始源码中找到该函数并替换
+        source_lines = source.split('\n')
+        try:
+            source_tree = ast.parse(source)
+        except SyntaxError:
+            return None
+
+        for node in ast.walk(source_tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == modified_func:
+                # 找到了要替换的函数
+                start_line = node.lineno - 1  # 0-indexed
+                end_line = node.end_lineno if hasattr(node, 'end_lineno') and node.end_lineno else start_line + 1
+
+                # 获取 LLM 输出中对应函数的源码
+                llm_func_lines = llm_func_code.split('\n')
+
+                # 找到 LLM 输出中的函数起始行
+                llm_func_start = None
+                for i, line in enumerate(llm_func_lines):
+                    if line.strip().startswith(f'def {modified_func}(') or line.strip().startswith(f'async def {modified_func}('):
+                        llm_func_start = i
+                        break
+
+                if llm_func_start is None:
+                    # 整个 LLM 输出就是函数
+                    new_func_code = llm_func_code
+                else:
+                    # 从 def 行开始
+                    new_func_code = '\n'.join(llm_func_lines[llm_func_start:])
+
+                # 替换
+                new_lines = source_lines[:start_line] + new_func_code.split('\n') + source_lines[end_line:]
+                return '\n'.join(new_lines)
+
+        logger.warning(f"[LLMMutator] Function {modified_func} not found in original source")
+        return None
 
     def _extract_imports(self, source: str) -> set:
         """提取导入的模块名"""

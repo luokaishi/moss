@@ -150,6 +150,7 @@ class SMEConfig:
     llm_consecutive_reject_threshold: int = 5                 # 连续拒绝切换LLM阈值
     llm_fitness_plateau_window: int = 5                       # fitness平台检测窗口
     llm_budget_fraction: float = 0.3                          # LLM变异占比上限
+    llm_base_url: str = ""                                    # LLM自定义base_url（用于Coding Plan等）
 
 
 # ─────────────────────────────────────────────
@@ -1395,6 +1396,7 @@ class SelfModificationEngine:
             llm_config = LLMConfig(
                 provider=self.config.llm_provider,
                 model=self.config.llm_model,
+                base_url=self.config.llm_base_url or None,  # v8.0: 支持自定义base_url
                 max_tokens=self.config.llm_max_tokens,
                 temperature=self.config.llm_temperature,
                 daily_token_budget=self.config.llm_daily_token_budget,
