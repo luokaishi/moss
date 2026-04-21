@@ -172,8 +172,19 @@ class LLMMutator:
                 validation_passed=False,
             )
 
-        # 提取变异代码（LLM 输出完整文件）
+        # 提取变异代码（LLM 输出完整文件或单个函数）
         mutated_source = self._clean_llm_output(response.content)
+
+        # v8.1: 如果 prompt 使用了函数级提取，LLM 只输出函数体
+        # 需要将其替换回完整源码
+        func_sources = self._extract_function_sources(source)
+        target_code_available = any(fname in func_sources for fname in target_functions)
+        if target_code_available:
+            # 尝试函数替换
+            merged = self._apply_function_mutation(source, mutated_source, target_functions)
+            if merged is not None:
+                mutated_source = merged
+            # else: LLM 可能还是输出了完整文件，直接使用
 
         # 提取变异元数据
         mutation_info = self._extract_mutation_info(mutated_source)
@@ -261,14 +272,46 @@ class LLMMutator:
                            fitness_history: Optional[List[Dict]],
                            immutable_functions: List[str],
                            strategy: str) -> str:
-        """构建用户提示"""
+        """构建用户提示（v8.1: 函数级提取，减少 input token 消耗）"""
+
+        # v8.1: 只发送目标函数源码而非完整文件，减少 ~60% input tokens
+        func_sources = self._extract_function_sources(source)
+        target_code_parts = []
+        for fname in target_functions:
+            if fname in func_sources:
+                target_code_parts.append(func_sources[fname])
+
+        # 同时提取不可变函数签名（给 LLM 上下文但不需要完整代码）
+        immutable_sigs = []
+        for fname in immutable_functions:
+            if fname in func_sources:
+                # 只取前2行（签名+docstring提示）
+                lines = func_sources[fname].split('\n')
+                sig_line = lines[0] if lines else f"def {fname}(...):"
+                immutable_sigs.append(f"  {sig_line}  # IMMUTABLE")
+
+        # 选择发送模式
+        if target_code_parts:
+            # 函数级提取模式（节省 token）
+            code_section = "\n\n".join(target_code_parts)
+            code_header = "=== TARGET FUNCTIONS (modifiable) ==="
+        else:
+            # 回退：发送完整源码
+            code_section = source
+            code_header = "=== CURRENT SOURCE CODE ==="
+
         parts = [
-            "=== CURRENT SOURCE CODE ===",
-            source,
+            code_header,
+            code_section,
             "",
             f"=== MODIFIABLE FUNCTIONS: {target_functions} ===",
-            f"=== IMMUTABLE FUNCTIONS (DO NOT TOUCH): {immutable_functions} ===",
         ]
+
+        if immutable_sigs:
+            parts.append(f"=== IMMUTABLE FUNCTIONS (DO NOT TOUCH): ===")
+            parts.extend(immutable_sigs)
+        elif immutable_functions:
+            parts.append(f"=== IMMUTABLE FUNCTIONS (DO NOT TOUCH): {immutable_functions} ===")
 
         if purpose_vector is not None:
             pv = np.array(purpose_vector)
@@ -293,11 +336,18 @@ class LLMMutator:
         parts.append(f"=== MUTATION STRATEGY: {strategy} ===")
         parts.append(f"  Guidance: {self.STRATEGIES[strategy]}")
         parts.append("")
-        parts.append(
-            "Output ONLY the modified function definition (from 'def' to end of function body). "
-            "Produce the COMPLETE modified Python source code (the entire file, not just the changed function). "
-            "At the END of the file, add a single comment line with mutation metadata:"
-        )
+        if target_code_parts:
+            # 函数级提取模式：LLM 只需输出修改后的函数
+            parts.append(
+                "Output the COMPLETE MODIFIED FUNCTION (from 'def' to end of function body). "
+                "Only output ONE function. At the END, add a single comment line with mutation metadata:"
+            )
+        else:
+            # 完整文件模式：LLM 输出完整源码
+            parts.append(
+                "Output ONLY the complete modified Python source code, no markdown fences, no explanations. "
+                "At the END of the file, add a single comment line with mutation metadata:"
+            )
         parts.append(
             '# MUTATION_INFO: {"strategy": "...", "target_function": "...", '
             '"description": "...", "confidence": 0.0-1.0}'
