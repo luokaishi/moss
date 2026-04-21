@@ -1,0 +1,77 @@
+{
+  "name": "Coding Plan LLM 30gen v4 (Optimized)",
+  "timestamp": "2026-04-21 09:26:06",
+  "config": {
+    "llm_provider": "bailian",
+    "llm_model": "qwen3-coder-plus",
+    "llm_budget_fraction": 0.5,
+    "schedule_pattern": [
+      "ast",
+      "ast",
+      "llm"
+    ],
+    "enable_elitism": true,
+    "enable_adaptive_threshold": true,
+    "enable_multi_eval": false
+  },
+  "generations": 30,
+  "initial_fitness": 0.6676632170746548,
+  "final_fitness": 0.6651710364202732,
+  "improvement": -0.002492180654381615,
+  "mutations_accepted": 21,
+  "elapsed_seconds": 616.9458935260773,
+  "fitness_per_generation": [
+    0.6712879653337197,
+    0.662013801209937,
+    0.6667275035106943,
+    0.6481635608051041,
+    0.6528612566254767,
+    0.650682547052438,
+    0.6601212917841338,
+    0.6609310649525175,
+    0.6588230135292114,
+    0.662873719880645,
+    0.6700660006891305,
+    0.6667216918960932,
+    0.6632527290041339,
+    0.6677515867398149,
+    0.6589156559428913,
+    0.6664713406804135,
+    0.6507121839351153,
+    0.6760023352472999,
+    0.6660281755923766,
+    0.6529646877224525,
+    0.6651710364202732
+  ],
+  "mutation_types": {
+    "llm_guided": 5,
+    "weight_hardcode": 6,
+    "constant_tweak": 4,
+    "action_insert": 3,
+    "no_op": 6,
+    "weight_shift": 2,
+    "condition_flip": 2,
+    "threshold_mutate": 2
+  },
+  "llm_calls": 0,
+  "llm_stats": {
+    "provider": "bailian",
+    "model": "qwen3-coder-plus",
+    "date": "2026-04-21",
+    "total_input_tokens": 55870,
+    "total_output_tokens": 50418,
+    "total_requests": 13,
+    "total_cost_usd": 0.1151,
+    "budget_remaining_tokens": 0,
+    "budget_remaining_requests": 187
+  },
+  "hybrid_stats": {
+    "mode": "scheduled",
+    "current_generation": 30,
+    "consecutive_no_ops": 0,
+    "consecutive_rejects": 0,
+    "last_llm_generation": 7,
+    "llm_calls_this_generation": 0,
+    "fitness_history_length": 30
+  }
+}
