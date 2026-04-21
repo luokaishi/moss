@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v8.1.0-dev-green.svg)](https://github.com/luokaishi/moss/releases/tag/v8.1.0-dev)
+[![Version](https://img.shields.io/badge/version-v8.1.1-dev-green.svg)](https://github.com/luokaishi/moss/releases/tag/v8.1.0-dev)
 
 > **Self-driven motivation is the key missing ingredient for AI autonomous evolution.**
 
@@ -12,7 +12,7 @@ MOSS is a theoretical framework that endows AI agents with four parallel intrins
 
 ---
 
-## MOSS v8.1.0-dev — LLM-Guided Self-Modification with Stability
+## MOSS v8.1.1-dev — Enhanced Elite Protection & Statistical Validation
 
 MOSS v8.0 introduces **LLM-guided mutation** — combining the creativity of Large Language Models with the safety of AST mutations for autonomous code evolution.
 
@@ -24,7 +24,7 @@ v6.2 Semantic Guidance       →  Purpose vector guides mutation direction
 v6.3 Pareto Optimization     →  4-D non-dominated frontier, multi-objective tradeoff
 v7.0 Meta-SME                →  Engine rewrites itself (dual sandbox + rollback protection)
 v8.0 LLM-Guided Mutation     →  Hybrid AST+LLM with elite protection & adaptive threshold
-v8.1 Stabilization            →  Token budget fix, scheduled mode fix, torch optional import
+v8.1.1 Enhanced Elite        →  Forced rollback, elite archive, v5 statistical validation
 ```
 
 ### Key Results

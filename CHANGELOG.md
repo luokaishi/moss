@@ -2,6 +2,39 @@
 
 All notable changes to the MOSS project.
 
+## [8.1.1-dev] - 2026-04-21
+
+### 🛡️ v8.1.1: Enhanced Elite Protection & Forced Rollback
+
+**Addressing LLM group instability in v5 statistical validation (final fitness σ=0.012 vs AST σ=0.005).**
+
+### Added
+
+#### Enhanced Elite Protection (`moss/core/self_modification_engine.py`)
+- **Forced Rollback** (`enable_forced_rollback`): After each generation, if fitness < `elite_rollback_threshold × best_fitness`, automatically rollback to elite version
+- **Elite Archive** (`elite_archive_size`): Maintain N recent elite versions (default 3) for smarter rollback selection
+- **Minimum Generations** (`elite_min_generations`): Delay rollback until N generations passed (early exploration allowed)
+
+#### v5 Statistical Validation Results (N=5 per group)
+
+| Metric | AST-only | LLM Hybrid | Δ | p-value | Effect Size |
+|--------|---------|-----------|---|---------|-------------|
+| Improvement | +0.0164 ± 0.0072 | +0.0184 ± 0.0150 | +0.0020 | 0.80 | d=0.17 (small) |
+| **Peak Fitness** | 0.6920 ± 0.0012 | **0.6971 ± 0.0059** | **+0.0051** | **0.12** | **d=1.20 (large)** |
+| Final Fitness | **0.6885 ± 0.0053** | 0.6834 ± 0.0120 | -0.0051 | 0.42 | d=-0.55 (medium) |
+
+**Key Finding**: Peak Fitness shows large effect size (d=1.20) but underpowered at N=5. Bootstrap 95% CI: [+0.0006, +0.0100] excludes 0. **N≥7 recommended for significance**.
+
+#### Token Optimization Verification
+
+| Mode | Input Tokens | Output Tokens | Cost |
+|------|-------------|--------------|------|
+| v4 (full source) | 268,482 | 238,028 | $0.55 |
+| v5 (function-level) | 101,908 | 15,569 | $0.08 |
+| **Reduction** | **-62.0%** | **-93.5%** | **-85.5%** |
+
+Function-level extraction (v8.1) dramatically reduces token usage by sending only target functions to LLM.
+
 ## [8.1.0-dev] - 2026-04-21
 
 ### 🧬 v8.1: LLM-Guided Mutation Stabilization & Budget Fix

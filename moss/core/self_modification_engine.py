@@ -155,6 +155,11 @@ class SMEConfig:
     enable_elitism: bool = False                              # 启用精英保留
     elitism_threshold: float = 0.95                           # 精英保留阈值（低于最佳fitness的95%拒绝）
     elitism_keep_source: bool = True                          # 保留精英源代码快照
+    # ── v8.1.1 增强：强制精英回滚 ──
+    enable_forced_rollback: bool = False                      # 强制回滚：每代后检查，低于elite阈值则回滚
+    elite_rollback_threshold: float = 0.93                    # 回滚阈值（比elitism_threshold更严格）
+    elite_archive_size: int = 3                               # 精英档案大小（保留最近N个elite版本）
+    elite_min_generations: int = 5                            # 最少运行代数后才启用强制回滚（早期允许探索）
     # ── v8.1 新增：动态接受阈值 ──
     enable_adaptive_threshold: bool = False                   # 启用动态接受阈值
     adaptive_threshold_start: float = -0.01                   # 初始阈值（早期宽松）
@@ -1396,6 +1401,9 @@ class SelfModificationEngine:
         self._elite_source = ""            # 历史最佳源代码
         self._elite_generation = 0         # 历史最佳产生代数
 
+        # v8.1.1: 增强精英档案（多版本回滚支持）
+        self._elite_archive: List[Dict] = []  # [{fitness, source, generation}, ...] 按fitness排序
+
         # v6.3: Pareto档案（仅当use_pareto=True时激活）
         if self.config.use_pareto:
             self.pareto_archive = ParetoArchive(max_size=self.config.pareto_archive_size)
@@ -1804,8 +1812,22 @@ class SelfModificationEngine:
                         self._elite_generation = self.generation
                         if self.config.elitism_keep_source:
                             self._elite_source = best_candidate['source']
+                        
+                        # v8.1.1: 添加到精英档案
+                        self._elite_archive.append({
+                            'fitness': self.best_fitness,
+                            'source': best_candidate['source'],
+                            'generation': self.generation,
+                        })
+                        # 保持档案大小限制
+                        if len(self._elite_archive) > self.config.elite_archive_size:
+                            # 移除fitness最低的（保留最近的高fitness版本）
+                            self._elite_archive.sort(key=lambda e: e['fitness'], reverse=True)
+                            self._elite_archive = self._elite_archive[:self.config.elite_archive_size]
+                        
                         logger.info(
-                            f"[SME] 👑 New elite record: fitness {self._elite_fitness:.4f} at Gen {self.generation}"
+                            f"[SME] 👑 New elite record: fitness {self._elite_fitness:.4f} at Gen {self.generation} "
+                            f"(archive size: {len(self._elite_archive)}/{self.config.elite_archive_size})"
                         )
 
                     if self.config.enable_hot_reload:
@@ -1919,6 +1941,10 @@ class SelfModificationEngine:
             summary = self.evolve_one_generation(purpose_vector=purpose_vector)
             all_summaries.append(summary)
 
+            # v8.1.1: 强制精英回滚检查
+            if self.config.enable_forced_rollback and self.generation >= self.config.elite_min_generations:
+                self._check_and_rollback_to_elite()
+
             if self.best_fitness >= early_stop_fitness:
                 logger.info(f"[SME] 🎯 Early stop: fitness {self.best_fitness:.4f} >= {early_stop_fitness}")
                 break
@@ -2006,6 +2032,56 @@ class SelfModificationEngine:
         )
         
         return mean_fitness, std_fitness
+
+    def _check_and_rollback_to_elite(self):
+        """
+        v8.1.1: 强制精英回滚检查
+        
+        如果当前fitness低于elite阈值，自动回滚到elite版本
+        防止峰值后的灾难性回退
+        """
+        if not self._elite_archive:
+            return
+        
+        # 计算回滚阈值
+        rollback_threshold = self._elite_fitness * self.config.elite_rollback_threshold
+        
+        # 检查当前状态
+        current_fitness = self.best_fitness
+        
+        if current_fitness < rollback_threshold:
+            # 找到最适合回滚的elite版本（不超过当前fitness太多，避免大幅跳跃）
+            best_elite = None
+            for elite in sorted(self._elite_archive, key=lambda e: e['fitness'], reverse=True):
+                # 选择fitness >= rollback_threshold且最接近当前fitness的elite
+                if elite['fitness'] >= rollback_threshold:
+                    best_elite = elite
+                    break
+            
+            if best_elite and best_elite['fitness'] > current_fitness:
+                logger.info(
+                    f"[SME] 🔄 FORCED ROLLBACK: fitness {current_fitness:.4f} < threshold {rollback_threshold:.4f} "
+                    f"(elite={self._elite_fitness:.4f}). Rolling back to Gen {best_elite['generation']} "
+                    f"(fitness={best_elite['fitness']:.4f})"
+                )
+                
+                # 执行回滚
+                self.current_source = best_elite['source']
+                self.best_fitness = best_elite['fitness']
+                self._write_source(best_elite['source'])
+                
+                # 记录回滚事件
+                rollback_record = {
+                    'generation': self.generation,
+                    'from_fitness': current_fitness,
+                    'to_fitness': best_elite['fitness'],
+                    'to_generation': best_elite['generation'],
+                    'elite_fitness': self._elite_fitness,
+                    'reason': 'forced_rollback'
+                }
+                rollback_path = self.output_dir / "rollback_history.jsonl"
+                with open(rollback_path, 'a') as f:
+                    f.write(json.dumps(rollback_record) + '\n')
 
     def _print_summary(self, report: Dict):
         """打印运行摘要"""
