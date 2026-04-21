@@ -1,0 +1,295 @@
+{
+  "version": "6.3.0-dev",
+  "target_module": "moss.core.unified_agent",
+  "total_generations": 10,
+  "initial_fitness": 0.5188249872116266,
+  "final_fitness": 0.5192858494394591,
+  "fitness_improvement": 0.00046086222783248143,
+  "total_mutations_accepted": 3,
+  "elapsed_seconds": 10.289866,
+  "generations": [
+    {
+      "generation": 1,
+      "baseline_fitness": 0.5188249872116266,
+      "best_fitness": 0.5188249872116266,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 0,
+      "accepted": false,
+      "mutation_type": "no_op",
+      "fitness_delta": 0.0,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 2,
+      "baseline_fitness": 0.5214476724471274,
+      "best_fitness": 0.5188249872116266,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 1,
+      "accepted": false,
+      "mutation_type": "constant_tweak",
+      "fitness_delta": -0.0067164439713313095,
+      "mutation_types_tried": [
+        "no_op",
+        "constant_tweak",
+        "no_op"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 3,
+      "baseline_fitness": 0.5068605566585109,
+      "best_fitness": 0.5188249872116266,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 0,
+      "accepted": false,
+      "mutation_type": "no_op",
+      "fitness_delta": 0.0,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 4,
+      "baseline_fitness": 0.5196287537789022,
+      "best_fitness": 0.5286035262487585,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "condition_flip",
+      "fitness_delta": 0.00897477246985634,
+      "mutation_types_tried": [
+        "condition_flip",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 5,
+      "baseline_fitness": 0.520271565724486,
+      "best_fitness": 0.5338461890203935,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 2,
+      "accepted": true,
+      "mutation_type": "threshold_mutate",
+      "fitness_delta": 0.013574623295907529,
+      "mutation_types_tried": [
+        "threshold_mutate",
+        "no_op",
+        "threshold_mutate"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 6,
+      "baseline_fitness": 0.5199346730886312,
+      "best_fitness": 0.5192858494394591,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 1,
+      "accepted": true,
+      "mutation_type": "threshold_mutate",
+      "fitness_delta": -0.00064882364917207,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "threshold_mutate"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 7,
+      "baseline_fitness": 0.5271599669007375,
+      "best_fitness": 0.5192858494394591,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 1,
+      "accepted": false,
+      "mutation_type": "constant_tweak",
+      "fitness_delta": -0.006138510883920256,
+      "mutation_types_tried": [
+        "constant_tweak",
+        "no_op",
+        "no_op"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 8,
+      "baseline_fitness": 0.5209131866052692,
+      "best_fitness": 0.5192858494394591,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 1,
+      "accepted": false,
+      "mutation_type": "weight_hardcode",
+      "fitness_delta": -0.005982109294273119,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "weight_hardcode"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 9,
+      "baseline_fitness": 0.5187315006689073,
+      "best_fitness": 0.5192858494394591,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 1,
+      "accepted": false,
+      "mutation_type": "epsilon_tune",
+      "fitness_delta": -0.012410749384596187,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "epsilon_tune"
+      ],
+      "pareto_archive_stats": null
+    },
+    {
+      "generation": 10,
+      "baseline_fitness": 0.5160586576436849,
+      "best_fitness": 0.5192858494394591,
+      "candidates_generated": 3,
+      "candidates_passed_sandbox": 1,
+      "accepted": false,
+      "mutation_type": "epsilon_tune",
+      "fitness_delta": -0.013504332119376072,
+      "mutation_types_tried": [
+        "no_op",
+        "no_op",
+        "epsilon_tune"
+      ],
+      "pareto_archive_stats": null
+    }
+  ],
+  "mutation_history": [
+    {
+      "mutation_id": "gen1_143907",
+      "mutation_type": "no_op",
+      "original_hash": "43375a7f",
+      "mutated_hash": "",
+      "fitness_before": 0.5188249872116266,
+      "fitness_after": 0.5188249872116266,
+      "fitness_delta": 0.0,
+      "accepted": false,
+      "sandbox_passed": false,
+      "timestamp": "2026-04-17T14:39:07.075546"
+    },
+    {
+      "mutation_id": "gen2_143908",
+      "mutation_type": "constant_tweak",
+      "original_hash": "43375a7f",
+      "mutated_hash": "825824d4",
+      "fitness_before": 0.5214476724471274,
+      "fitness_after": 0.5147312284757961,
+      "fitness_delta": -0.0067164439713313095,
+      "accepted": false,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-17T14:39:08.212779"
+    },
+    {
+      "mutation_id": "gen3_143908",
+      "mutation_type": "no_op",
+      "original_hash": "43375a7f",
+      "mutated_hash": "",
+      "fitness_before": 0.5068605566585109,
+      "fitness_after": 0.5068605566585109,
+      "fitness_delta": 0.0,
+      "accepted": false,
+      "sandbox_passed": false,
+      "timestamp": "2026-04-17T14:39:08.345725"
+    },
+    {
+      "mutation_id": "gen4_143909",
+      "mutation_type": "condition_flip",
+      "original_hash": "78ece21b",
+      "mutated_hash": "78ece21b",
+      "fitness_before": 0.5196287537789022,
+      "fitness_after": 0.5286035262487585,
+      "fitness_delta": 0.00897477246985634,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-17T14:39:09.450847"
+    },
+    {
+      "mutation_id": "gen5_143911",
+      "mutation_type": "threshold_mutate",
+      "original_hash": "ffa8e256",
+      "mutated_hash": "ffa8e256",
+      "fitness_before": 0.520271565724486,
+      "fitness_after": 0.5338461890203935,
+      "fitness_delta": 0.013574623295907529,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-17T14:39:11.627425"
+    },
+    {
+      "mutation_id": "gen6_143912",
+      "mutation_type": "threshold_mutate",
+      "original_hash": "6e42c8e3",
+      "mutated_hash": "6e42c8e3",
+      "fitness_before": 0.5199346730886312,
+      "fitness_after": 0.5192858494394591,
+      "fitness_delta": -0.00064882364917207,
+      "accepted": true,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-17T14:39:12.709612"
+    },
+    {
+      "mutation_id": "gen7_143913",
+      "mutation_type": "constant_tweak",
+      "original_hash": "6e42c8e3",
+      "mutated_hash": "3c36c4c2",
+      "fitness_before": 0.5271599669007375,
+      "fitness_after": 0.5210214560168173,
+      "fitness_delta": -0.006138510883920256,
+      "accepted": false,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-17T14:39:13.846683"
+    },
+    {
+      "mutation_id": "gen8_143915",
+      "mutation_type": "weight_hardcode",
+      "original_hash": "6e42c8e3",
+      "mutated_hash": "e073b365",
+      "fitness_before": 0.5209131866052692,
+      "fitness_after": 0.5149310773109961,
+      "fitness_delta": -0.005982109294273119,
+      "accepted": false,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-17T14:39:15.024574"
+    },
+    {
+      "mutation_id": "gen9_143916",
+      "mutation_type": "epsilon_tune",
+      "original_hash": "6e42c8e3",
+      "mutated_hash": "0b35b9eb",
+      "fitness_before": 0.5187315006689073,
+      "fitness_after": 0.5063207512843111,
+      "fitness_delta": -0.012410749384596187,
+      "accepted": false,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-17T14:39:16.131109"
+    },
+    {
+      "mutation_id": "gen10_143917",
+      "mutation_type": "epsilon_tune",
+      "original_hash": "6e42c8e3",
+      "mutated_hash": "81a06269",
+      "fitness_before": 0.5160586576436849,
+      "fitness_after": 0.5025543255243088,
+      "fitness_delta": -0.013504332119376072,
+      "accepted": false,
+      "sandbox_passed": true,
+      "timestamp": "2026-04-17T14:39:17.232787"
+    }
+  ],
+  "timestamp": "2026-04-17T14:39:17.232917"
+}

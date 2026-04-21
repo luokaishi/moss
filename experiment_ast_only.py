@@ -47,7 +47,7 @@ def run_ast_only_experiment(generations: int = 30) -> dict:
 
     sme = SelfModificationEngine(config=config, hybrid_config=hybrid_config)
 
-    print(f"\nHybrid mode: {sme._hybrid_strategy.config.mode}")
+    print(f"\nHybrid mode: {sme._hybrid_strategy.config.mode if sme._hybrid_strategy else 'ast_only (no hybrid)'}")
 
     start_time = time.time()
 

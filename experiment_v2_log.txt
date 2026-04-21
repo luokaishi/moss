@@ -1,0 +1,131 @@
+[SME] PurposeGuidedSelector enabled (temperature=1.5, exploration_bonus=0.10)
+[LLMBackend] Creating bailian backend (model=qwen3-coder-plus)
+[SME] Using custom HybridStrategyConfig (mode=scheduled)
+[HybridStrategy] Initialized (mode=scheduled, llm_fraction=33%)
+[SME] LLMMutator enabled (provider=bailian, strategy=adaptive, budget_fraction=33%)
+[SME] SelfModificationEngine v8.0.0-dev initialized
+[SME] Target: moss.core.unified_agent
+[SME] Project root: /workspace/moss
+[SME] LLM Mutation: ENABLED (bailian)
+[SME] 🚀 Starting evolution: max_generations=30
+[SME] ═══ Generation 1 ═══
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Baseline fitness: 0.6868
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+[HybridStrategy] Gen 1: generated 6 candidates (llm_calls=2, no_ops=0, rejects=1)
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6568 Δ=-0.0300 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [weight_shift] from ast: fitness=0.6736 Δ=-0.0132 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6832 Δ=-0.0037 sandbox=✓
+[SME] Mutated source saved to isolated dir: mutated_gen1_113453.py
+[SME] Backup saved: backup_gen1_113453.py
+[SME] ⚠️  Source NOT written to original module (isolation mode)
+[SME] ✅ Mutation ACCEPTED: fitness 0.6868 → 0.6832 (+-0.0037)
+[SME] ═══ Generation 2 ═══
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Baseline fitness: 0.6765
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+[HybridStrategy] Gen 2: generated 6 candidates (llm_calls=2, no_ops=0, rejects=0)
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6546 Δ=-0.0219 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6718 Δ=-0.0048 sandbox=✓
+[SME] Mutated source saved to isolated dir: mutated_gen2_113607.py
+[SME] Backup saved: backup_gen2_113607.py
+[SME] ⚠️  Source NOT written to original module (isolation mode)
+[SME] ✅ Mutation ACCEPTED: fitness 0.6765 → 0.6718 (+-0.0048)
+[SME] ═══ Generation 3 ═══
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Baseline fitness: 0.6740
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+[HybridStrategy] Gen 3: generated 6 candidates (llm_calls=2, no_ops=0, rejects=0)
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6925 Δ=+0.0185 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [weight_hardcode] from ast: fitness=0.6577 Δ=-0.0163 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6569 Δ=-0.0171 sandbox=✓
+[SME] Mutated source saved to isolated dir: mutated_gen3_113731.py
+[SME] Backup saved: backup_gen3_113731.py
+[SME] ⚠️  Source NOT written to original module (isolation mode)
+[SME] ✅ Mutation ACCEPTED: fitness 0.6740 → 0.6925 (+0.0185)
+[SME] ═══ Generation 4 ═══
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Baseline fitness: 0.6554
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+[HybridStrategy] Gen 4: generated 6 candidates (llm_calls=2, no_ops=0, rejects=0)
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [threshold_mutate] from ast: fitness=0.6770 Δ=+0.0216 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6729 Δ=+0.0174 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [constant_tweak] from ast: fitness=0.5047 Δ=-0.1507 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6898 Δ=+0.0343 sandbox=✓
+[SME] Mutated source saved to isolated dir: mutated_gen4_113902.py
+[SME] Backup saved: backup_gen4_113902.py
+[SME] ⚠️  Source NOT written to original module (isolation mode)
+[SME] ✅ Mutation ACCEPTED: fitness 0.6554 → 0.6898 (+0.0343)
+[SME] ═══ Generation 5 ═══
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Baseline fitness: 0.6727
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+[HybridStrategy] Gen 5: generated 6 candidates (llm_calls=2, no_ops=0, rejects=0)
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [epsilon_tune] from ast: fitness=0.6868 Δ=+0.0140 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6515 Δ=-0.0212 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6795 Δ=+0.0068 sandbox=✓
+[SME] Mutated source saved to isolated dir: mutated_gen5_114037.py
+[SME] Backup saved: backup_gen5_114037.py
+[SME] ⚠️  Source NOT written to original module (isolation mode)
+[SME] ✅ Mutation ACCEPTED: fitness 0.6727 → 0.6868 (+0.0140)
+[SME] ═══ Generation 6 ═══
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Baseline fitness: 0.6695
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+HTTP Request: POST https://coding.dashscope.aliyuncs.com/v1/chat/completions "HTTP/1.1 200 OK"
+[HybridStrategy] Gen 6: generated 6 candidates (llm_calls=2, no_ops=0, rejects=0)
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6632 Δ=-0.0063 sandbox=✓
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Candidate [llm_guided] from llm: fitness=0.6770 Δ=+0.0075 sandbox=✓
+[SME] Mutated source saved to isolated dir: mutated_gen6_114209.py
+[SME] Backup saved: backup_gen6_114209.py
+[SME] ⚠️  Source NOT written to original module (isolation mode)
+[SME] ✅ Mutation ACCEPTED: fitness 0.6695 → 0.6770 (+0.0075)
+[SME] ═══ Generation 7 ═══
+[BaseMOSSAgent] fitness_eval_001 initialized
+[UnifiedMOSSAgent] fitness_eval_001 ready with 8 dimensions
+[SME] Baseline fitness: 0.6860

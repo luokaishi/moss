@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v8.0.0-dev-green.svg)](https://github.com/luokaishi/moss/releases/tag/v8.0.0-dev)
+[![Version](https://img.shields.io/badge/version-v8.1.0-dev-green.svg)](https://github.com/luokaishi/moss/releases/tag/v8.1.0-dev)
 
 > **Self-driven motivation is the key missing ingredient for AI autonomous evolution.**
 
@@ -12,7 +12,7 @@ MOSS is a theoretical framework that endows AI agents with four parallel intrins
 
 ---
 
-## MOSS v8.0.0-dev — LLM-Guided Self-Modification
+## MOSS v8.1.0-dev — LLM-Guided Self-Modification with Stability
 
 MOSS v8.0 introduces **LLM-guided mutation** — combining the creativity of Large Language Models with the safety of AST mutations for autonomous code evolution.
 
@@ -24,6 +24,7 @@ v6.2 Semantic Guidance       →  Purpose vector guides mutation direction
 v6.3 Pareto Optimization     →  4-D non-dominated frontier, multi-objective tradeoff
 v7.0 Meta-SME                →  Engine rewrites itself (dual sandbox + rollback protection)
 v8.0 LLM-Guided Mutation     →  Hybrid AST+LLM with elite protection & adaptive threshold
+v8.1 Stabilization            →  Token budget fix, scheduled mode fix, torch optional import
 ```
 
 ### Key Results
@@ -34,7 +35,7 @@ v8.0 LLM-Guided Mutation     →  Hybrid AST+LLM with elite protection & adaptiv
 | **v6.2** | Semantic guidance (PurposeGuidedSelector) | Acceptance 25%→41% (+60%) |
 | **v6.3** | Pareto multi-objective (ParetoArchive) | Δfitness +144%, acceptance 62%, HV=0.176 |
 | **v7.0** | Meta-SME (triple safety mechanism) | 50-gen meta-evolution, Meta-fitness +26.3% |
-| **v8.0** | LLM-guided hybrid mutation | 30-gen, fitness +0.86%, 59 LLM calls, elite protection |
+| **v8.1** | LLM mutation stabilization | 30-gen full LLM participation (66.7%), elite protection, $0.55/run |
 
 ### Technical Highlights
 
@@ -52,7 +53,10 @@ v8.0 LLM-Guided Mutation     →  Hybrid AST+LLM with elite protection & adaptiv
 moss/core/self_modification_engine.py   # Self-modification engine v7.0 (~1900 LOC)
 moss/core/unified_agent.py              # 9-D UnifiedMOSSAgent
 moss/core/objectives.py                 # Four objective modules
-moss/api/adapter.py                     # Multi-version Agent API adapter
+moss/core/llm_backend.py              # LLM backend abstraction (6 providers)
+moss/core/llm_mutator.py              # LLM-guided code mutation
+moss/core/hybrid_mutation.py          # Hybrid AST+LLM strategy
+moss/core/local_llm_backend.py        # Local model deployment (optional)
 ```
 
 ---
@@ -146,7 +150,7 @@ moss/
 
 | Version | Date | Key Changes |
 |---------|------|-------------|
-| **v8.0.0-dev** | 2026-04-16 | Meta-SME, paper v3.0 |
+| **v8.1.0-dev** | 2026-04-21 | LLM mutation stabilization, token budget fix, elite protection |
 | v6.3.0 | 2026-04-15 | Pareto multi-objective, Δfitness+144% |
 | v6.2.0 | 2026-04-14 | Semantic-guided mutation, acceptance +60% |
 | v6.1.0 | 2026-04-13 | Code self-modification engine, fitness +6.3% |
@@ -159,9 +163,9 @@ moss/
 ## Citation
 
 ```bibtex
-@software{moss_v7_2026,
-  title={MOSS v7.0: From Weight Self-Modification to Code Self-Modification
-         with Semantic Guidance, Pareto Optimization, and Meta-Level Self-Rewriting},
+@software{moss_v81_2026,
+  title={MOSS v8.1: Self-Driven AI Evolution with LLM-Guided Mutation,
+         Elite Protection, and Adaptive Threshold},
   author={Cash and Fuxi},
   year={2026},
   url={https://github.com/luokaishi/moss}

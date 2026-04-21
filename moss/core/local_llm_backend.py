@@ -20,7 +20,10 @@ import os
 from dataclasses import dataclass
 from typing import Dict, Optional
 
-import torch
+try:
+    import torch
+except ImportError:
+    torch = None
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +88,12 @@ class LocalLLMBackend:
         """延迟加载模型"""
         if self._is_loaded:
             return
+
+        if torch is None:
+            raise ImportError(
+                "PyTorch is required for local LLM inference. "
+                "Install it with: pip install torch"
+            )
 
         from transformers import AutoModelForCausalLM, AutoTokenizer
 

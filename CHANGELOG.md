@@ -2,7 +2,61 @@
 
 All notable changes to the MOSS project.
 
-## [Unreleased] - Phase 2: Statistical Validation (2026-04-17)
+## [8.1.0-dev] - 2026-04-21
+
+### 🧬 v8.1: LLM-Guided Mutation Stabilization & Budget Fix
+
+**Critical fixes and stability features ensuring LLM participates in full 30-generation evolution.**
+
+### Added
+
+#### v8.1 Stability Features (`moss/core/self_modification_engine.py`)
+- **Elite Protection** (`enable_elitism`): Prevents catastrophic fitness regression by rejecting mutations below `elite_threshold × best_fitness`
+- **Adaptive Acceptance Threshold** (`enable_adaptive_threshold`): Linear interpolation from permissive (early) to strict (late) acceptance
+- **Multi-Run Evaluation** (`enable_multi_eval`): N-run averaging with std reporting to reduce fitness noise
+
+#### Experiment Results (5 groups, 30 generations each)
+
+| Experiment | LLM Participation | Peak Fitness | Improvement | Stability (σ) |
+|-----------|-------------------|-------------|-------------|---------------|
+| AST-only | 0% | 0.6881 | -1.08% | 0.0068 |
+| v2 (budget exhaust) | 20% (Gen 1-7 only) | 0.6844 | +0.62% | 0.0078 |
+| v3 (full LLM) | 43.3% | 0.6954 | +0.86% | 0.0130 |
+| v4 (budget fail) | 16.7% (Gen 1-7 only) | 0.6760 | -0.25% | 0.0073 |
+| **v4 fixed (v8.1)** | **66.7%** | **0.6910** | **+0.27%** | **0.0081** |
+
+### Fixed
+
+- **Critical: Token budget exhaustion** — `llm_daily_token_budget` default (100K) only supports 7 generations. Increased to 500K for full 30-gen runs.
+- **Critical: Scheduled mode cooldown** — Removed cooldown check in scheduled mode, ensuring LLM calls follow `["ast", "ast", "llm"]` pattern for all 30 generations.
+- **torch optional import** — `import torch` in `local_llm_backend.py` now gracefully degrades when PyTorch not installed.
+- **`__init__.py` LocalLLMBackend import** — Wrapped in try/except for environments without torch/transformers.
+- **BailianBackend `_client` attribute** — Added `self._client = None` initialization to prevent AttributeError.
+- **Coding Plan model name** — Changed from `qwen-coder-plus` (404) to `qwen3-coder-plus`.
+
+### Changed
+
+- `requirements.txt` updated to v8.1.0-dev with `openai>=1.0.0` dependency
+- `local_llm_backend.py`: torch is now optional import with clear error on use
+- `__init__.py`: LocalLLMBackend import is optional (graceful degradation)
+
+### Experiment Configuration (v4 fixed)
+
+```python
+HybridStrategyConfig(mode="scheduled", schedule_pattern=["ast", "ast", "llm"], llm_budget_fraction=0.50)
+SMEConfig(
+    enable_llm_mutation=True,
+    llm_provider='bailian',
+    llm_model='qwen3-coder-plus',
+    llm_base_url='https://coding.dashscope.aliyuncs.com/v1',
+    llm_daily_token_budget=500000,  # Key fix
+    llm_daily_request_budget=500,
+    enable_elitism=True,
+    enable_adaptive_threshold=True,
+)
+```
+
+## [8.0.0-dev] - 2026-04-16
 
 ### 🔬 Phase 2 Progress: Rigorous Statistical Validation
 

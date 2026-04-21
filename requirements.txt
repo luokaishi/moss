@@ -1,5 +1,5 @@
 # MOSS Project Dependencies
-# Version: 3.0.0
+# Version: 8.1.0-dev
 # Python: 3.8+
 
 # Core dependencies
@@ -21,6 +21,9 @@ seaborn>=0.11.0
 plotly>=5.0.0
 networkx>=2.6.0  # For trust network graphs
 
+# v8.0: LLM-guided mutation
+openai>=1.0.0  # Required for Bailian/OpenAI-compatible API backends
+
 # Development
 pytest>=6.2.0
 black>=21.0.0
@@ -29,3 +32,7 @@ flake8>=3.9.0
 # Optional: Jupyter for interactive analysis
 jupyter>=1.0.0
 ipywidgets>=7.6.0
+
+# Optional: Local LLM inference (requires GPU or high-RAM CPU)
+# torch>=2.0.0
+# transformers>=4.35.0
