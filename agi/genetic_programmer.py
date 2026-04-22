@@ -248,15 +248,16 @@ class EvolvedDrive:
 
 
 class GeneticProgrammer:
-    """遗传编程驱动力发现器"""
+    """遗传编程驱动力发现器 (v8.3.0 - 稳定性优化)"""
 
     def __init__(self, config: Dict = None):
         cfg = config or {}
-        self.population_size = cfg.get('population_size', 100)
-        self.generations = cfg.get('generations', 50)
+        # v8.3.0: 提升稳定性参数
+        self.population_size = cfg.get('population_size', 200)  # 100 -> 200
+        self.generations = cfg.get('generations', 80)  # 50 -> 80
         self.max_depth = cfg.get('max_depth', 5)
-        self.crossover_rate = cfg.get('crossover_rate', 0.4)
-        self.mutation_rate = cfg.get('mutation_rate', 0.3)
+        self.crossover_rate = cfg.get('crossover_rate', 0.5)  # 0.4 -> 0.5
+        self.mutation_rate = cfg.get('mutation_rate', 0.4)  # 0.3 -> 0.4
         self.tournament_size = cfg.get('tournament_size', 5)
         self.complexity_penalty = cfg.get('complexity_penalty', 0.01)
         self.behavioral_gain_weight = cfg.get('behavioral_gain_weight', 0.3)
@@ -264,7 +265,7 @@ class GeneticProgrammer:
         self.mse_weight = cfg.get('mse_weight', 0.2)
         self.null_model_samples = cfg.get('null_model_samples', 100)
         self.validation_ratio = cfg.get('validation_ratio', 0.3)
-        self.acceptance_threshold = cfg.get('acceptance_threshold', 0.2)  # 降低到 0.2
+        self.acceptance_threshold = cfg.get('acceptance_threshold', 0.15)  # 0.2 -> 0.15
         self.min_samples = cfg.get('min_samples', 20)
 
     def evolve(self, behavior_labels: List[int], env_states: List[Dict],
@@ -357,10 +358,17 @@ class GeneticProgrammer:
 
             population = new_population
 
-            # 提前收敛检测
-            if gen > 10 and gen % 5 == 0:
+            # v8.3.0: 多样性维护 - 每 10 代注入随机个体
+            if gen > 0 and gen % 10 == 0:
+                diversity_injection = self.population_size // 10  # 10% 随机个体
+                for _ in range(diversity_injection):
+                    population[random.randint(0, len(population)-1)] = random_tree(self.max_depth, 'half_and_half')
+
+            # 提前收敛检测 (放宽条件)
+            if gen > 15 and gen % 10 == 0:
                 recent_best = self._fitness(best_tree, B_train, X_train)
                 if abs(recent_best - best_fitness) < 1e-6:
+                    logger.info(f"Early convergence at gen {gen}")
                     break
 
         if best_tree is None:
