@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-04-22T12:29:21.854779",
+  "config": {
+    "n_experimental": 5,
+    "n_control": 5,
+    "generations": 30,
+    "population_size": 50,
+    "enable_llm": true,
+    "llm_profile": "test",
+    "llm_mutation_rate": 0.5,
+    "enable_elitism": true,
+    "enable_multi_eval": true,
+    "multi_eval_rounds": 3,
+    "seed_base": 42,
+    "output_dir": "experiments/n10_llm_validation/results"
+  },
+  "experimental_group": {
+    "n": 5,
+    "final_fitness_mean": 0.475992485924842,
+    "final_fitness_std": 0.02965889946366342,
+    "fitness_improvement_mean": 0.0,
+    "fitness_improvement_std": 0.0,
+    "llm_calls_mean": 0.0,
+    "tokens_used_mean": 0.0
+  },
+  "control_group": {
+    "n": 5,
+    "final_fitness_mean": 0.4949345429470708,
+    "final_fitness_std": 0.050571195409228,
+    "fitness_improvement_mean": 0.0,
+    "fitness_improvement_std": 0.0
+  }
+}
