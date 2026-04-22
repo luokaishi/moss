@@ -171,6 +171,41 @@ def subtree_mutation(tree: ExprNode, max_depth: int = 5) -> ExprNode:
     return child
 
 
+def hoist_mutation(tree: ExprNode) -> ExprNode:
+    """Hoist变异：用子树替换整棵树（简化但保留结构）"""
+    nodes = _collect_all_nodes(tree)
+    if len(nodes) > 1:
+        # 选择非根节点的子树
+        replacement = random.choice(nodes[1:]).copy()
+        return replacement
+    return tree.copy()
+
+
+def point_mutation(tree: ExprNode) -> ExprNode:
+    """点变异：只改变节点的操作符或终端，不改变结构"""
+    child = tree.copy()
+    nodes = _collect_all_nodes(child)
+    if not nodes:
+        return child
+    
+    target = random.choice(nodes)
+    if target.is_terminal():
+        # 改变终端
+        if random.random() < 0.7:
+            target.op = random.choice(ALL_TERMINALS)
+            target.value = None
+        else:
+            target.value = random.uniform(-1, 1)
+            target.op = None
+    else:
+        # 改变函数，保持arity
+        old_arity = FUNCTIONS[target.op]['arity']
+        same_arity_fns = [fn for fn, info in FUNCTIONS.items() if info['arity'] == old_arity]
+        if same_arity_fns:
+            target.op = random.choice(same_arity_fns)
+    return child
+
+
 def _collect_all_nodes(tree: ExprNode) -> list:
     """收集树中所有节点的引用"""
     result = [tree]
@@ -298,13 +333,24 @@ class GeneticProgrammer:
             while len(new_population) < self.population_size:
                 r = random.random()
                 if r < self.crossover_rate:
+                    # 交叉
                     p1 = self._tournament_select(population, fitnesses)
                     p2 = self._tournament_select(population, fitnesses)
                     child = subtree_crossover(p1, p2, self.max_depth)
-                elif r < self.crossover_rate + self.mutation_rate:
+                elif r < self.crossover_rate + self.mutation_rate * 0.6:
+                    # 子树变异（主要变异方式）
                     parent = self._tournament_select(population, fitnesses)
                     child = subtree_mutation(parent, self.max_depth)
+                elif r < self.crossover_rate + self.mutation_rate * 0.8:
+                    # Hoist变异（简化树结构）
+                    parent = self._tournament_select(population, fitnesses)
+                    child = hoist_mutation(parent)
+                elif r < self.crossover_rate + self.mutation_rate:
+                    # 点变异（微调）
+                    parent = self._tournament_select(population, fitnesses)
+                    child = point_mutation(parent)
                 else:
+                    # 复制
                     parent = self._tournament_select(population, fitnesses)
                     child = parent.copy()
                 new_population.append(child)
@@ -332,6 +378,13 @@ class GeneticProgrammer:
         # 计算详细指标
         corr = self._correlation(best_tree, B_train, X_train)
         gain = self._behavioral_gain(best_tree, B_train, X_train)
+        
+        # V3 改进：最小 behavioral_gain 门槛
+        min_gain_threshold = 0.05  # 至少 5% 的行为增益
+        if gain < min_gain_threshold:
+            logger.info(f"  >> GP rejected: behavioral_gain {gain:.3f} < {min_gain_threshold}")
+            return None
+        
         fn = expr_to_callable(best_tree)
 
         # 自动命名
@@ -341,6 +394,8 @@ class GeneticProgrammer:
         top_ops = self._top_n(ops, 1)
         name = candidate_name or f"auto_{top_features[0]}_{top_features[1]}" if len(top_features) >= 2 else f"auto_{top_features[0]}"
         description = self._auto_describe(top_features, top_ops)
+
+        logger.info(f"  >> GP succeeded: fitness={val_fitness:.3f}, gain={gain:.3f}, nodes={best_tree.node_count()}, expr={best_tree.to_string()[:50]}")
 
         return EvolvedDrive(
             name=name, description=description, eval_fn=fn,
@@ -409,14 +464,26 @@ class GeneticProgrammer:
         # Behavioral gain
         gain = self._behavioral_gain_from_preds(B, predictions)
 
-        # 复杂度惩罚
+        # V3 改进：预测方差正则化 - 惩罚低方差预测
+        pred_std = np.std(predictions)
+        variance_penalty = 0.0
+        if pred_std < 0.05:
+            variance_penalty = 0.3 * (0.05 - pred_std) / 0.05  # 最高 0.3 惩罚
+
+        # 复杂度惩罚（V3 调整：降低惩罚力度，鼓励适度复杂）
         nc = tree.node_count()
+        # 单终端函数额外惩罚
+        terminal_penalty = 0.0
+        if nc == 1 and tree.is_terminal():
+            terminal_penalty = 0.5  # 强惩罚单终端函数
 
         fitness = (
             self.corr_weight * corr
             + self.mse_weight * (1 - min(mse, 1))
             + self.behavioral_gain_weight * max(gain, 0)
             - self.complexity_penalty * nc
+            - variance_penalty
+            - terminal_penalty
         )
         return float(fitness)
 
@@ -434,7 +501,9 @@ class GeneticProgrammer:
 
     def _behavioral_gain_from_preds(self, B: np.ndarray, P: np.ndarray) -> float:
         """计算因果力：f(state)高时目标行为是否更频繁"""
-        high_mask = P > 0.5
+        # V3 改进：使用自适应阈值而非固定 0.5
+        pred_median = np.median(P)
+        high_mask = P > pred_median
         low_mask = ~high_mask
 
         if high_mask.sum() < 3 or low_mask.sum() < 3:
