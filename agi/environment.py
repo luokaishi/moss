@@ -222,9 +222,13 @@ class RealEnvironment:
         # 成功率变化越大，熵越高
         return np_clip(abs(success_rate - 0.7) * 2, 0.1, 1.0)
 
-    def generate_action_candidates(self, state: EnvState) -> List[Dict]:
+    def generate_action_candidates(self, state: EnvState, task_context: Dict = None) -> List[Dict]:
         """根据当前状态生成候选行动（引入多样性）"""
         candidates = []
+        
+        # Phase 3: 任务感知动作生成
+        if task_context and task_context.get('type') == 'file_organization':
+            candidates.extend(self._generate_file_org_actions(state, task_context))
 
         # 生存相关
         if state.resource_level < 0.7:
@@ -304,6 +308,83 @@ class RealEnvironment:
             })
 
         return candidates
+    
+    def _generate_file_org_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成文件整理相关动作"""
+        actions = []
+        
+        # 1. 探索当前目录结构
+        actions.append({
+            'type': 'shell', 
+            'command': 'ls -la',
+            'description': 'List files to organize',
+            'drives': ['curiosity'],
+            'task_relevant': True
+        })
+        
+        actions.append({
+            'type': 'shell',
+            'command': 'find . -maxdepth 1 -type f',
+            'description': 'Find files in root',
+            'drives': ['curiosity'],
+            'task_relevant': True
+        })
+        
+        # 2. 检查目标文件夹是否存在
+        actions.append({
+            'type': 'shell',
+            'command': 'ls -d images documents code 2>/dev/null || echo "Need folders"',
+            'description': 'Check target folders',
+            'drives': ['curiosity'],
+            'task_relevant': True
+        })
+        
+        # 3. 创建目标文件夹（如果不存在）
+        actions.append({
+            'type': 'shell',
+            'command': 'mkdir -p images documents code',
+            'description': 'Create target folders',
+            'drives': ['influence'],
+            'task_relevant': True
+        })
+        
+        # 4. 移动图片文件
+        actions.append({
+            'type': 'shell',
+            'command': 'mv *.jpg *.png *.gif images/ 2>/dev/null; echo "Moved images"',
+            'description': 'Move images to folder',
+            'drives': ['optimization'],
+            'task_relevant': True
+        })
+        
+        # 5. 移动文档文件
+        actions.append({
+            'type': 'shell',
+            'command': 'mv *.pdf *.txt *.md documents/ 2>/dev/null; echo "Moved documents"',
+            'description': 'Move documents to folder',
+            'drives': ['optimization'],
+            'task_relevant': True
+        })
+        
+        # 6. 移动代码文件
+        actions.append({
+            'type': 'shell',
+            'command': 'mv *.py *.js *.sh code/ 2>/dev/null; echo "Moved code"',
+            'description': 'Move code to folder',
+            'drives': ['optimization'],
+            'task_relevant': True
+        })
+        
+        # 7. 验证整理结果
+        actions.append({
+            'type': 'shell',
+            'command': 'echo "=== Result ==="; ls -la images/ documents/ code/ 2>/dev/null; echo "=== Root ==="; ls -la',
+            'description': 'Verify organization',
+            'drives': ['curiosity'],
+            'task_relevant': True
+        })
+        
+        return actions
 
     def get_stats(self) -> Dict:
         return {
