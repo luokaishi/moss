@@ -1,0 +1,107 @@
+{
+  "version": "v8.3.0",
+  "seeds_tested": 15,
+  "success_rate": 0.6666666666666666,
+  "results": [
+    {
+      "seed": 42,
+      "success": true,
+      "expr": "gt(sigmoid(-0.336), resource_level)",
+      "fitness": 0.3754737756383099,
+      "gain": 0.5769230769230769,
+      "nodes": 4
+    },
+    {
+      "seed": 123,
+      "success": true,
+      "expr": "sigmoid(neg(resource_level))",
+      "fitness": 0.2910776848328738,
+      "gain": 0.37142857142857144,
+      "nodes": 3
+    },
+    {
+      "seed": 456,
+      "success": true,
+      "expr": "sigmoid(neg(resource_level))",
+      "fitness": 0.31291650509640323,
+      "gain": 0.2571428571428571,
+      "nodes": 3
+    },
+    {
+      "seed": 789,
+      "success": true,
+      "expr": "gt(0.427, resource_level)",
+      "fitness": 0.38547377563830987,
+      "gain": 0.631578947368421,
+      "nodes": 3
+    },
+    {
+      "seed": 2024,
+      "success": true,
+      "expr": "sub(sub(entropy_delta, resource_level), resource_level)",
+      "fitness": 0.23384442006386408,
+      "gain": 0.676923076923077,
+      "nodes": 5
+    },
+    {
+      "seed": 31415,
+      "success": false
+    },
+    {
+      "seed": 271828,
+      "success": false
+    },
+    {
+      "seed": 161803,
+      "success": true,
+      "expr": "neg(sub(environment_entropy, gt(environment_entropy, sqrt(resource_level))))",
+      "fitness": 0.22019657680871368,
+      "gain": 0.34523809523809523,
+      "nodes": 7
+    },
+    {
+      "seed": 999999,
+      "success": false
+    },
+    {
+      "seed": 111111,
+      "success": false
+    },
+    {
+      "seed": 555555,
+      "success": false
+    },
+    {
+      "seed": 777777,
+      "success": true,
+      "expr": "gt(abs(-0.335), resource_level)",
+      "fitness": 0.2596316015520623,
+      "gain": 0.3333333333333333,
+      "nodes": 4
+    },
+    {
+      "seed": 888888,
+      "success": true,
+      "expr": "gt(sub(entropy_delta, resource_level), resource_level)",
+      "fitness": 0.42416407864998745,
+      "gain": 0.7230769230769232,
+      "nodes": 5
+    },
+    {
+      "seed": 666666,
+      "success": true,
+      "expr": "gt(0.061, resource_level)",
+      "fitness": 0.329284291400159,
+      "gain": 0.40625,
+      "nodes": 3
+    },
+    {
+      "seed": 333333,
+      "success": true,
+      "expr": "gt(0.155, resource_level)",
+      "fitness": 0.16216817387478857,
+      "gain": 0.6958105646630237,
+      "nodes": 3
+    }
+  ]
+}
