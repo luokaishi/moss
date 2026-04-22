@@ -251,6 +251,97 @@ class DriveManager:
     def get_all_drive_names(self) -> List[str]:
         return list(self.drives.keys())
 
+    # ========== 驱动力竞争机制 (Phase 3) ==========
+    
+    def update_drive_weights_competitive(self, performance_window: int = 50):
+        """
+        基于表现动态调整驱动力权重 - 竞争机制
+        
+        规则:
+        1. 新涌现驱动力有试用期 (probation)，初始权重较低
+        2. 根据最近表现调整权重 (reward 高则增，低则减)
+        3. 权重过低的驱动被淘汰
+        4. 定期重新归一化
+        """
+        import logging
+        logger = logging.getLogger('DriveManager')
+        
+        # 计算每个驱动的平均 reward
+        drive_performance = {}
+        for name, drive in self.drives.items():
+            if len(drive.history) < 10:
+                continue  # 数据不足
+            
+            recent_scores = drive.history[-performance_window:]
+            avg_score = np.mean(recent_scores)
+            trend = np.mean(recent_scores[-10:]) - np.mean(recent_scores[:10]) if len(recent_scores) >= 20 else 0
+            
+            drive_performance[name] = {
+                'avg_score': avg_score,
+                'trend': trend,
+                'is_emergent': drive.is_emergent,
+            }
+        
+        if not drive_performance:
+            return
+        
+        # 调整权重
+        eliminated = []
+        for name, perf in drive_performance.items():
+            drive = self.drives[name]
+            
+            # 试用期处理：新涌现驱动权重增长较慢
+            if drive.is_emergent and drive.emerged_at:
+                age_cycles = len(drive.history)
+                if age_cycles < 100:  # 前 100 cycles 为试用期
+                    # 试用期表现不好，加速淘汰
+                    if perf['avg_score'] < 0.3:
+                        drive.weight *= 0.90
+                        logger.debug(f"Drive {name} (probation): weight decay to {drive.weight:.3f}")
+                    # 试用期表现好，缓慢增长
+                    elif perf['avg_score'] > 0.6:
+                        drive.weight = min(drive.weight * 1.02, 0.30)  # 试用期上限 0.30
+                        logger.debug(f"Drive {name} (probation): weight grow to {drive.weight:.3f}")
+                else:
+                    # 转正后正常竞争
+                    self._adjust_drive_weight(drive, perf)
+            else:
+                # 初始驱动正常竞争
+                self._adjust_drive_weight(drive, perf)
+            
+            # 淘汰检查
+            if drive.weight < 0.02 and drive.is_emergent:
+                eliminated.append(name)
+                logger.info(f"Drive {name} eliminated (weight {drive.weight:.3f} < 0.02)")
+        
+        # 执行淘汰
+        for name in eliminated:
+            del self.drives[name]
+        
+        # 重新归一化
+        self._normalize_weights()
+    
+    def _adjust_drive_weight(self, drive: Drive, perf: Dict):
+        """根据表现调整单个驱动力权重"""
+        avg_score = perf['avg_score']
+        trend = perf['trend']
+        
+        # 基于平均表现调整
+        if avg_score > 0.7:
+            # 表现优秀，权重增长
+            growth = 1.0 + (avg_score - 0.7) * 0.5  # 最高增长 15%
+            drive.weight = min(drive.weight * growth, 0.40)  # 上限 0.40
+        elif avg_score < 0.3:
+            # 表现差，权重衰减
+            decay = 0.95 if avg_score < 0.2 else 0.98
+            drive.weight *= decay
+        
+        # 趋势加成：上升趋势额外奖励
+        if trend > 0.1:
+            drive.weight = min(drive.weight * 1.03, 0.40)
+        elif trend < -0.1:
+            drive.weight *= 0.97
+    
     def get_drive_summary(self) -> Dict:
         return {
             name: {

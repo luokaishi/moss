@@ -113,6 +113,11 @@ class AGIAgent:
             # 周期性日志
             if verbose and cycle % 10 == 0:
                 self._print_status()
+            
+            # Phase 3: 每 50 cycles 运行驱动力竞争机制
+            if cycle % 50 == 0 and cycle > 100:
+                logger.info(f"  >> Running drive competition at cycle {cycle}")
+                self.drive_manager.update_drive_weights_competitive(performance_window=50)
 
         self._print_final_report()
 
