@@ -23,7 +23,3 @@
 ## 结论
 
 N=30 大样本验证成功，效应量稳定，为 v8.2.0 提供强科学支撑。
-
----
-
-**原始数据**: `experiments/n30_bailian_real/results/` (mves)

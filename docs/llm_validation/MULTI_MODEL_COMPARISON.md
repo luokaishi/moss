@@ -22,7 +22,3 @@
 ## 结论
 
 两模型均显著优于纯 GP，kimi-k2.5 效应量略大。
-
----
-
-**原始数据**: `experiments/multi_model_real/results/` (mves)
