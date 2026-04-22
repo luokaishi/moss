@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-04-23T06:50:51.028214",
+  "seeds_tested": 10,
+  "success_rate": 0.6,
+  "results": [
+    {
+      "seed": 42,
+      "success": true,
+      "expr": "sub(abs(0.429), resource_level)",
+      "fitness": 0.3380163654001029,
+      "gain": 0.5769230769230769,
+      "nodes": 4,
+      "features": [
+        "resource_level"
+      ]
+    },
+    {
+      "seed": 123,
+      "success": true,
+      "expr": "sub(sub(file_count_norm, resource_level), resource_delta)",
+      "fitness": 0.28409381846456255,
+      "gain": 0.37142857142857144,
+      "nodes": 5,
+      "features": [
+        "resource_level",
+        "file_count_norm",
+        "resource_delta"
+      ]
+    },
+    {
+      "seed": 456,
+      "success": false
+    },
+    {
+      "seed": 789,
+      "success": true,
+      "expr": "gt(neg(sub(resource_level, 0.427)), task_completion)",
+      "fitness": 0.3554737756383099,
+      "gain": 0.631578947368421,
+      "nodes": 6,
+      "features": [
+        "resource_level",
+        "task_completion"
+      ]
+    },
+    {
+      "seed": 2024,
+      "success": true,
+      "expr": "gt(sigmoid(sub(error_rate_delta, resource_level)), resource_level)",
+      "fitness": 0.35275252316519473,
+      "gain": 0.4444444444444444,
+      "nodes": 6,
+      "features": [
+        "resource_level",
+        "error_rate_delta"
+      ]
+    },
+    {
+      "seed": 31415,
+      "success": false
+    },
+    {
+      "seed": 271828,
+      "success": false
+    },
+    {
+      "seed": 161803,
+      "success": true,
+      "expr": "neg(resource_delta)",
+      "fitness": 0.40660118118695543,
+      "gain": 0.21078431372549022,
+      "nodes": 2,
+      "features": [
+        "resource_delta"
+      ]
+    },
+    {
+      "seed": 999999,
+      "success": true,
+      "expr": "sub(success_rate_recent, resource_level)",
+      "fitness": 0.425555435931549,
+      "gain": 0.2647058823529412,
+      "nodes": 3,
+      "features": [
+        "success_rate_recent",
+        "resource_level"
+      ]
+    },
+    {
+      "seed": 111111,
+      "success": false
+    }
+  ]
+}
