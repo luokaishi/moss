@@ -2,6 +2,34 @@
 
 All notable changes to the MOSS project.
 
+## [9.1.0] - 2026-04-23
+
+### 🧠 v9.1.0: LLM-Powered Semantic Refactoring
+
+**Dual-engine architecture combining AST-based deterministic refactoring with LLM-powered semantic understanding.**
+
+### Added
+
+#### SemanticRefactorEngine (`moss/core/semantic_refactor.py`)
+- **7 Semantic Refactoring Types**: Function Split, Pattern Refactor, Algorithm Optimize, Code Simplify, Type Annotation, Error Handling, API Modernize
+- **4-Layer Safety Validation**: Syntax → Structure → Safety → Imports
+- **Automatic Fallback**: LLM failure → AST RefactorEngine takeover
+- **PromptBuilder**: Type-specific prompt templates for optimal LLM output
+- **Budget-Aware**: Respects LLMBackend budget limits
+- **Demo**: `examples/v91_demo.py` with full dual-engine showcase
+
+### Improvements Over v9.0
+
+| Capability | v9.0 (AST Only) | v9.1 (AST + LLM) |
+|------------|-----------------|-------------------|
+| Refactoring types | 4 | 11 (+175%) |
+| Function splitting | Mark only | Actual split |
+| Code simplification | N/A | Flatten + simplify |
+| Error handling | N/A | Auto-enhance |
+| API modernization | N/A | Auto-modernize |
+
+---
+
 ## [9.0.0-stable] - 2026-04-23
 
 ### 🎯 v9.0.0-stable: Production-Ready Refactoring
