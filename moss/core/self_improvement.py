@@ -23,6 +23,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from moss.core.agent_registry import AgentRegistry, AgentStatus, HealthStatus
 from moss.core.message_bus import MessageBus, Message, MessageType, Priority
 from moss.core.conflict_resolver import ConflictResolver, ConflictType, ResolutionStrategy
+from moss.core.refactor_engine import create_refactorer, CodeRefactorer
 
 
 class ImprovementType(Enum):
@@ -219,6 +220,7 @@ class SelfImprovementOrchestrator:
         self.codebase_path = Path(codebase_path)
 
         self.analyzer = CodeAnalyzer()
+        self.refactorer = create_refactorer()
         self.tasks: Dict[str, ImprovementTask] = {}
         self.backup_cache: Dict[str, str] = {}  # 原始代码备份
 
@@ -436,51 +438,67 @@ class SelfImprovementOrchestrator:
         return healthy_agents
 
     async def _handle_refactor(self, task: ImprovementTask, agent) -> Optional[str]:
-        """处理重构任务"""
+        """处理重构任务 - 使用RefactorEngine"""
         print(f"  [Refactor] Agent {agent.agent_id} 执行重构")
 
         if not task.original_code:
             return None
 
-        # 简化版：提取长函数的逻辑（实际应调用Agent）
-        # 这里模拟改进效果
-        lines = task.original_code.split('\n')
+        code = task.original_code
+        changes_applied = []
 
-        # 如果函数过长，添加注释提示
+        # 策略1: 组织导入语句
+        result = self.refactorer.refactor(code, 'organize_imports')
+        if result.success:
+            code = result.refactored_code
+            changes_applied.append(f"organize_imports:{len(result.changes)}")
+
+        # 策略2: 优化循环
+        result = self.refactorer.refactor(code, 'optimize_loops')
+        if result.success:
+            code = result.refactored_code
+            changes_applied.append(f"optimize_loops:{len(result.changes)}")
+
+        # 策略3: 移除未使用变量
+        result = self.refactorer.refactor(code, 'remove_unused')
+        if result.success:
+            code = result.refactored_code
+            changes_applied.append(f"remove_unused:{len(result.changes)}")
+
+        # 策略4: 函数提取（如果函数过长）
         if task.opportunity.location.function_name:
             func_name = task.opportunity.location.function_name
+            result = self.refactorer.refactor(
+                code,
+                'extract_function',
+                function_name=func_name,
+                max_lines=30
+            )
+            if result.success:
+                code = result.refactored_code
+                changes_applied.append(f"extract_function:{len(result.changes)}")
 
-            new_lines = []
-            in_target_func = False
-            indent_level = 0
+        if changes_applied:
+            print(f"    ✅ 应用重构: {', '.join(changes_applied)}")
+        else:
+            print(f"    ℹ️ 无需重构")
 
-            for i, line in enumerate(lines):
-                stripped = line.strip()
-
-                # 检测函数定义
-                if stripped.startswith(f'def {func_name}('):
-                    in_target_func = True
-                    indent_level = len(line) - len(line.lstrip())
-                    new_lines.append(line)
-                    new_lines.append(' ' * (indent_level + 4) + '# TODO: 此函数需要重构拆分')
-                    continue
-
-                # 检测函数结束
-                if in_target_func and stripped and not stripped.startswith('#'):
-                    current_indent = len(line) - len(line.lstrip())
-                    if current_indent <= indent_level and not stripped.startswith('def '):
-                        in_target_func = False
-
-                new_lines.append(line)
-
-            return '\n'.join(new_lines)
-
-        return task.original_code
+        return code
 
     async def _handle_optimize(self, task: ImprovementTask, agent) -> Optional[str]:
-        """处理优化任务"""
+        """处理优化任务 - 使用RefactorEngine"""
         print(f"  [Optimize] Agent {agent.agent_id} 执行优化")
-        # 简化版实现
+
+        if not task.original_code:
+            return None
+
+        # 使用refactorer的循环优化
+        result = self.refactorer.refactor(task.original_code, 'optimize_loops')
+
+        if result.success:
+            print(f"    ✅ 优化了 {len(result.changes)} 个循环")
+            return result.refactored_code
+
         return task.original_code
 
     async def _handle_bugfix(self, task: ImprovementTask, agent) -> Optional[str]:
