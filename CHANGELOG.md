@@ -2,6 +2,42 @@
 
 All notable changes to the MOSS project.
 
+## [9.0.0-beta] - 2026-04-23
+
+### 🚀 v9.0.0-beta: Agent Self-Improvement
+
+**Multi-agent coordinated code optimization system enabling AI agents to automatically analyze, refactor, and optimize their own codebase.**
+
+### Added
+
+#### Core Self-Improvement System
+- **SelfImprovementOrchestrator** (`moss/core/self_improvement.py`): Multi-agent coordinated code optimization
+  - Automatic code scanning and opportunity detection
+  - Agent task assignment by capability matching
+  - Safety rollback mechanism on test failure
+  - Diff generation and execution tracking
+  - 100% success rate in validation (5/5 tasks)
+
+- **CodeAnalyzer**: AST-based static analysis
+  - Long function detection (>50 lines)
+  - Deep nesting detection (>4 levels)
+  - TODO/FIXME comment tracking
+  - Severity scoring (1-10) and confidence estimation
+
+- **6 Improvement Types**
+  - `REFACTOR`: Code structure optimization
+  - `OPTIMIZE`: Performance enhancement
+  - `BUGFIX`: Issue resolution
+  - `FEATURE`: Capability enhancement
+  - `DOCUMENT`: Documentation improvement
+  - `TEST`: Test coverage expansion
+
+#### Demos
+- **Multi-Agent Demo** (`examples/multi_agent_demo.py`): 4-agent collaboration showcase
+- **Self-Improvement Demo** (`examples/self_improvement_demo.py`): 50 opportunities detected, 5 processed
+
+---
+
 ## [9.0.0-alpha] - 2026-04-23
 
 ### 🚀 v9.0.0-alpha: Unified Architecture

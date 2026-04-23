@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v9.0.0--dev-green.svg)](https://github.com/luokaishi/moss)
+[![Version](https://img.shields.io/badge/version-v9.0.0--beta-green.svg)](https://github.com/luokaishi/moss)
 
 > **Self-driven motivation is the key missing ingredient for AI autonomous evolution.**
 
@@ -12,18 +12,24 @@ MOSS is a theoretical framework that endows AI agents with four parallel intrins
 
 ---
 
-## MOSS v9.0.0-alpha — Unified Architecture 🚀
+## MOSS v9.0.0-beta — Self-Improvement 🚀
 
-MOSS v9.0.0-alpha introduces **Unified Architecture** — a 4-layer architecture that integrates the SME engine from main branch and AGI components from mves branch, with a new Coordination Layer for multi-agent systems.
+MOSS v9.0.0-beta introduces **Agent Self-Improvement** — multi-agent coordinated code optimization system that enables AI agents to automatically analyze, refactor, and optimize their own codebase.
 
-### What's New in v9.0.0-alpha
+### What's New in v9.0.0-beta
+
+- ✅ **SelfImprovementOrchestrator** - Multi-agent coordinated code optimization
+- ✅ **CodeAnalyzer** - AST-based automatic issue detection
+- ✅ **6 Improvement Types** - REFACTOR, OPTIMIZE, BUGFIX, FEATURE, DOCUMENT, TEST
+- ✅ **Safety Mechanisms** - Automatic testing and rollback on failure
+- ✅ **100% Demo Success Rate** - 5/5 self-improvement tasks completed
+
+### What's Included from v9.0.0-alpha
 
 - ✅ **Unified 4-Layer Architecture** - Application/Capability/Coordination/Foundation
-- ✅ **AgentRegistry** - Centralized agent lifecycle management
-- ✅ **MessageBus** - Unified inter-agent communication infrastructure
-- ✅ **ConflictResolver** - Automatic conflict detection and resolution
-- ✅ **mves v8.6.0 Merge** - 78 AGI components merged from mves branch
-- ✅ **Unified Validation Report** - N=5 to N=45 statistical validation (p<0.0001, d=3.112)
+- ✅ **AgentRegistry + MessageBus + ConflictResolver** - Complete coordination layer
+- ✅ **mves v8.6.0 Merge** - 78 AGI components
+- ✅ **Unified Validation Report** - N=5 to N=45 (p<0.0001, d=3.112)
 
 ### What's Included from v8.3.0-v8.6.0
 
