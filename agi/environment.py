@@ -227,8 +227,18 @@ class RealEnvironment:
         candidates = []
         
         # Phase 3: 任务感知动作生成
-        if task_context and task_context.get('type') == 'file_organization':
-            candidates.extend(self._generate_file_org_actions(state, task_context))
+        if task_context:
+            task_type = task_context.get('type', 'file_organization')
+            if task_type == 'file_organization':
+                candidates.extend(self._generate_file_org_actions(state, task_context))
+            elif task_type == 'log_analysis':
+                candidates.extend(self._generate_log_analysis_actions(state, task_context))
+            elif task_type == 'system_monitor':
+                candidates.extend(self._generate_system_monitor_actions(state, task_context))
+            elif task_type == 'code_review':
+                candidates.extend(self._generate_code_review_actions(state, task_context))
+            elif task_type == 'backup_cleanup':
+                candidates.extend(self._generate_backup_cleanup_actions(state, task_context))
 
         # 生存相关
         if state.resource_level < 0.7:
@@ -385,6 +395,44 @@ class RealEnvironment:
         })
         
         return actions
+    
+    def _generate_log_analysis_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成日志分析相关动作"""
+        return [
+            {'type': 'shell', 'command': 'find . -name "*.log" -type f 2>/dev/null | head -5', 'description': 'Find log files', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'grep -i "error" *.log 2>/dev/null | wc -l', 'description': 'Count errors', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'grep -i "warning" *.log 2>/dev/null | wc -l', 'description': 'Count warnings', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'grep -i "error" *.log 2>/dev/null | head -10', 'description': 'View error details', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'tail -50 *.log 2>/dev/null | head -50', 'description': 'View recent logs', 'drives': ['curiosity'], 'task_relevant': True},
+        ]
+    
+    def _generate_system_monitor_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成系统监控相关动作"""
+        return [
+            {'type': 'shell', 'command': 'df -h', 'description': 'Check disk space', 'drives': ['survival'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'free -h', 'description': 'Check memory', 'drives': ['survival'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'ps aux --sort=-%cpu | head -10', 'description': 'Top CPU processes', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'ps aux --sort=-%mem | head -10', 'description': 'Top memory processes', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'uptime', 'description': 'System uptime', 'drives': ['survival'], 'task_relevant': True},
+        ]
+    
+    def _generate_code_review_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成代码审查相关动作"""
+        return [
+            {'type': 'shell', 'command': 'find . -name "*.py" -type f 2>/dev/null | wc -l', 'description': 'Count Python files', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'find . -name "*.py" -exec grep -l "TODO\\|FIXME" {} \\; 2>/dev/null', 'description': 'Find TODO markers', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'grep -r "import" --include="*.py" . 2>/dev/null | wc -l', 'description': 'Count imports', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'find . -name "*.py" -exec wc -l {} + 2>/dev/null | tail -1', 'description': 'Count lines of code', 'drives': ['curiosity'], 'task_relevant': True},
+        ]
+    
+    def _generate_backup_cleanup_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成备份清理相关动作"""
+        return [
+            {'type': 'shell', 'command': 'find . -name "*.bak" -o -name "*.backup" -o -name "*~" 2>/dev/null | wc -l', 'description': 'Count backup files', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'find . -name "*.bak" -mtime +7 2>/dev/null', 'description': 'Find old backups', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'find . -name "*.tmp" -o -name "*.temp" 2>/dev/null | wc -l', 'description': 'Count temp files', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'find . -name "__pycache__" -type d 2>/dev/null | wc -l', 'description': 'Count cache dirs', 'drives': ['optimization'], 'task_relevant': True},
+        ]
 
     def get_stats(self) -> Dict:
         return {
