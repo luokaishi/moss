@@ -11,6 +11,7 @@ from agi.agent import AGIAgent
 from agi.environment import EnvState
 from typing import Dict, List, Optional, Callable
 import logging
+import random
 
 logger = logging.getLogger('TaskAwareAgent')
 
@@ -127,7 +128,9 @@ class TaskAwareAgent(AGIAgent):
         best_drive = max(drive_scores, key=drive_scores.get) if drive_scores else 'none'
         
         # 4. 生成候选行动并选择
-        candidates = self.env.generate_action_candidates(state)
+        # Phase 3: 任务感知动作生成
+        task_context = self.current_task if self.current_task else None
+        candidates = self.env.generate_action_candidates(state, task_context)
         
         # 如果有记忆，加入记忆相关的行动
         if relevant_memories:
@@ -138,8 +141,14 @@ class TaskAwareAgent(AGIAgent):
         # 任务感知：优先选择与任务相关的行动
         if self.current_task and self.task_reward_system:
             candidates = self._prioritize_task_actions(candidates, self.current_task)
-        
-        action = self.drive_manager.get_weighted_action(state, candidates)
+            # 强制选择任务相关动作 (80% 概率)
+            task_candidates = [c for c in candidates if c.get('task_relevant')]
+            if task_candidates and random.random() < 0.8:
+                action = random.choice(task_candidates)
+            else:
+                action = self.drive_manager.get_weighted_action(state, candidates)
+        else:
+            action = self.drive_manager.get_weighted_action(state, candidates)
         
         # 5. 执行行动
         if action:

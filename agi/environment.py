@@ -360,7 +360,7 @@ class RealEnvironment:
         # 5. 移动文档文件
         actions.append({
             'type': 'shell',
-            'command': 'mv *.pdf *.txt *.md documents/ 2>/dev/null; echo "Moved documents"',
+            'command': 'mv *.pdf *.txt *.md *.json documents/ 2>/dev/null; echo "Moved documents"',
             'description': 'Move documents to folder',
             'drives': ['optimization'],
             'task_relevant': True
@@ -369,7 +369,7 @@ class RealEnvironment:
         # 6. 移动代码文件
         actions.append({
             'type': 'shell',
-            'command': 'mv *.py *.js *.sh code/ 2>/dev/null; echo "Moved code"',
+            'command': 'mv *.py *.js *.sh *.css *.html code/ 2>/dev/null; echo "Moved code"',
             'description': 'Move code to folder',
             'drives': ['optimization'],
             'task_relevant': True
