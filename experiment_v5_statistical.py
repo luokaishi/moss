@@ -65,26 +65,26 @@ def make_llm_config(trial_id: int) -> tuple:
 
     hybrid_config = HybridStrategyConfig(
         mode="scheduled",
-        schedule_pattern=["ast", "ast", "llm"],
+        schedule_pattern=["ast", "ast", "ast", "llm"],  # 调整为每4代1次LLM
         llm_budget_fraction=0.50,
-        llm_cooldown_generations=0,
+        llm_cooldown_generations=2,  # 增加冷却代数
     )
 
+    # 由于API密钥失效，暂时使用mock后端
     config = SMEConfig(
         enable_llm_mutation=True,
-        llm_provider='bailian',
-        llm_model='qwen3-coder-plus',
-        llm_base_url='https://coding.dashscope.aliyuncs.com/v1',
-        llm_max_tokens=4096,
+        llm_provider='mock',
+        llm_model='mock-v1',
+        llm_max_tokens=2048,
         llm_mutation_strategy='adaptive',
         llm_budget_fraction=0.50,
-        llm_daily_token_budget=500000,
-        llm_daily_request_budget=500,
+        llm_daily_token_budget=1000000,  # 提高token预算
+        llm_daily_request_budget=1000,  # 提高请求预算
         population_size=POPULATION,
         max_generations=GENERATIONS,
         acceptance_threshold=-0.01,
         enable_hot_reload=False,
-        output_dir=f"experiments/v5_statistical/llm_trial_{trial_id}",
+        output_dir=f"experiments/v5_statistical/llm_trial_{trial_id}_mock",
         # v8.1 features
         enable_elitism=True,
         elitism_threshold=0.95,

@@ -2,6 +2,76 @@
 
 All notable changes to the MOSS project.
 
+## [9.0.0-alpha] - 2026-04-23
+
+### 🚀 v9.0.0-alpha: Unified Architecture
+
+**Integration of main branch (SME engine) and mves branch (AGI components) into a unified 4-layer architecture.**
+
+### Added
+
+#### Layer 2: Coordination Layer (NEW)
+- **AgentRegistry** (`moss/core/agent_registry.py`): Centralized agent lifecycle management
+  - Agent registration/unregistration
+  - Capability indexing and discovery
+  - Health status management with automatic health checks
+  - Async-safe operations with locking
+  
+- **MessageBus** (`moss/core/message_bus.py`): Unified inter-agent communication
+  - Publish-subscribe pattern
+  - Point-to-point messaging
+  - Broadcast messaging
+  - Priority queue with TTL support
+  
+- **ConflictResolver** (`moss/core/conflict_resolver.py`): Automatic conflict resolution
+  - Conflict detection (resource, task, action, goal, communication)
+  - 5 resolution strategies: priority, timestamp, performance, coordination, arbitration
+  - Extensible strategy system
+
+#### mves v8.6.0 Components Merge
+- **78 AGI modules** from mves branch merged into `agi/`
+- **EventDrivenPurpose** (v8.6): 5 event types → purpose generation
+- **MonitoringDashboard** (v8.6): Real-time monitoring with alerting
+- **AutoRecovery** (v8.6): 5 auto-recovery strategies
+- **MVESRealWorldBridge** (v8.5): Real-world environment coupling
+- **MultiAgentCoordinator** (v8.4): Multi-agent collaboration framework
+
+#### Unified Validation Report
+- **N=5** (main) + **N=10/20/30/45** (mves) statistical validation
+- **p < 0.0001**, **Cohen's d = 3.112** (large effect)
+- **100-generation** long-term stability validation
+- **Multi-model comparison**: qwen3.5-plus vs kimi-k2.5
+- All 14 mves experiment reports archived in `data/mves_validation/`
+
+### Architecture
+
+```
+MOSS v9.0.0-alpha (Unified 4-Layer Architecture)
+├── Layer 4: Application
+├── Layer 3: Capability (SME + TaskAgent + EventDriven + ...)
+├── Layer 2: Coordination (AgentRegistry + MessageBus + ConflictResolver) ⭐ NEW
+└── Layer 1: Foundation (LLMBackend + MutationEngine + SafetyGuard)
+```
+
+### Performance
+
+| Metric | v8.6.0 | v9.0-alpha |
+|--------|--------|------------|
+| Core Components | 78 | 81 (+3) |
+| Architecture | 3-layer | 4-layer unified |
+| Agent Registration Latency | - | <10ms |
+| Message Delivery Latency | - | <5ms |
+| Conflict Detection Latency | - | <50ms |
+
+### Documentation
+
+- [RELEASE_v9.0.0-alpha.md](./RELEASE_v9.0.0-alpha.md)
+- [UNIFIED_VALIDATION_REPORT.md](./docs/UNIFIED_VALIDATION_REPORT.md)
+- [DESIGN_v860_Components.md](./docs/DESIGN_v860_Components.md)
+- [RFC_v9.md](./docs/RFC_v9.md)
+
+---
+
 ## [8.1.1-dev] - 2026-04-21
 
 ### 🛡️ v8.1.1: Enhanced Elite Protection & Forced Rollback

@@ -1,0 +1,59 @@
+{
+  "group": "llm",
+  "trial_id": 7,
+  "timestamp": "2026-04-22T03:51:33.701603",
+  "generations": 30,
+  "initial_fitness": 0.6674986626903895,
+  "final_fitness": 0.6920915080115925,
+  "improvement": 0.024592845321202983,
+  "mutations_accepted": 16,
+  "elapsed_seconds": 301.18,
+  "fitness_per_generation": [
+    0.6709022314630863,
+    0.6738719892057745,
+    0.6717121467926629,
+    0.6724403876331131,
+    0.677636861905817,
+    0.6674030080840198,
+    0.6735717531009654,
+    0.6642159268231647,
+    0.658523220952417,
+    0.6781031238440962,
+    0.681721916822347,
+    0.6830197411247309,
+    0.6755901651380795,
+    0.6862457098567045,
+    0.6823794700015743,
+    0.6920915080115925
+  ],
+  "mutation_types": {
+    "no_op": 11,
+    "weight_shift": 1,
+    "threshold_mutate": 7,
+    "weight_hardcode": 3,
+    "action_insert": 3,
+    "condition_flip": 1,
+    "constant_tweak": 4
+  },
+  "llm_calls": 0,
+  "llm_stats": {
+    "provider": "bailian",
+    "model": "qwen3-coder-plus",
+    "date": "2026-04-22",
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_requests": 0,
+    "total_cost_usd": 0.0,
+    "budget_remaining_tokens": 1000000,
+    "budget_remaining_requests": 1000
+  },
+  "hybrid_stats": {
+    "mode": "scheduled",
+    "current_generation": 30,
+    "consecutive_no_ops": 1,
+    "consecutive_rejects": 1,
+    "last_llm_generation": 30,
+    "llm_calls_this_generation": 1,
+    "fitness_history_length": 30
+  }
+}

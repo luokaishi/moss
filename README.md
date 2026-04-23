@@ -12,17 +12,27 @@ MOSS is a theoretical framework that endows AI agents with four parallel intrins
 
 ---
 
-## MOSS v8.3.0 — Task-Aware Agent 🎉
+## MOSS v9.0.0-alpha — Unified Architecture 🚀
 
-MOSS v8.3.0 introduces **Task-Aware Agent** — an autonomous agent that can learn and complete specific tasks through task perception and task reward systems.
+MOSS v9.0.0-alpha introduces **Unified Architecture** — a 4-layer architecture that integrates the SME engine from main branch and AGI components from mves branch, with a new Coordination Layer for multi-agent systems.
 
-### What's New in v8.3.0
+### What's New in v9.0.0-alpha
 
-- ✅ **Task-Aware Agent** - Complete specific tasks autonomously
-- ✅ **5 Task Scenarios** - File organization, system monitoring, log analysis, code review, backup cleanup
-- ✅ **100% Task Completion Rate** - Validated through 5/5 stability tests
-- ✅ **Task Reward System** - Action + Progress + Completion rewards
-- ✅ **Forced Task Action Selection** - 80% probability to select task-related actions
+- ✅ **Unified 4-Layer Architecture** - Application/Capability/Coordination/Foundation
+- ✅ **AgentRegistry** - Centralized agent lifecycle management
+- ✅ **MessageBus** - Unified inter-agent communication infrastructure
+- ✅ **ConflictResolver** - Automatic conflict detection and resolution
+- ✅ **mves v8.6.0 Merge** - 78 AGI components merged from mves branch
+- ✅ **Unified Validation Report** - N=5 to N=45 statistical validation (p<0.0001, d=3.112)
+
+### What's Included from v8.3.0-v8.6.0
+
+- ✅ **Task-Aware Agent** (v8.3) - Task perception and completion
+- ✅ **Multi-Agent Coordinator** (v8.4) - Multi-agent collaboration
+- ✅ **Real-World Bridge** (v8.5) - Real-world environment coupling
+- ✅ **Event-Driven Purpose** (v8.6) - Event-driven purpose generation
+- ✅ **Monitoring Dashboard** (v8.6) - Real-time monitoring and alerts
+- ✅ **Auto Recovery** (v8.6) - Automatic failure recovery
 
 ### Quick Start
 

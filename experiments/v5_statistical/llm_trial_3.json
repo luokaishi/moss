@@ -1,0 +1,56 @@
+{
+  "group": "llm",
+  "trial_id": 3,
+  "timestamp": "2026-04-22T03:31:21.766320",
+  "generations": 30,
+  "initial_fitness": 0.663576123563925,
+  "final_fitness": 0.6777510629012712,
+  "improvement": 0.014174939337346149,
+  "mutations_accepted": 14,
+  "elapsed_seconds": 61.38,
+  "fitness_per_generation": [
+    0.6831056958037888,
+    0.6635995820008054,
+    0.6902011951105781,
+    0.682674293847777,
+    0.6883965500979752,
+    0.6850781745476126,
+    0.6971564985847661,
+    0.6731073116019193,
+    0.6863665736752884,
+    0.660850333292605,
+    0.6675494713180485,
+    0.6747718057269099,
+    0.673088883857166,
+    0.6777510629012712
+  ],
+  "mutation_types": {
+    "weight_shift": 3,
+    "weight_hardcode": 5,
+    "no_op": 11,
+    "constant_tweak": 6,
+    "threshold_mutate": 2,
+    "action_insert": 3
+  },
+  "llm_calls": 0,
+  "llm_stats": {
+    "provider": "mock",
+    "model": "mock-v1",
+    "date": "2026-04-22",
+    "total_input_tokens": 47695,
+    "total_output_tokens": 47913,
+    "total_requests": 30,
+    "total_cost_usd": 0.0,
+    "budget_remaining_tokens": 904392,
+    "budget_remaining_requests": 970
+  },
+  "hybrid_stats": {
+    "mode": "scheduled",
+    "current_generation": 30,
+    "consecutive_no_ops": 0,
+    "consecutive_rejects": 0,
+    "last_llm_generation": 30,
+    "llm_calls_this_generation": 1,
+    "fitness_history_length": 30
+  }
+}
