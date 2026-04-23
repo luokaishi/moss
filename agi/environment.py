@@ -239,6 +239,16 @@ class RealEnvironment:
                 candidates.extend(self._generate_code_review_actions(state, task_context))
             elif task_type == 'backup_cleanup':
                 candidates.extend(self._generate_backup_cleanup_actions(state, task_context))
+            elif task_type == 'network_diagnosis':
+                candidates.extend(self._generate_network_diagnosis_actions(state, task_context))
+            elif task_type == 'dependency_analysis':
+                candidates.extend(self._generate_dependency_analysis_actions(state, task_context))
+            elif task_type == 'security_scan':
+                candidates.extend(self._generate_security_scan_actions(state, task_context))
+            elif task_type == 'performance_test':
+                candidates.extend(self._generate_performance_test_actions(state, task_context))
+            elif task_type == 'documentation_gen':
+                candidates.extend(self._generate_documentation_gen_actions(state, task_context))
 
         # 生存相关
         if state.resource_level < 0.7:
@@ -432,6 +442,56 @@ class RealEnvironment:
             {'type': 'shell', 'command': 'find . -name "*.bak" -mtime +7 2>/dev/null', 'description': 'Find old backups', 'drives': ['optimization'], 'task_relevant': True},
             {'type': 'shell', 'command': 'find . -name "*.tmp" -o -name "*.temp" 2>/dev/null | wc -l', 'description': 'Count temp files', 'drives': ['optimization'], 'task_relevant': True},
             {'type': 'shell', 'command': 'find . -name "__pycache__" -type d 2>/dev/null | wc -l', 'description': 'Count cache dirs', 'drives': ['optimization'], 'task_relevant': True},
+        ]
+    
+    def _generate_network_diagnosis_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成网络诊断相关动作"""
+        return [
+            {'type': 'shell', 'command': 'ping -c 3 google.com 2>/dev/null || echo "Network unreachable"', 'description': 'Test internet connection', 'drives': ['survival'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'curl -I http://example.com 2>/dev/null | head -5 || echo "HTTP failed"', 'description': 'Test HTTP connection', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'netstat -tuln 2>/dev/null | head -10 || echo "No netstat"', 'description': 'View network ports', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'ifconfig 2>/dev/null || ip addr 2>/dev/null | head -10', 'description': 'View network interfaces', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'traceroute google.com 2>/dev/null | head -5 || echo "Traceroute failed"', 'description': 'Route tracing', 'drives': ['curiosity'], 'task_relevant': True},
+        ]
+    
+    def _generate_dependency_analysis_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成依赖分析相关动作"""
+        return [
+            {'type': 'shell', 'command': 'pip list 2>/dev/null | wc -l', 'description': 'Count Python packages', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'pipdeptree 2>/dev/null | head -20 || echo "No pipdeptree"', 'description': 'View dependency tree', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'find . -name "requirements.txt" -o -name "setup.py" 2>/dev/null', 'description': 'Find dependency files', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'cat requirements.txt 2>/dev/null | head -10 || echo "No requirements.txt"', 'description': 'View dependencies', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'pip check 2>/dev/null || echo "Dependency check failed"', 'description': 'Check dependency conflicts', 'drives': ['optimization'], 'task_relevant': True},
+        ]
+    
+    def _generate_security_scan_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成安全扫描相关动作"""
+        return [
+            {'type': 'shell', 'command': 'find . -name "*.key" -o -name "*.pem" -o -name "*.p12" 2>/dev/null | head -5', 'description': 'Find key files', 'drives': ['survival'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'grep -r "password\|passwd" --include="*.py" . 2>/dev/null | head -5 || echo "No password found"', 'description': 'Check hardcoded passwords', 'drives': ['survival'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'grep -r "SECRET\|API_KEY\|TOKEN" --include="*.py" . 2>/dev/null | head -5 || echo "No secrets found"', 'description': 'Check sensitive info', 'drives': ['survival'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'find . -name ".env" -o -name "config.ini" 2>/dev/null | head -5', 'description': 'Find config files', 'drives': ['survival'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'ls -la 2>/dev/null | grep -E "^.{7}rwx" | head -5', 'description': 'Check executable permissions', 'drives': ['survival'], 'task_relevant': True},
+        ]
+    
+    def _generate_performance_test_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成性能测试相关动作"""
+        return [
+            {'type': 'shell', 'command': 'time python3 -c "import time; time.sleep(0.1)" 2>&1 | tail -3', 'description': 'Test Python startup', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'python3 -c "import os; print(len(os.listdir(\"/usr/bin\")))"', 'description': 'Test filesystem', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'dd if=/dev/zero of=/tmp/test_perf bs=1M count=10 2>&1 | tail -1', 'description': 'Test disk write', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'python3 -c "sum(range(1000000))" 2>&1', 'description': 'Test CPU', 'drives': ['optimization'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'free -h && df -h /tmp', 'description': 'View resource usage', 'drives': ['survival'], 'task_relevant': True},
+        ]
+    
+    def _generate_documentation_gen_actions(self, state: EnvState, task_context: Dict) -> List[Dict]:
+        """生成文档生成相关动作"""
+        return [
+            {'type': 'shell', 'command': 'find . -name "*.py" | wc -l', 'description': 'Count code files', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'find . -name "README*" -o -name "CHANGELOG*" -o -name "LICENSE*" 2>/dev/null', 'description': 'Find existing docs', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'grep -r "^def \|^class " --include="*.py" . 2>/dev/null | wc -l', 'description': 'Count functions and classes', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'head -50 README.md 2>/dev/null || echo "No README"', 'description': 'View README', 'drives': ['curiosity'], 'task_relevant': True},
+            {'type': 'shell', 'command': 'git log --oneline -10 2>/dev/null || echo "No git history"', 'description': 'View commit history', 'drives': ['curiosity'], 'task_relevant': True},
         ]
 
     def get_stats(self) -> Dict:
