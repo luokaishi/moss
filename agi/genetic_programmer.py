@@ -248,15 +248,16 @@ class EvolvedDrive:
 
 
 class GeneticProgrammer:
-    """遗传编程驱动力发现器 (v8.3.0 - 稳定性优化)"""
+    """遗传编程驱动力发现器 (v8.4.0 - 性能优化)"""
 
     def __init__(self, config: Dict = None):
         cfg = config or {}
-        # v8.3.0: 提升稳定性参数
-        self.population_size = cfg.get('population_size', 200)  # 100 -> 200
-        self.generations = cfg.get('generations', 80)  # 50 -> 80
+        # v8.4.0: 进一步提升性能
+        self.population_size = cfg.get('population_size', 300)  # 200 -> 300
+        self.generations = cfg.get('generations', 100)  # 80 -> 100
         self.max_depth = cfg.get('max_depth', 5)
-        self.crossover_rate = cfg.get('crossover_rate', 0.5)  # 0.4 -> 0.5
+        self.crossover_rate = cfg.get('crossover_rate', 0.6)  # 0.5 -> 0.6
+        self.mutation_rate = cfg.get('mutation_rate', 0.5)  # 0.4 -> 0.5
         self.mutation_rate = cfg.get('mutation_rate', 0.4)  # 0.3 -> 0.4
         self.tournament_size = cfg.get('tournament_size', 5)
         self.complexity_penalty = cfg.get('complexity_penalty', 0.01)
