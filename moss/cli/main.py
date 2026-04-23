@@ -146,6 +146,43 @@ async def cmd_version(args):
     return 0
 
 
+async def cmd_init(args):
+    """初始化MOSS配置"""
+    from moss.core.config_manager import ConfigManager
+
+    path = args.path or "."
+
+    print(f"🚀 初始化 MOSS: {path}")
+    print()
+
+    config_mgr = ConfigManager()
+
+    # 创建默认配置
+    config_path = config_mgr.create_default_config(path)
+
+    # 创建 .moss 目录
+    moss_dir = Path(path) / ".moss"
+    moss_dir.mkdir(exist_ok=True)
+
+    # 创建 .moss/.gitignore
+    gitignore_content = """# MOSS generated files
+backups/
+reports/
+cache/
+"""
+    (moss_dir / ".gitignore").write_text(gitignore_content)
+
+    print(f"  ✅ 配置文件: {config_path}")
+    print(f"  ✅ 工作目录: {moss_dir}/")
+    print()
+    print("  下一步:")
+    print(f"    1. 编辑 {config_path} 自定义配置")
+    print(f"    2. 运行 'moss analyze {path}' 分析代码库")
+    print(f"    3. 运行 'moss status' 查看系统状态")
+
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog='moss',
@@ -153,6 +190,10 @@ def main():
     )
 
     subparsers = parser.add_subparsers(dest='command', help='可用命令')
+
+    # init
+    p_init = subparsers.add_parser('init', help='初始化MOSS配置')
+    p_init.add_argument('path', nargs='?', default='.', help='项目路径')
 
     # analyze
     p_analyze = subparsers.add_parser('analyze', help='分析代码库')
@@ -180,6 +221,7 @@ def main():
         return 0
 
     commands = {
+        'init': cmd_init,
         'analyze': cmd_analyze,
         'move': cmd_move,
         'status': cmd_status,

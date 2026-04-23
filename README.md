@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v9.2.0--beta-blue.svg)](https://github.com/luokaishi/moss)
+[![Version](https://img.shields.io/badge/version-v9.2.0--stable-blue.svg)](https://github.com/luokaishi/moss)
 
 > **Self-driven motivation is the key missing ingredient for AI autonomous evolution.**
 
@@ -12,20 +12,34 @@ MOSS is a theoretical framework that endows AI agents with four parallel intrins
 
 ---
 
-## MOSS v9.2.0-beta — Cross-File Refactoring 🔗
+## MOSS v9.2.0-stable — Cross-File Refactoring Platform 🔗
 
-MOSS v9.2.0-beta introduces **Cross-File Refactoring** — analyzing and transforming code across module boundaries. The system builds dependency graphs, tracks symbols across files, and executes safe function/class moves with automatic import updates.
+MOSS v9.2.0-stable is the **production-ready cross-file refactoring platform** — analyzing, transforming, and reorganizing code across module boundaries. The system provides CLI tools, IDE integration, and comprehensive safety mechanisms for enterprise-grade code evolution.
 
-### What's New in v9.2.0-beta
+### What's New in v9.2.0-stable
 
-- 🔗 **ImportGraphBuilder** - NetworkX-based module dependency graph (42 modules, 29 edges)
-- 📍 **SymbolTracker** - Cross-file symbol usage tracking (185 symbols)
-- 📊 **ImpactAnalyzer** - Refactoring risk assessment (low/medium/high)
-- 📦 **MoveExecutor** - Actual function/class moves with import updates
-- 🔧 **CLI Toolchain** - `moss analyze`, `moss move`, `moss status`
-- ⚙️ **ConfigManager** - YAML configuration with environment overrides
-- 🔄 **TransactionManager** - Atomic operations with automatic rollback
-- ⚠️ **Cycle Detection** - Found 2 circular dependencies in MOSS itself
+**Cross-File Engine:**
+- 🔗 **ImportGraphBuilder** - NetworkX dependency graph (48 modules, 29 edges)
+- 📍 **SymbolTracker** - 192 symbols tracked across codebase
+- 📊 **ImpactAnalyzer** - Risk assessment (low/medium/high)
+- 📦 **MoveExecutor** - Function/class moves with import updates
+- ✂️ **SplitExecutor** - Module splitting strategies (by type, extract large classes, create package)
+
+**CLI Toolchain:**
+- 🔧 `moss init` - Initialize project configuration
+- 🔧 `moss analyze <path>` - Analyze codebase
+- 🔧 `moss move <sym> <s> <t>` - Move symbols
+- 🔧 `moss status` - Show system status
+
+**Configuration:**
+- ⚙️ **ConfigManager** - YAML + environment variables
+- 🔄 **TransactionManager** - Atomic operations with rollback
+- ⚠️ **Cycle Detection** - Automatic circular dependency detection
+
+**IDE Integration:**
+- 💻 **IDEPluginAPI** - VSCode/PyCharm plugin support
+- 🔍 **Code Analysis** - Real-time issue detection
+- ⚡ **Quick Fixes** - One-click problem resolution
 
 ### What's Included from v9.0-v9.1
 
