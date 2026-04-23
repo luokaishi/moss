@@ -2,13 +2,38 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Version](https://img.shields.io/badge/version-v8.1.1-dev-green.svg)](https://github.com/luokaishi/moss/releases/tag/v8.1.0-dev)
+[![Version](https://img.shields.io/badge/version-v8.3.0-green.svg)](https://github.com/luokaishi/moss/releases/tag/v8.3.0)
 
 > **Self-driven motivation is the key missing ingredient for AI autonomous evolution.**
 
 MOSS is a theoretical framework that endows AI agents with four parallel intrinsic objectives: **survival**, **curiosity**, **influence**, and **self-optimization**. In v7.0, agents can now **rewrite their own source code** and even **modify the modification engine itself**.
 
 📄 **[Paper v3.0](./docs/paper.tex)** | 📖 **[Documentation](./docs/)** | 🧪 **[Run Experiments](./sandbox/)**
+
+---
+
+## MOSS v8.3.0 — Task-Aware Agent 🎉
+
+MOSS v8.3.0 introduces **Task-Aware Agent** — an autonomous agent that can learn and complete specific tasks through task perception and task reward systems.
+
+### What's New in v8.3.0
+
+- ✅ **Task-Aware Agent** - Complete specific tasks autonomously
+- ✅ **5 Task Scenarios** - File organization, system monitoring, log analysis, code review, backup cleanup
+- ✅ **100% Task Completion Rate** - Validated through 5/5 stability tests
+- ✅ **Task Reward System** - Action + Progress + Completion rewards
+- ✅ **Forced Task Action Selection** - 80% probability to select task-related actions
+
+### Quick Start
+
+```bash
+# Run demo
+python3 demo.py
+
+# Run tests
+python3 experiments/phase4_end_to_end_test.py
+python3 experiments/stability_validation.py
+```
 
 ---
 
@@ -36,6 +61,7 @@ v8.1.1 Enhanced Elite        →  Forced rollback, elite archive, v5 statistical
 | **v6.3** | Pareto multi-objective (ParetoArchive) | Δfitness +144%, acceptance 62%, HV=0.176 |
 | **v7.0** | Meta-SME (triple safety mechanism) | 50-gen meta-evolution, Meta-fitness +26.3% |
 | **v8.1** | LLM mutation stabilization | 30-gen full LLM participation (66.7%), elite protection, $0.55/run |
+| **v8.3.0** | Task-Aware Agent | 100% task completion, 5 task scenarios, 40 cycles avg |
 
 ### Technical Highlights
 
