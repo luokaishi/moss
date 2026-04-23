@@ -12,8 +12,20 @@ from agi.task_aware_agent import TaskAwareAgent
 import yaml
 import time
 import json
+import logging
 from datetime import datetime, timedelta
 from pathlib import Path
+
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(name)s] %(levelname)s: %(message)s',
+    handlers=[
+        logging.FileHandler('/tmp/mves_72h_logs/experiment.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger('72h_experiment')
 
 print("=" * 70)
 print("72小时长期实验")
@@ -53,12 +65,12 @@ class Experiment72h:
             'description': '72h long-term evolution'
         })
         
-        print(f"实验配置:")
-        print(f"  开始时间: {datetime.fromtimestamp(self.start_time)}")
-        print(f"  结束时间: {datetime.fromtimestamp(self.end_time)}")
-        print(f"  持续时间: 72小时")
-        print(f"  检查点间隔: 1小时")
-        print(f"  指标记录间隔: 10分钟")
+        logger.info(f"实验配置:")
+        logger.info(f"  开始时间: {datetime.fromtimestamp(self.start_time)}")
+        logger.info(f"  结束时间: {datetime.fromtimestamp(self.end_time)}")
+        logger.info(f"  持续时间: 72小时")
+        logger.info(f"  检查点间隔: 1小时")
+        logger.info(f"  指标记录间隔: 10分钟")
     
     def run(self):
         """运行72小时实验"""
@@ -87,7 +99,7 @@ class Experiment72h:
             if current_time - last_checkpoint >= CHECKPOINT_INTERVAL:
                 self.save_checkpoint()
                 last_checkpoint = current_time
-                print(f"\n  💾 检查点已保存 (Gen {self.generation})")
+                logger.info(f"💾 检查点已保存 (Gen {self.generation})")
             
             # 健康检查
             if not self.health_check():
@@ -153,10 +165,11 @@ class Experiment72h:
         remaining_str = str(timedelta(seconds=int(remaining)))
         progress = (elapsed / EXPERIMENT_DURATION) * 100
         
-        print(f"[{elapsed_str}/{remaining_str}] Gen {self.generation} | "
-              f"进度: {progress:.1f}% | "
-              f"任务: {len(self.agent.task_history)} | "
-              f"事件: {len(self.events)}")
+        status_msg = (f"[{elapsed_str}/{remaining_str}] Gen {self.generation} | "
+                     f"进度: {progress:.1f}% | "
+                     f"任务: {len(self.agent.task_history)} | "
+                     f"事件: {len(self.events)}")
+        logger.info(status_msg)
     
     def health_check(self) -> bool:
         """健康检查"""
@@ -173,14 +186,14 @@ class Experiment72h:
     
     def handle_failure(self):
         """处理故障"""
-        print(f"\n  ⚠️ 检测到故障，尝试恢复...")
+        logger.warning(f"⚠️ 检测到故障，尝试恢复...")
         
         # 尝试从检查点恢复
         checkpoint = self.bridge.load_checkpoint(self.generation - 10)
         if checkpoint:
-            print(f"  ✅ 从检查点恢复 (Gen {checkpoint['generation']})")
+            logger.info(f"✅ 从检查点恢复 (Gen {checkpoint['generation']})")
         else:
-            print(f"  ⚠️ 无法恢复，继续运行")
+            logger.warning(f"⚠️ 无法恢复，继续运行")
     
     def save_checkpoint(self):
         """保存检查点"""
@@ -194,10 +207,12 @@ class Experiment72h:
         checkpoint_path = self.checkpoint_dir / f'checkpoint_gen_{self.generation}.json'
         with open(checkpoint_path, 'w') as f:
             json.dump(checkpoint, f)
+        
+        logger.info(f"检查点已保存: {checkpoint_path}")
     
     def generate_report(self):
         """生成实验报告"""
-        print("生成实验报告...")
+        logger.info("生成实验报告...")
         
         report = {
             'experiment': '72h_longterm',
@@ -215,13 +230,13 @@ class Experiment72h:
         with open(report_path, 'w') as f:
             json.dump(report, f, indent=2)
         
-        print(f"\n实验报告:")
-        print(f"  总代数: {report['total_generations']}")
-        print(f"  总指标: {report['total_metrics']}")
-        print(f"  总事件: {report['total_events']}")
-        print(f"  平均任务/代: {report['avg_task_per_gen']:.2f}")
-        print(f"  涌现驱动: {report['emerged_drives']}")
-        print(f"  报告保存: {report_path}")
+        logger.info(f"实验报告:")
+        logger.info(f"  总代数: {report['total_generations']}")
+        logger.info(f"  总指标: {report['total_metrics']}")
+        logger.info(f"  总事件: {report['total_events']}")
+        logger.info(f"  平均任务/代: {report['avg_task_per_gen']:.2f}")
+        logger.info(f"  涌现驱动: {report['emerged_drives']}")
+        logger.info(f"  报告保存: {report_path}")
 
 
 # 运行实验
