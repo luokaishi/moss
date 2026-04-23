@@ -1,0 +1,58 @@
+# 72小时实验告警配置
+
+# 告警级别
+alert_levels:
+  critical:
+    - process_crashed
+    - process_not_found
+    - system_failure
+  
+  warning:
+    - high_cpu
+    - high_memory
+    - log_not_found
+    - checkpoint_not_found
+  
+  info:
+    - check_complete
+    - milestone_reached
+
+# 告警方式
+notifications:
+  # 日志告警
+  log:
+    enabled: true
+    path: /tmp/mves_72h_logs/alerts.log
+  
+  # 控制台告警
+  console:
+    enabled: true
+  
+  # 文件告警
+  file:
+    enabled: true
+    path: /tmp/mves_72h_full/alerts.json
+
+# 检查间隔 (秒)
+check_interval: 600  # 10分钟
+
+# 阈值设置
+thresholds:
+  cpu: 95
+  memory: 80
+  log_size_max: 104857600  # 100MB
+  checkpoint_max_age: 7200  # 2小时
+
+# 实验配置
+experiment:
+  duration: 72  # 小时
+  checkpoint_interval: 3600  # 1小时
+  metrics_interval: 600  # 10分钟
+  
+# 里程碑
+milestones:
+  - 6h: "6小时完成"
+  - 12h: "12小时完成"
+  - 24h: "24小时完成 (1天)"
+  - 48h: "48小时完成 (2天)"
+  - 72h: "72小时完成!"

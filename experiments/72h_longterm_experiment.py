@@ -224,30 +224,39 @@ class Experiment72h:
         print(f"  报告保存: {report_path}")
 
 
-# 运行实验 (简化版，实际运行72小时)
+# 运行实验
 if __name__ == '__main__':
-    print("\n注意: 这是72小时实验的简化演示版")
-    print("实际实验需要运行72小时\n")
+    import sys
     
-    # 创建实验实例
-    experiment = Experiment72h()
-    
-    # 运行简化版 (10分钟)
-    print("运行简化版 (10分钟)...\n")
-    
-    # 模拟运行
-    for i in range(10):
-        experiment.run_cycle()
-        experiment.record_metrics()
-        experiment.print_status(i * 60, EXPERIMENT_DURATION - i * 60)
-        time.sleep(1)  # 模拟1分钟
-    
-    print(f"\n{'='*70}")
-    print("简化版实验完成!")
-    print(f"{'='*70}")
-    
-    experiment.generate_report()
-    
-    print(f"\n{'='*70}")
-    print("✅ 72小时实验框架准备完成!")
-    print("实际72小时实验请运行: python3 72h_longterm_experiment.py --full")
+    # 检查是否是完整模式
+    if '--full' in sys.argv:
+        print("\n🚀 启动完整72小时实验!\n")
+        experiment = Experiment72h()
+        experiment.run()
+    else:
+        print("\n注意: 这是72小时实验的简化演示版")
+        print("实际实验需要运行72小时")
+        print("运行完整实验: python3 72h_longterm_experiment.py --full\n")
+        
+        # 创建实验实例
+        experiment = Experiment72h()
+        
+        # 运行简化版 (10分钟)
+        print("运行简化版 (10分钟)...\n")
+        
+        # 模拟运行
+        for i in range(10):
+            experiment.run_cycle()
+            experiment.record_metrics()
+            experiment.print_status(i * 60, EXPERIMENT_DURATION - i * 60)
+            time.sleep(1)  # 模拟1分钟
+        
+        print(f"\n{'='*70}")
+        print("简化版实验完成!")
+        print(f"{'='*70}")
+        
+        experiment.generate_report()
+        
+        print(f"\n{'='*70}")
+        print("✅ 72小时实验框架准备完成!")
+        print("运行完整实验: python3 72h_longterm_experiment.py --full")
