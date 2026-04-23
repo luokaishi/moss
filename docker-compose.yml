@@ -1,42 +1,31 @@
 version: '3.8'
 
 services:
-  moss-openclaw:
-    image: moss-openclaw:latest
-    container_name: moss-openclaw
-    restart: unless-stopped
-    mem_limit: 4g
-    memswap_limit: 4g
-    pids_limit: 256
-    cpu_shares: 512
-    volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
-      - ./experiments:/app/experiments
-    environment:
-      - OPENCLAW_HEADLESS=true
-      - OPENCLAW_RESOURCE_BLOCKING=true
-      - MOSS_PURPOSE_INTERVAL=2000
-    networks:
-      - moss-network
-
-  moss-agent:
+  moss:
     build: .
-    container_name: moss-agent
-    restart: unless-stopped
-    mem_limit: 2g
-    memswap_limit: 2g
-    depends_on:
-      - moss-openclaw
+    container_name: moss_7layer
     volumes:
-      - .:/workspace/projects/moss
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ./experiments/output:/app/experiments/output
+      - ./experiments/reproducibility:/app/experiments/reproducibility
     environment:
-      - MOSS_MODE=real_world
-      - MOSS_EXPERIMENT_DURATION=72h
-    networks:
-      - moss-network
+      - PYTHONPATH=/app
+      - MOSS_RANDOM_SEED=42
+    command: python experiment_7layer_v2_5000.py
 
-networks:
-  moss-network:
-    driver: bridge
+  moss-multi-seed:
+    build: .
+    container_name: moss_multi_seed
+    volumes:
+      - ./experiments/output:/app/experiments/output
+    environment:
+      - PYTHONPATH=/app
+    command: python experiment_multi_seed_validation.py
+
+  moss-feature-compare:
+    build: .
+    container_name: moss_feature_compare
+    volumes:
+      - ./experiments/output:/app/experiments/output
+    environment:
+      - PYTHONPATH=/app
+    command: python experiment_feature_comparison.py
