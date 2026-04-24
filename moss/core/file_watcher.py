@@ -408,7 +408,48 @@ class AnalysisOrchestrator:
 
     async def _analyze_single_file(self, file_path: Path) -> Dict[str, Any]:
         """分析单个文件"""
-        # 简化版分析 - 实际应调用 IncrementalAnalyzer
+        # 优先使用 IncrementalAnalyzer 进行真实分析
+        if self._analyzer:
+            try:
+                # 使用增量分析器
+                import hashlib
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                checksum = hashlib.sha256(content.encode()).hexdigest()
+
+                # 尝试从缓存获取
+                cached = self._analyzer.cache.get_file_analysis(str(file_path), checksum)
+                if cached:
+                    return {
+                        'source': 'cache',
+                        'lines': len(content.split('\n')),
+                        'cached_result': True,
+                        'issues': cached.get('issues', []),
+                        'issue_count': len(cached.get('issues', [])),
+                    }
+
+                # 执行分析
+                result = self._analyzer.analyze_file(str(file_path))
+
+                # 缓存结果
+                self._analyzer.cache.set_file_analysis(str(file_path), checksum, result)
+
+                return {
+                    'source': 'incremental_analyzer',
+                    'lines': len(content.split('\n')),
+                    'issues': result.get('issues', []),
+                    'issue_count': len(result.get('issues', [])),
+                    'metrics': result.get('metrics', {}),
+                }
+            except Exception as e:
+                logger.warning(f"IncrementalAnalyzer failed for {file_path}: {e}, falling back")
+
+        # 降级到简化版分析
+        return await self._fallback_analyze(file_path)
+
+    async def _fallback_analyze(self, file_path: Path) -> Dict[str, Any]:
+        """降级分析 - 当 IncrementalAnalyzer 不可用时"""
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
@@ -426,7 +467,16 @@ class AnalysisOrchestrator:
                         'message': f'Line {i} is too long ({len(line)} chars)'
                     })
 
+                # 检查尾随空格
+                if line != line.rstrip():
+                    issues.append({
+                        'line': i,
+                        'type': 'trailing_whitespace',
+                        'message': f'Line {i} has trailing whitespace'
+                    })
+
             return {
+                'source': 'fallback',
                 'lines': len(lines),
                 'chars': len(content),
                 'issues': issues,

@@ -212,6 +212,7 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
             self._init_purpose_generator()
         self.action_history = []
         self.max_action_history = 1000
+        self.purpose_history = []  # D5-D8 维度使用的历史记录
         logger.info(f'[UnifiedMOSSAgent] {self.agent_id} ready with {self._get_enabled_dimensions()} dimensions')
 
     def _init_dimensions(self):
@@ -258,17 +259,100 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         return sum([self.config.enable_survival, self.config.enable_curiosity, self.config.enable_influence, self.config.enable_optimization, self.config.enable_coherence, self.config.enable_valence, self.config.enable_other, self.config.enable_norm, self.config.enable_purpose])
 
     def select_action(self, observation: Dict) -> str:
-        """基于当前权重选择行动"""
+        """基于当前权重选择行动 (使用全部9维)"""
         self._update_state(observation)
         self._apply_state_weights()
+
+        # 更新 D5-D8 维度状态
+        self._update_extended_dimensions(observation)
+
         if np.random.random() < 0.1:
             return self._random_action()
-        dim_names = ['survival', 'curiosity', 'influence', 'optimization']
-        weights = self.weights[:4]
-        selected_dim = dim_names[np.argmax(weights)]
+
+        # 使用全部9维进行决策
+        dim_names = [
+            'survival', 'curiosity', 'influence', 'optimization',  # D1-D4
+            'coherence', 'valence', 'other', 'norm', 'purpose'       # D5-D9
+        ]
+
+        # 获取9维权重 (扩展权重向量)
+        weights = self._get_nine_dim_weights()
+
+        # 选择权重最高的维度
+        selected_idx = np.argmax(weights)
+        selected_dim = dim_names[selected_idx]
+
         if selected_dim in self.dimensions:
             return self.dimensions[selected_dim].suggest_action()
+
+        # 如果扩展维度没有返回动作，回退到 D1-D4
+        if selected_idx >= 4:
+            weights_d14 = weights[:4]
+            selected_dim = dim_names[np.argmax(weights_d14)]
+            if selected_dim in self.dimensions:
+                return self.dimensions[selected_dim].suggest_action()
+
         return self._random_action()
+
+    def _update_extended_dimensions(self, observation: Dict) -> None:
+        """更新 D5-D8 扩展维度状态"""
+        # D5: Coherence - 基于历史一致性
+        if 'coherence' in self.dimensions and self.action_history:
+            recent_actions = self.action_history[-10:]
+            action_consistency = len(set(recent_actions)) / len(recent_actions)
+            self.dimensions['coherence'].update_state({
+                'consistency': 1.0 - action_consistency  # 一致性越高，值越低
+            })
+
+        # D6: Valence - 基于最近奖励
+        if 'valence' in self.dimensions and self.purpose_history:
+            recent_valence = [p.get('valence', 0.5) for p in self.purpose_history[-10:]]
+            avg_valence = sum(recent_valence) / len(recent_valence)
+            self.dimensions['valence'].update_state({'valence': avg_valence})
+
+        # D7: Other - 简化处理
+        if 'other' in self.dimensions:
+            self.dimensions['other'].update_state({'trust': 0.5})
+
+        # D8: Norm - 基于成功率
+        if 'norm' in self.dimensions and self.purpose_history:
+            success_rate = sum(1 for p in self.purpose_history if p.get('success', False))
+            success_rate /= max(len(self.purpose_history), 1)
+            self.dimensions['norm'].update_state({'compliance': success_rate})
+
+    def _get_nine_dim_weights(self) -> np.ndarray:
+        """获取9维权重向量"""
+        # 基础权重 (D1-D4)
+        base_weights = self.weights[:4]
+
+        # 扩展权重 (D5-D8) - 从维度模块获取
+        extended_weights = []
+
+        for dim_name in ['coherence', 'valence', 'other', 'norm']:
+            if dim_name in self.dimensions:
+                # 从维度模块获取当前权重或激活度
+                dim = self.dimensions[dim_name]
+                if hasattr(dim, 'current_weight'):
+                    extended_weights.append(dim.current_weight)
+                elif hasattr(dim, 'activation'):
+                    extended_weights.append(dim.activation)
+                else:
+                    # 默认中等权重
+                    extended_weights.append(0.1)
+            else:
+                extended_weights.append(0.1)
+
+        # D9: Purpose - 基于目的向量强度
+        purpose_weight = float(np.linalg.norm(self.purpose_vector)) if hasattr(self, 'purpose_vector') else 0.1
+        extended_weights.append(purpose_weight)
+
+        # 合并并归一化
+        all_weights = np.array(list(base_weights) + extended_weights)
+        weight_sum = np.sum(all_weights)
+        if weight_sum > 0:
+            all_weights = all_weights / weight_sum
+
+        return all_weights
 
     def _update_state(self, observation: Dict):
         """更新状态

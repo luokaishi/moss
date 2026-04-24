@@ -446,9 +446,48 @@ class CodeEnvironment(Environment):
         return Reward(total=total, components=components)
 
     def _estimate_quality(self) -> float:
-        """估算代码质量 (简化版)"""
-        # 实际实现应调用 IncrementalAnalyzer
-        return 0.5 + np.random.normal(0, 0.05)
+        """估算代码质量"""
+        # 尝试使用真实分析器
+        try:
+            from moss.core.incremental_analyzer import IncrementalAnalyzer
+
+            if not hasattr(self, '_analyzer'):
+                self._analyzer = IncrementalAnalyzer(self.project_path)
+
+            # 收集项目中的所有 Python 文件
+            import os
+            py_files = []
+            for root, dirs, files in os.walk(self.project_path):
+                # 跳过隐藏目录和缓存
+                dirs[:] = [d for d in dirs if not d.startswith('.') and d != '__pycache__']
+                for f in files:
+                    if f.endswith('.py'):
+                        py_files.append(os.path.join(root, f))
+
+            if not py_files:
+                return 0.5
+
+            # 分析样本文件 (最多10个)
+            sample_files = py_files[:10]
+            total_score = 0.0
+
+            for file_path in sample_files:
+                try:
+                    result = self._analyzer.analyze_file(file_path)
+                    # 基于问题数量计算质量分数
+                    issues = result.get('issues', [])
+                    lines = result.get('lines', 1)
+                    issue_density = len(issues) / max(lines, 1)
+                    file_score = max(0.0, 1.0 - issue_density * 10)
+                    total_score += file_score
+                except Exception:
+                    total_score += 0.5  # 分析失败时给中等分数
+
+            return total_score / len(sample_files)
+
+        except ImportError:
+            # 降级到简化版
+            return 0.5 + np.random.normal(0, 0.05)
 
 
 # ═══════════════════════════════════════════════════════════
