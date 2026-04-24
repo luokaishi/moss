@@ -1,10 +1,10 @@
-# MOSS v9.3.0 🌿
+# MOSS v9.5.0 🌿
 
 **M**ulti-**O**bjective **S**elf-Driven **S**ystem
 
 > *Evolved from autonomous agent research to intelligent code refactoring*
 
-[![Version](https://img.shields.io/badge/version-9.3.0-blue.svg)](https://github.com/moss-devtools/moss)
+[![Version](https://img.shields.io/badge/version-9.5.0-blue.svg)](https://github.com/moss-devtools/moss)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -27,6 +27,25 @@
 - ML-powered refactoring recommendations based on historical data
 - Code pattern learning and anti-pattern detection
 - Project-specific best practices
+
+### 🤖 Autonomous Agent (v9.5)
+- **Self-driven learning loop**: Observe → Decide → Act → Learn → Reflect
+- **9-dimension policy**: Linear weights for Survival/Curiosity/Influence/Optimization/Coherence/Valence/Other/Norm/Purpose
+- **CodeEnvironment**: Real reward signals from code quality metrics
+- **ExperimentRunner**: N=30 statistical validation, A/B testing
+
+### 🔧 Refactoring (v9.2-9.3)
+- Cross-file refactoring with dependency analysis
+- Intelligent code extraction and movement
+- Safe refactoring with transaction rollback
+- Import organization and optimization
+
+### 🧩 Extensibility (v9.4)
+- **Plugin System**: Extensible architecture for custom analyzers
+- **Task-Aware Agent**: 5 autonomous task scenarios
+- **LLM Cost Controller**: Token budget management, every-N-generations strategy
+- **Statistical Validator**: N=30 validation, t-test, Cohen's d effect size
+- **File Watcher**: Real-time monitoring with debounce batching
 
 ### 🛠️ Developer Experience
 - **VSCode Extension** with full LSP support
@@ -63,7 +82,7 @@ moss analyze . --format text
 Output:
 ```
 ============================================================
-MOSS v9.3.0 分析报告
+MOSS v9.5.0 分析报告
 ============================================================
 项目: /path/to/your-project
 文件: 42

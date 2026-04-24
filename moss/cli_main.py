@@ -28,10 +28,10 @@ def create_parser() -> argparse.ArgumentParser:
     """创建命令行解析器"""
     parser = argparse.ArgumentParser(
         prog="moss",
-        description="MOSS v9.4 - Multi-Objective Self-Driven System",
+        description="MOSS v9.5.0 - Multi-Objective Self-Driven System",
         epilog="Example: moss analyze ./src --format json --output report.json"
     )
-    parser.add_argument("--version", action="version", version="MOSS v9.4.0")
+    parser.add_argument("--version", action="version", version="MOSS v9.5.0")
     parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
     parser.add_argument("--quiet", "-q", action="store_true", help="静默模式")
 
@@ -145,8 +145,8 @@ def create_parser() -> argparse.ArgumentParser:
 
 async def cmd_analyze(args: argparse.Namespace) -> int:
     """执行代码分析"""
-    from incremental_analyzer import IncrementalAnalyzer, MultiLevelCache
-    from parallel_analyzer import ParallelAnalyzer
+    from moss.core.incremental_analyzer import IncrementalAnalyzer, MultiLevelCache
+    from moss.core.parallel_analyzer import ParallelAnalyzer
     import ast
 
     project_path = Path(args.path).resolve()
@@ -333,7 +333,7 @@ async def cmd_analyze(args: argparse.Namespace) -> int:
 
 async def cmd_refactor(args: argparse.Namespace) -> int:
     """执行重构"""
-    from cross_file_refactor import CrossFileRefactorEngine
+    from moss.core.cross_file_refactor import CrossFileRefactorEngine
 
     project_path = Path(args.path).resolve()
     print(f"MOSS v9.3 - 重构: {args.refactor_type}")
@@ -359,7 +359,7 @@ async def cmd_refactor(args: argparse.Namespace) -> int:
             return 1
 
     elif args.refactor_type == 'imports':
-        from refactor_engine import CodeRefactorer, ImportOrganizer
+        from moss.core.refactor_engine import CodeRefactorer, ImportOrganizer
         organizer = ImportOrganizer()
 
         with open(args.file, 'r') as f:
@@ -385,7 +385,7 @@ async def cmd_refactor(args: argparse.Namespace) -> int:
 
 async def cmd_server(args: argparse.Namespace) -> int:
     """启动 LSP 服务器"""
-    from lsp_server import MossAnalysisProvider, LSPProtocolHandler
+    from moss.core.lsp_server import MossAnalysisProvider, LSPProtocolHandler
 
     provider = MossAnalysisProvider(".")
     handler = LSPProtocolHandler(provider)
@@ -405,7 +405,7 @@ async def cmd_server(args: argparse.Namespace) -> int:
 
 async def cmd_cache(args: argparse.Namespace) -> int:
     """管理缓存"""
-    from incremental_analyzer import MultiLevelCache
+    from moss.core.incremental_analyzer import MultiLevelCache
 
     project_path = Path(args.path).resolve()
     cache = MultiLevelCache(str(project_path))
@@ -590,7 +590,7 @@ async def cmd_watch(args: argparse.Namespace) -> int:
 
 async def cmd_benchmark(args: argparse.Namespace) -> int:
     """性能基准测试"""
-    from performance_engine import PerformanceEngine, PerformanceConfig
+    from moss.core.performance_engine import PerformanceEngine, PerformanceConfig
 
     project_path = Path(args.path).resolve()
     config = PerformanceConfig(max_workers=4)

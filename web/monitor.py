@@ -248,7 +248,7 @@ DASHBOARD_HTML = '''
     </div>
     
     <div class="footer">
-        <p>MOSS v0.2.0 | Real-time Monitoring Dashboard</p>
+        <p>MOSS v9.5.0 | Real-time Monitoring Dashboard</p>
         <p>Auto-refresh every 5 seconds</p>
     </div>
     
@@ -304,8 +304,8 @@ def api_start():
     
     try:
         import sys
-        sys.path.insert(0, '/workspace/projects/moss')
-        from agents.moss_agent_v2 import MOSSAgentV2
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from moss.agents.moss_agent_v2 import MOSSAgentV2
         
         agent = MOSSAgentV2(agent_id="web_monitor", mode="demo")
         moss_status['agent_id'] = agent.agent_id
