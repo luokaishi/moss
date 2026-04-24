@@ -28,10 +28,10 @@ def create_parser() -> argparse.ArgumentParser:
     """创建命令行解析器"""
     parser = argparse.ArgumentParser(
         prog="moss",
-        description="MOSS v9.3 - Smart Code Refactoring Engine",
+        description="MOSS v9.4 - Multi-Objective Self-Driven System",
         epilog="Example: moss analyze ./src --format json --output report.json"
     )
-    parser.add_argument("--version", action="version", version="MOSS v9.3.0")
+    parser.add_argument("--version", action="version", version="MOSS v9.4.0")
     parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
     parser.add_argument("--quiet", "-q", action="store_true", help="静默模式")
 
@@ -85,6 +85,16 @@ def create_parser() -> argparse.ArgumentParser:
     cache_sub.add_parser("clear", help="清除所有缓存")
     cache_sub.add_parser("warm", help="预热缓存")
     cache_parser.add_argument("path", nargs="?", default=".", help="项目路径")
+
+    # ── agent ──
+    agent_parser = subparsers.add_parser("agent", help="运行自主任务 Agent")
+    agent_parser.add_argument("--task", "-t",
+                              choices=["file_organization", "log_analysis", "system_monitor",
+                                       "code_review", "backup_cleanup"],
+                              help="任务类型")
+    agent_parser.add_argument("--path", "-p", default=".", help="工作目录")
+    agent_parser.add_argument("--max-cycles", "-c", type=int, default=100, help="最大执行周期")
+    agent_parser.add_argument("--list", "-l", action="store_true", help="列出可用任务")
 
     # ── benchmark ──
     bench_parser = subparsers.add_parser("benchmark", help="性能基准测试")
@@ -404,6 +414,28 @@ async def cmd_cache(args: argparse.Namespace) -> int:
 
 
 # ──────────────────────────────────────────────────────────────
+# Agent Command
+# ──────────────────────────────────────────────────────────────
+
+async def cmd_agent(args: argparse.Namespace) -> int:
+    """运行自主任务 Agent"""
+    from moss.plugins.task_agent_plugin import TaskAgentPlugin, run_task_cli
+
+    if args.list:
+        plugin = TaskAgentPlugin()
+        tasks = plugin.list_tasks()
+        print("\n可用任务:")
+        print("-" * 60)
+        for task in tasks:
+            print(f"  {task['type']:20s} - {task['name']}")
+            print(f"    {task['description']}")
+        print()
+        return 0
+
+    return run_task_cli(args.task, args.path, args.max_cycles)
+
+
+# ──────────────────────────────────────────────────────────────
 # Benchmark Command
 # ──────────────────────────────────────────────────────────────
 
@@ -501,6 +533,7 @@ async def async_main():
         'refactor': cmd_refactor,
         'server': cmd_server,
         'cache': cmd_cache,
+        'agent': cmd_agent,
         'benchmark': cmd_benchmark,
         'init': cmd_init,
     }
