@@ -133,6 +133,23 @@ moss refactor move --symbol X --source A --target B [--dry-run]
 moss refactor extract --file main.py --start-line 10 --end-line 50 --name helper
 moss refactor imports --file main.py
 
+# Autonomous Agent (v9.5)
+moss agent --task system_monitor
+moss agent --task code_review --path ./src
+moss agent --list
+
+# Reports (v9.4)
+moss report cost --budget 5.0
+moss report cost --history ./cost_history.json
+
+# Statistical Validation (v9.4)
+moss validate --experiment exp_data.json --control ctrl_data.json --name "MyExperiment"
+moss validate -e exp.json -c ctrl.json --alpha 0.05
+
+# File Watcher (v9.4)
+moss watch ./src --pattern "*.py" --debounce 1.0
+moss watch . --pattern "*.py" --pattern "*.js" --auto-refactor
+
 # Server (for IDE integration)
 moss server --mode stdio
 moss server --mode tcp --port 2087
@@ -192,22 +209,43 @@ repos:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    MOSS v9.3.0                              │
+│                    MOSS v9.5.0                              │
 ├─────────────────────────────────────────────────────────────┤
-│  VSCode / PyCharm / CLI / CI/CD                             │
+│  VSCode / PyCharm / CLI / CI/CD / Web Dashboard             │
 ├─────────────────────────────────────────────────────────────┤
 │  LSP Server (JSON-RPC 2.0)                                  │
 ├─────────────────────────────────────────────────────────────┤
-│  Performance Engine                                         │
+│  Autonomous Agent Layer (v9.5)                              │
+│  ├─ IntegratedMOSSSystem (Agent + LearningLoop)             │
+│  ├─ CodeEnvironment (Real reward signals)                   │
+│  ├─ UnifiedAgentPolicy (9-dim decision)                     │
+│  └─ ExperimentRunner (N=30 validation)                      │
+├─────────────────────────────────────────────────────────────┤
+│  Extensibility Layer (v9.4)                                 │
+│  ├─ Plugin System (Git/Coverage/TypeCheck)                  │
+│  ├─ Task-Aware Agent (5 scenarios)                          │
+│  ├─ LLM Cost Controller (Token budget)                      │
+│  ├─ Statistical Validator (t-test, Cohen's d)               │
+│  └─ File Watcher (Real-time monitoring)                     │
+├─────────────────────────────────────────────────────────────┤
+│  Performance Engine (v9.3)                                  │
 │  ├─ Incremental Analyzer                                    │
 │  ├─ Parallel Analyzer                                       │
 │  └─ Multi-Level Cache (L1/L2/L3)                           │
 ├─────────────────────────────────────────────────────────────┤
-│  ML Features                                                │
+│  ML Features (v9.3)                                         │
 │  ├─ Refactoring Recommender                                 │
 │  └─ Pattern Learning Engine                                 │
 ├─────────────────────────────────────────────────────────────┤
-│  Cross-File Refactor Engine (v9.2)                          │
+│  Refactoring Engine (v9.2)                                  │
+│  ├─ Cross-File Refactor                                     │
+│  ├─ Move Operations                                         │
+│  └─ Split Operations                                        │
+├─────────────────────────────────────────────────────────────┤
+│  Core Agent (9-Dimension)                                   │
+│  ├─ D1-D4: Survival/Curiosity/Influence/Optimization        │
+│  ├─ D5-D8: Coherence/Valence/Other/Norm                     │
+│  └─ D9: Purpose                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
