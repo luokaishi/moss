@@ -112,6 +112,64 @@ except ImportError:
     TeamConfig = None
     QualityDashboard = None
 
+# v9.4: Quality & Plugin Architecture
+try:
+    from .exceptions import (
+        MossError, AnalysisError, ParseError, DependencyError, CacheError, FileWatchError,
+        RefactoringError, UnsafeRefactoringError, ImpactAnalysisError, RollbackError, CrossFileError,
+        LSPError, ProtocolError, TransportError, ServerStartError,
+        ConfigError, ValidationError, MigrationError,
+        PluginError, PluginLoadError, PluginConflictError,
+    )
+    from .plugin_system import (
+        MossPlugin, PluginManager, PluginContext, PluginInfo,
+        HookType, HookPriority,
+        GitPlugin, CoveragePlugin, TypeCheckPlugin,
+    )
+    from .config_manager import (
+        ConfigManager, MossProjectConfig,
+        AnalysisConfig, PerformanceConfig as V94PerformanceConfig,
+        LSPConfig, MLConfig, TeamConfig as V94TeamConfig, LoggingConfig,
+    )
+except ImportError:
+    MossError = None
+    AnalysisError = None
+    ParseError = None
+    DependencyError = None
+    CacheError = None
+    FileWatchError = None
+    RefactoringError = None
+    UnsafeRefactoringError = None
+    ImpactAnalysisError = None
+    RollbackError = None
+    CrossFileError = None
+    LSPError = None
+    ProtocolError = None
+    TransportError = None
+    ServerStartError = None
+    ConfigError = None
+    ValidationError = None
+    MigrationError = None
+    PluginError = None
+    PluginLoadError = None
+    PluginConflictError = None
+    MossPlugin = None
+    PluginManager = None
+    PluginContext = None
+    PluginInfo = None
+    HookType = None
+    HookPriority = None
+    GitPlugin = None
+    CoveragePlugin = None
+    TypeCheckPlugin = None
+    ConfigManager = None
+    MossProjectConfig = None
+    V94PerformanceConfig = None
+    LSPConfig = None
+    MLConfig = None
+    V94TeamConfig = None
+    LoggingConfig = None
+
 __all__ = [
     # Agent
     'BaseMOSSAgent',
@@ -182,4 +240,17 @@ __all__ = [
     'TeamManager',
     'TeamConfig',
     'QualityDashboard',
+    # v9.4 Exception Hierarchy
+    'MossError', 'AnalysisError', 'ParseError', 'DependencyError', 'CacheError', 'FileWatchError',
+    'RefactoringError', 'UnsafeRefactoringError', 'ImpactAnalysisError', 'RollbackError', 'CrossFileError',
+    'LSPError', 'ProtocolError', 'TransportError', 'ServerStartError',
+    'ConfigError', 'ValidationError', 'MigrationError',
+    'PluginError', 'PluginLoadError', 'PluginConflictError',
+    # v9.4 Plugin System
+    'MossPlugin', 'PluginManager', 'PluginContext', 'PluginInfo',
+    'HookType', 'HookPriority',
+    'GitPlugin', 'CoveragePlugin', 'TypeCheckPlugin',
+    # v9.4 Config Management
+    'ConfigManager', 'MossProjectConfig',
+    'V94PerformanceConfig', 'LSPConfig', 'MLConfig', 'V94TeamConfig', 'LoggingConfig',
 ]
