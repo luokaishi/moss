@@ -2,7 +2,7 @@
 MOSS Unified Core Package
 =========================
 
-Unified core architecture integrating v0.3-v7.0 best practices.
+Unified core architecture integrating v0.3-v9.3 best practices.
 
 Usage:
     from moss.core import UnifiedMOSSAgent, MOSSConfig
@@ -11,6 +11,12 @@ Usage:
     from moss.core.causal_purpose import CausalPurposeGenerator
     from moss.core.gradient_safety_guard import GradientSafetyGuard
     from moss.core.moss_mathematical_framework import MOSSMultiObjectiveFramework
+
+    # v9.3 Performance Engine
+    from moss.core.performance_engine import PerformanceEngine, PerformanceConfig
+    from moss.core.incremental_analyzer import IncrementalAnalyzer, MultiLevelCache
+    from moss.core.parallel_analyzer import ParallelAnalyzer
+    from moss.core.lsp_server import MossAnalysisProvider
 
 Purpose System Note:
     - PurposeGenerator (v5.0): Behavior-derived purpose generation
@@ -66,6 +72,46 @@ except ImportError:
     LocalModelConfig = None
     create_local_backend_for_moss = None
 
+# v9.2: Cross-file refactoring
+try:
+    from .cross_file_refactor import CrossFileRefactorEngine
+    from .semantic_refactor import SemanticRefactorEngine
+    from .split_operations import SplitOperations
+    from .move_operations import MoveOperations
+except ImportError:
+    pass
+
+# v9.3: Performance & Ecosystem
+try:
+    from .incremental_analyzer import IncrementalAnalyzer, MultiLevelCache, PerformanceBenchmark
+    from .parallel_analyzer import ParallelAnalyzer, IncrementalParallelAnalyzer, ParallelBenchmark
+    from .performance_engine import PerformanceEngine, PerformanceConfig
+    from .lsp_server import MossAnalysisProvider, LSPProtocolHandler
+    from .ml_recommender import RefactoringRecommender, CodeFeatures, RefactoringRecommendation
+    from .pattern_learner import PatternLearningEngine, ProjectProfile, CodePattern, AntiPattern
+    from .team_collaboration import TeamManager, TeamConfig, QualityDashboard
+except ImportError:
+    IncrementalAnalyzer = None
+    MultiLevelCache = None
+    PerformanceBenchmark = None
+    ParallelAnalyzer = None
+    IncrementalParallelAnalyzer = None
+    ParallelBenchmark = None
+    PerformanceEngine = None
+    PerformanceConfig = None
+    MossAnalysisProvider = None
+    LSPProtocolHandler = None
+    RefactoringRecommender = None
+    CodeFeatures = None
+    RefactoringRecommendation = None
+    PatternLearningEngine = None
+    ProjectProfile = None
+    CodePattern = None
+    AntiPattern = None
+    TeamManager = None
+    TeamConfig = None
+    QualityDashboard = None
+
 __all__ = [
     # Agent
     'BaseMOSSAgent',
@@ -113,4 +159,27 @@ __all__ = [
     # State Decision
     'StateDecisionModel',
     'SystemStateLevel',
+    # v9.3 Performance & Ecosystem
+    'IncrementalAnalyzer',
+    'MultiLevelCache',
+    'PerformanceBenchmark',
+    'ParallelAnalyzer',
+    'IncrementalParallelAnalyzer',
+    'ParallelBenchmark',
+    'PerformanceEngine',
+    'PerformanceConfig',
+    'MossAnalysisProvider',
+    'LSPProtocolHandler',
+    # v9.3 ML Features
+    'RefactoringRecommender',
+    'CodeFeatures',
+    'RefactoringRecommendation',
+    'PatternLearningEngine',
+    'ProjectProfile',
+    'CodePattern',
+    'AntiPattern',
+    # v9.3 Enterprise
+    'TeamManager',
+    'TeamConfig',
+    'QualityDashboard',
 ]

@@ -1,0 +1,137 @@
+# MOSS v9.3 - GitLab CI/CD Template
+# 代码质量分析集成
+#
+# 使用方式:
+#   include:
+#     - remote: 'https://raw.githubusercontent.com/moss-devtools/moss/main/ci/gitlab-ci.yml'
+#
+# 或复制到 .gitlab-ci.yml
+
+stages:
+  - analysis
+  - report
+
+variables:
+  MOSS_THRESHOLD: "50"
+  MOSS_COMPLEXITY: "10"
+  MOSS_FORMAT: "json"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+# 缓存配置
+cache:
+  key: moss-${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/pip
+    - .moss/cache
+
+# ── 代码质量分析 ──
+moss-analyze:
+  stage: analysis
+  image: python:3.11-slim
+  before_script:
+    - pip install networkx
+    - mkdir -p .moss/cache
+  script:
+    - export PYTHONPATH=moss/core:$PYTHONPATH
+    - |
+      python3 moss/cli.py analyze . \
+        --format ${MOSS_FORMAT} \
+        --threshold ${MOSS_THRESHOLD} \
+        --complexity ${MOSS_COMPLEXITY} \
+        --output moss-report.json \
+        || true
+    - |
+      python3 moss/cli.py analyze . \
+        --format text \
+        --threshold ${MOSS_THRESHOLD} \
+        --output moss-report.txt \
+        || true
+  artifacts:
+    when: always
+    paths:
+      - moss-report.json
+      - moss-report.txt
+    reports:
+      codequality: moss-report.json
+    expire_in: 30 days
+  rules:
+    - changes:
+        - "**/*.py"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ── PR/MR 评论 ──
+moss-comment:
+  stage: report
+  image: python:3.11-slim
+  needs:
+    - moss-analyze
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "**/*.py"
+  before_script:
+    - pip install requests
+  script:
+    - |
+      python3 -c "
+      import json, os, requests
+
+      # 读取报告
+      with open('moss-report.json') as f:
+          report = json.load(f)
+
+      summary = report.get('summary', {})
+      results = report.get('results', [])
+
+      # 构建 MR 评论
+      body = '## 🌿 MOSS v9.3 Code Analysis\n\n'
+      body += '| Metric | Value |\n|--------|-------|\n'
+      body += f'| Files Analyzed | {summary.get(\"total_files\", 0)} |\n'
+      body += f'| Issues Found | {summary.get(\"total_issues\", 0)} |\n'
+      body += f'| Errors | {summary.get(\"errors\", 0)} |\n'
+      body += f'| Warnings | {summary.get(\"warnings\", 0)} |\n'
+      body += f'| Info | {summary.get(\"info\", 0)} |\n\n'
+
+      if summary.get('errors', 0) > 0 or summary.get('warnings', 0) > 0:
+          body += '### ⚠️ Issues Found\n\n'
+          for r in results[:10]:
+              for issue in r.get('issues', [])[:3]:
+                  icon = {'error': '🔴', 'warning': '🟡', 'info': '🔵'}.get(issue['severity'], '•')
+                  body += f\"{icon} **{r['file']}**:{issue['line']} - {issue['message']}\n\"
+      else:
+          body += '✅ No critical issues found!\n'
+
+      # 发送评论
+      mr_iid = os.environ.get('CI_MERGE_REQUEST_IID')
+      project_id = os.environ.get('CI_PROJECT_ID')
+      gitlab_url = os.environ.get('CI_API_V4_URL', 'https://gitlab.com/api/v4')
+      token = os.environ.get('MOSS_GITLAB_TOKEN')
+
+      if mr_iid and token:
+          url = f'{gitlab_url}/projects/{project_id}/merge_requests/{mr_iid}/notes'
+          headers = {'PRIVATE-TOKEN': token}
+          requests.post(url, headers=headers, json={'body': body})
+      else:
+          print('Skipping MR comment (no token or MR context)')
+          print(body)
+      "
+
+# ── 缓存预热 ──
+moss-cache-warm:
+  stage: .pre
+  image: python:3.11-slim
+  before_script:
+    - pip install networkx
+  script:
+    - export PYTHONPATH=moss/core:$PYTHONPATH
+    - python3 moss/cli.py cache warm .
+  cache:
+    key: moss-${CI_COMMIT_REF_SLUG}
+    policy: push
+    paths:
+      - .moss/cache
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - "**/*.py"

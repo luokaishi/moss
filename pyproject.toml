@@ -1,77 +1,73 @@
 [build-system]
-requires = ["setuptools>=64.0", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "moss"
-version = "7.1.0-dev"
-description = "Multi-Objective Self-Driven System for AI Autonomous Evolution"
+name = "moss-refactor"
+version = "9.3.0"
+description = "MOSS - Smart Code Refactoring Engine"
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.9"
 authors = [
-    {name = "Cash, Fuxi", email = "luokaishi@example.com"},
+    {name = "MOSS DevTools", email = "support@moss-devtools.com"}
 ]
-keywords = ["ai-agent", "multi-objective", "self-driven", "intrinsic-motivation", "autonomous-evolution"]
+keywords = ["refactoring", "code-analysis", "python", "IDE", "LSP", "ML"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Science/Research",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Quality Assurance",
 ]
-
+requires-python = ">=3.9"
 dependencies = [
-    "numpy>=1.20.0",
-    "scipy>=1.6.0",
-    "matplotlib>=3.3.0",
-    "scikit-learn>=0.24.0",
-    "pandas>=1.2.0",
-    "tqdm>=4.60.0",
+    "networkx>=2.8",
 ]
 
 [project.optional-dependencies]
-visualization = [
-    "seaborn>=0.11.0",
-    "plotly>=5.0.0",
-    "networkx>=2.6.0",
+ml = [
+    "numpy>=1.21",
+]
+local-llm = [
+    "torch>=2.0",
+    "transformers>=4.30",
 ]
 dev = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "black>=22.0.0",
-    "flake8>=4.0.0",
-    "mypy>=0.950",
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "flake8>=6.0",
+    "mypy>=1.0",
 ]
 docs = [
-    "jupyter>=1.0.0",
-    "ipywidgets>=7.6.0",
+    "mkdocs>=1.4",
+    "mkdocs-material>=9.0",
+    "mkdocstrings[python]>=0.20",
 ]
-all = [
-    "moss[visualization,dev,docs]",
-]
+
+[project.scripts]
+moss = "moss.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/luokaishi/moss"
-Repository = "https://github.com/luokaishi/moss"
+Homepage = "https://moss-devtools.github.io/moss"
+Documentation = "https://moss-devtools.github.io/moss"
+Repository = "https://github.com/moss-devtools/moss"
+Issues = "https://github.com/moss-devtools/moss/issues"
 
 [tool.setuptools.packages.find]
+where = ["."]
 include = ["moss*"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "-v --tb=short"
+exclude = ["tests*", "experiments*", "docs-site*"]
 
 [tool.black]
 line-length = 100
-target-version = ["py39"]
+target-version = ['py39', 'py310', 'py311', 'py312']
 
 [tool.mypy]
 python_version = "3.9"
@@ -79,14 +75,9 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 
-[tool.coverage.run]
-source = ["moss"]
-omit = ["tests/*", "moss/core/*_legacy.py"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"

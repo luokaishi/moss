@@ -1,0 +1,154 @@
+# MOSS v9.3 - GitHub Actions Workflow
+# 自动代码质量检查
+#
+# 功能:
+# - Push/PR 时自动分析
+# - 生成代码质量报告
+# - PR 评论中展示结果
+# - 缓存分析结果
+
+name: MOSS Code Analysis
+
+on:
+  push:
+    branches: [main, develop, 'v9.*']
+    paths:
+      - '**.py'
+      - '.moss/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**.py'
+  workflow_dispatch:
+    inputs:
+      threshold:
+        description: 'Function line count threshold'
+        default: '50'
+      complexity:
+        description: 'Complexity threshold'
+        default: '10'
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  analyze:
+    name: MOSS Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install networkx
+
+      - name: Cache MOSS results
+        uses: actions/cache@v4
+        with:
+          path: .moss/cache
+          key: moss-${{ runner.os }}-${{ hashFiles('**/*.py') }}
+          restore-keys: |
+            moss-${{ runner.os }}-
+
+      - name: Run MOSS Analysis (GitHub format)
+        env:
+          PYTHONPATH: moss/core:$PYTHONPATH
+        run: |
+          python3 moss/cli.py analyze . \
+            --format github \
+            --threshold ${{ github.event.inputs.threshold || '50' }} \
+            --complexity ${{ github.event.inputs.complexity || '10' }} \
+            --output moss-report.json
+
+      - name: Run MOSS Analysis (JSON for report)
+        if: always()
+        env:
+          PYTHONPATH: moss/core:$PYTHONPATH
+        run: |
+          python3 moss/cli.py analyze . \
+            --format json \
+            --threshold ${{ github.event.inputs.threshold || '50' }} \
+            --output moss-report.json
+
+      - name: Generate PR Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let report = {};
+            try {
+              report = JSON.parse(fs.readFileSync('moss-report.json', 'utf8'));
+            } catch (e) {
+              console.log('No report file found');
+              return;
+            }
+
+            const summary = report.summary || {};
+            const results = report.results || [];
+
+            let body = `## 🌿 MOSS v9.3 Code Analysis\n\n`;
+            body += `| Metric | Value |\n|--------|-------|\n`;
+            body += `| Files Analyzed | ${summary.total_files || 0} |\n`;
+            body += `| Files with Issues | ${summary.files_with_issues || 0} |\n`;
+            body += `| Total Issues | ${summary.total_issues || 0} |\n`;
+            body += `| Errors | ${summary.errors || 0} |\n`;
+            body += `| Warnings | ${summary.warnings || 0} |\n`;
+            body += `| Info | ${summary.info || 0} |\n`;
+            body += `| Duration | ${report.duration || 0}s |\n\n`;
+
+            if (results.length > 0) {
+              body += `### Top Issues\n\n`;
+              const topIssues = results.slice(0, 10);
+              for (const result of topIssues) {
+                for (const issue of result.issues.slice(0, 3)) {
+                  const icon = issue.severity === 'error' ? '🔴' : issue.severity === 'warning' ? '🟡' : '🔵';
+                  body += `${icon} **${result.file}**:${issue.line} - ${issue.message}\n`;
+                }
+              }
+            } else {
+              body += `✅ No issues found!\n`;
+            }
+
+            body += `\n---\n*Powered by [MOSS v9.3](https://github.com/moss-devtools/moss)*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Upload Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: moss-report
+          path: moss-report.json
+          retention-days: 30
+
+      - name: MOSS Summary
+        if: always()
+        run: |
+          echo "## MOSS Analysis Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f moss-report.json ]; then
+            python3 -c "
+          import json
+          d = json.load(open('moss-report.json'))
+          s = d.get('summary', {})
+          print(f\"- Files: {s.get('total_files', 0)}\")
+          print(f\"- Issues: {s.get('total_issues', 0)}\")
+          print(f\"- Errors: {s.get('errors', 0)} | Warnings: {s.get('warnings', 0)} | Info: {s.get('info', 0)}\")
+          print(f\"- Duration: {d.get('duration', 0)}s\")
+          " >> $GITHUB_STEP_SUMMARY
+          fi

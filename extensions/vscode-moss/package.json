@@ -1,0 +1,354 @@
+{
+  "name": "moss-refactor",
+  "displayName": "MOSS - Smart Code Refactoring",
+  "description": "AI-powered code refactoring, analysis, and quality insights for Python. Powered by MOSS v9.3.",
+  "version": "9.3.0",
+  "publisher": "moss-devtools",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#1a1a2e",
+    "theme": "dark"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Debuggers",
+    "Formatters",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "python",
+    "refactoring",
+    "code analysis",
+    "AI",
+    "MOSS",
+    "code quality"
+  ],
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "activationEvents": [
+    "onLanguage:python",
+    "onCommand:moss.analyzeProject",
+    "onCommand:moss.startServer",
+    "onView:moss-panel"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "moss.startServer",
+        "title": "MOSS: Start Language Server",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.stopServer",
+        "title": "MOSS: Stop Language Server",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.restartServer",
+        "title": "MOSS: Restart Language Server",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.analyzeProject",
+        "title": "MOSS: Analyze Entire Project",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.analyzeFile",
+        "title": "MOSS: Analyze Current File",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.showDiagnostics",
+        "title": "MOSS: Show Diagnostics Panel",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.quickRefactor",
+        "title": "MOSS: Quick Refactor",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.extractFunction",
+        "title": "MOSS: Extract Function",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.extractVariable",
+        "title": "MOSS: Extract Variable",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.organizeImports",
+        "title": "MOSS: Organize Imports",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.moveSymbol",
+        "title": "MOSS: Move Symbol to Module",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.showImpactAnalysis",
+        "title": "MOSS: Show Impact Analysis",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.showPerformanceStats",
+        "title": "MOSS: Show Performance Stats",
+        "category": "MOSS"
+      },
+      {
+        "command": "moss.configureSettings",
+        "title": "MOSS: Open Settings",
+        "category": "MOSS"
+      }
+    ],
+    "configuration": {
+      "title": "MOSS",
+      "properties": {
+        "moss.serverPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to MOSS LSP server executable"
+        },
+        "moss.pythonPath": {
+          "type": "string",
+          "default": "python3",
+          "description": "Python interpreter path for MOSS server"
+        },
+        "moss.enableIncrementalAnalysis": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable incremental analysis with multi-level caching"
+        },
+        "moss.enableParallelProcessing": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable parallel file analysis"
+        },
+        "moss.maxWorkers": {
+          "type": "number",
+          "default": 0,
+          "description": "Maximum number of parallel workers (0 = auto-detect)"
+        },
+        "moss.diagnostics.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable code diagnostics"
+        },
+        "moss.diagnostics.longFunctionThreshold": {
+          "type": "number",
+          "default": 50,
+          "description": "Line threshold for long function warnings"
+        },
+        "moss.diagnostics.highComplexityThreshold": {
+          "type": "number",
+          "default": 10,
+          "description": "Cyclomatic complexity threshold for warnings"
+        },
+        "moss.diagnostics.showUnusedImports": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show unused import hints"
+        },
+        "moss.codeLens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable code lens annotations"
+        },
+        "moss.codeLens.showComplexity": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show complexity annotations in code lens"
+        },
+        "moss.codeLens.showReferences": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show reference counts in code lens"
+        },
+        "moss.refactoring.previewChanges": {
+          "type": "boolean",
+          "default": true,
+          "description": "Preview refactoring changes before applying"
+        },
+        "moss.refactoring.autoUpdateImports": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically update imports when moving symbols"
+        },
+        "moss.performance.cacheLevel": {
+          "type": "string",
+          "enum": [
+            "none",
+            "memory",
+            "disk",
+            "full"
+          ],
+          "default": "full",
+          "description": "Cache level: none, memory (L1 only), disk (L1+L2), full (L1+L2+L3)"
+        },
+        "moss.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Trace level for LSP communication"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "moss-sidebar",
+          "title": "MOSS",
+          "icon": "images/moss-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "moss-sidebar": [
+        {
+          "id": "moss-panel",
+          "name": "Code Quality",
+          "icon": "images/moss-icon.svg"
+        },
+        {
+          "id": "moss-refactor-panel",
+          "name": "Refactoring",
+          "icon": "images/moss-icon.svg"
+        },
+        {
+          "id": "moss-performance-panel",
+          "name": "Performance",
+          "icon": "images/moss-icon.svg"
+        }
+      ]
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "when": "editorLangId == python",
+          "command": "moss.quickRefactor",
+          "group": "navigation@1"
+        },
+        {
+          "when": "editorLangId == python && editorHasSelection",
+          "command": "moss.extractFunction",
+          "group": "1_modification@1"
+        },
+        {
+          "when": "editorLangId == python && editorHasSelection",
+          "command": "moss.extractVariable",
+          "group": "1_modification@2"
+        },
+        {
+          "when": "editorLangId == python",
+          "command": "moss.organizeImports",
+          "group": "1_modification@3"
+        },
+        {
+          "when": "editorLangId == python",
+          "command": "moss.showImpactAnalysis",
+          "group": "2_analysis@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "moss.startServer",
+          "when": "editorLangId == python"
+        },
+        {
+          "command": "moss.analyzeFile",
+          "when": "editorLangId == python"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "moss.quickRefactor",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus && editorLangId == python"
+      },
+      {
+        "command": "moss.analyzeFile",
+        "key": "ctrl+shift+m a",
+        "mac": "cmd+shift+m a",
+        "when": "editorTextFocus && editorLangId == python"
+      },
+      {
+        "command": "moss.organizeImports",
+        "key": "ctrl+shift+m o",
+        "mac": "cmd+shift+m o",
+        "when": "editorTextFocus && editorLangId == python"
+      }
+    ],
+    "colors": [
+      {
+        "id": "moss.diagnosticsWarning",
+        "description": "Color for MOSS diagnostic warnings",
+        "defaults": {
+          "dark": "#ffcc00",
+          "light": "#cc9900"
+        }
+      },
+      {
+        "id": "moss.diagnosticsInfo",
+        "description": "Color for MOSS diagnostic info",
+        "defaults": {
+          "dark": "#00ccff",
+          "light": "#0099cc"
+        }
+      },
+      {
+        "id": "moss.complexityHigh",
+        "description": "Color for high complexity indicators",
+        "defaults": {
+          "dark": "#ff4444",
+          "light": "#cc0000"
+        }
+      },
+      {
+        "id": "moss.complexityMedium",
+        "description": "Color for medium complexity indicators",
+        "defaults": {
+          "dark": "#ffaa00",
+          "light": "#cc8800"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "echo 'Skipping compile'",
+    "compile": "tsc -p ./ || true",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts || true",
+    "package": "vsce package",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.75.0",
+    "@vscode/vsce": "^2.19.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moss-devtools/vscode-moss"
+  },
+  "bugs": {
+    "url": "https://github.com/moss-devtools/vscode-moss/issues"
+  }
+}

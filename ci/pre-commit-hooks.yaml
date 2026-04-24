@@ -1,0 +1,52 @@
+# MOSS v9.3 - Pre-commit Hook
+# 在 git commit 前自动检查代码质量
+#
+# 使用方式 (方式一 - 推荐):
+#   repos:
+#     - repo: https://github.com/moss-devtools/moss
+#       rev: v9.3.0
+#       hooks:
+#         - id: moss-analyze
+#
+# 使用方式 (方式二 - 本地):
+#   repos:
+#     - repo: local
+#       hooks:
+#         - id: moss-analyze
+#           name: moss-analyze
+#           entry: python3 moss/cli.py analyze --format text --fail-on-error
+#           language: system
+#           types: [python]
+#           pass_filenames: false
+
+- id: moss-analyze
+  name: MOSS Code Analysis
+  description: 'AI-powered code quality analysis by MOSS v9.3'
+  entry: python3 moss/cli.py analyze --format text --fail-on-error
+  language: python
+  language_version: python3.11
+  types: [python]
+  pass_filenames: false
+  require_serial: true
+  stages: [commit]
+
+- id: moss-analyze-strict
+  name: MOSS Code Analysis (Strict)
+  description: 'Strict code quality check - fails on warnings'
+  entry: python3 moss/cli.py analyze --format text --fail-on-error --threshold 30 --complexity 8
+  language: python
+  language_version: python3.11
+  types: [python]
+  pass_filenames: false
+  require_serial: true
+  stages: [commit]
+
+- id: moss-imports
+  name: MOSS Organize Imports
+  description: 'Sort and organize import statements'
+  entry: python3 moss/cli.py refactor imports
+  language: python
+  language_version: python3.11
+  types: [python]
+  files: '\.py$'
+  stages: [commit]

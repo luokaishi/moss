@@ -1,0 +1,100 @@
+# MOSS v9.3 Documentation Site
+# MkDocs Configuration
+
+site_name: MOSS v9.3
+site_description: Smart Code Refactoring Engine - AI-powered code analysis and refactoring
+site_author: MOSS DevTools
+site_url: https://moss-devtools.github.io/moss
+
+repo_name: moss-devtools/moss
+repo_url: https://github.com/moss-devtools/moss
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  custom_dir: overrides
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [../moss]
+          options:
+            docstring_style: google
+            show_source: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/moss-devtools/moss
+  version:
+    provider: mike
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Configuration: getting-started/configuration.md
+  - User Guide:
+    - CLI Usage: guides/cli.md
+    - IDE Integration: guides/ide-integration.md
+    - CI/CD Setup: guides/ci-cd.md
+    - Performance Tuning: guides/performance.md
+  - API Reference:
+    - Core API: api/core.md
+    - Refactoring API: api/refactoring.md
+    - LSP Server: api/lsp.md
+    - ML Features: api/ml.md
+  - Examples:
+    - Basic Analysis: examples/basic-analysis.md
+    - Refactoring: examples/refactoring.md
+    - Team Collaboration: examples/team-collaboration.md
+  - About:
+    - Changelog: changelog.md
+    - Contributing: contributing.md
+    - License: license.md

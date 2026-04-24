@@ -1,0 +1,147 @@
+# MOSS v9.3 - GitHub Action
+# 代码质量分析和自动重构检查
+#
+# 使用方式:
+#   name: MOSS Analysis
+#   on: [push, pull_request]
+#   jobs:
+#     moss:
+#       uses: ./.github/workflows/moss.yml
+
+name: 'MOSS Code Analysis'
+description: 'AI-powered code quality analysis and refactoring suggestions by MOSS v9.3'
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'Project path to analyze'
+    required: false
+    default: '.'
+  threshold:
+    description: 'Function line count threshold'
+    required: false
+    default: '50'
+  complexity:
+    description: 'Cyclomatic complexity threshold'
+    required: false
+    default: '10'
+  format:
+    description: 'Output format (text, json, github, junit)'
+    required: false
+    default: 'github'
+  fail-on-error:
+    description: 'Fail the action if errors are found'
+    required: false
+    default: 'true'
+  no-cache:
+    description: 'Disable caching'
+    required: false
+    default: 'false'
+  parallel:
+    description: 'Number of parallel workers (0=auto)'
+    required: false
+    default: '0'
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.11'
+
+outputs:
+  total-issues:
+    description: 'Total number of issues found'
+    value: ${{ steps.analyze.outputs.total_issues }}
+  errors:
+    description: 'Number of errors'
+    value: ${{ steps.analyze.outputs.errors }}
+  warnings:
+    description: 'Number of warnings'
+    value: ${{ steps.analyze.outputs.warnings }}
+  report-file:
+    description: 'Path to the analysis report file'
+    value: ${{ steps.analyze.outputs.report_file }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: 'pip'
+
+    - name: Install MOSS
+      shell: bash
+      run: |
+        pip install networkx
+        echo "MOSS v9.3 installed"
+
+    - name: Cache MOSS analysis results
+      uses: actions/cache@v4
+      if: inputs.no-cache != 'true'
+      with:
+        path: .moss/cache
+        key: moss-${{ runner.os }}-${{ hashFiles('**/*.py') }}
+        restore-keys: |
+          moss-${{ runner.os }}-
+
+    - name: Run MOSS Analysis
+      id: analyze
+      shell: bash
+      run: |
+        cd ${{ github.workspace }}
+
+        # 构建 moss 命令
+        MOSS_CMD="python3 moss/cli.py analyze ${{ inputs.path }}"
+        MOSS_CMD="$MOSS_CMD --format ${{ inputs.format }}"
+        MOSS_CMD="$MOSS_CMD --threshold ${{ inputs.threshold }}"
+        MOSS_CMD="$MOSS_CMD --complexity ${{ inputs.complexity }}"
+        MOSS_CMD="$MOSS_CMD --output moss-report.json"
+
+        if [ "${{ inputs.no-cache }}" = "true" ]; then
+          MOSS_CMD="$MOSS_CMD --no-cache"
+        fi
+
+        if [ "${{ inputs.fail-on-error }}" = "true" ]; then
+          MOSS_CMD="$MOSS_CMD --fail-on-error"
+        fi
+
+        # 运行分析
+        PYTHONPATH=moss/core:$PYTHONPATH eval $MOSS_CMD || EXIT_CODE=$?
+
+        # 提取结果
+        if [ -f moss-report.json ]; then
+          TOTAL_ISSUES=$(python3 -c "import json; d=json.load(open('moss-report.json')); print(d.get('summary',{}).get('total_issues',0))")
+          ERRORS=$(python3 -c "import json; d=json.load(open('moss-report.json')); print(d.get('summary',{}).get('errors',0))")
+          WARNINGS=$(python3 -c "import json; d=json.load(open('moss-report.json')); print(d.get('summary',{}).get('warnings',0))")
+
+          echo "total_issues=$TOTAL_ISSUES" >> $GITHUB_OUTPUT
+          echo "errors=$ERRORS" >> $GITHUB_OUTPUT
+          echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
+          echo "report_file=moss-report.json" >> $GITHUB_OUTPUT
+        fi
+
+        exit ${EXIT_CODE:-0}
+
+    - name: Upload Analysis Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: moss-analysis-report
+        path: moss-report.json
+        retention-days: 30
+
+    - name: MOSS Summary
+      if: always()
+      shell: bash
+      run: |
+        echo "## MOSS Analysis Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Total Issues | ${{ steps.analyze.outputs.total_issues }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Errors | ${{ steps.analyze.outputs.errors }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Warnings | ${{ steps.analyze.outputs.warnings }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Threshold | ${{ inputs.threshold }} lines |" >> $GITHUB_STEP_SUMMARY
+        echo "| Complexity | ${{ inputs.complexity }} |" >> $GITHUB_STEP_SUMMARY

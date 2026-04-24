@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  MOSS v9.3 - PyCharm Plugin Configuration
+  IntelliJ Platform Plugin SDK
+-->
+<idea-plugin>
+    <id>com.moss-devtools.pycharm-moss</id>
+    <name>MOSS - Smart Code Refactoring</name>
+    <vendor email="support@moss-devtools.com" url="https://moss-devtools.com">MOSS DevTools</vendor>
+    <description><![CDATA[
+    <h2>MOSS - AI-Powered Code Refactoring for Python</h2>
+    <p>Smart code analysis, refactoring suggestions, and quality insights powered by MOSS v9.3.</p>
+    <h3>Features:</h3>
+    <ul>
+      <li>Intelligent code diagnostics and quality analysis</li>
+      <li>AI-powered refactoring suggestions</li>
+      <li>Multi-level caching for fast incremental analysis</li>
+      <li>Cross-file refactoring with impact analysis</li>
+      <li>Parallel processing for large codebases</li>
+      <li>Import organization and optimization</li>
+    </ul>
+    ]]></description>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.python</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- LSP Client Integration -->
+        <applicationService serviceImplementation="com.moss.devtools.MossSettings"/>
+        <applicationConfigurable parentId="tools" instance="com.moss.devtools.MossSettingsConfigurable"
+                                  id="com.moss.devtools.MossSettingsConfigurable"
+                                  displayName="MOSS"/>
+
+        <!-- Code Analysis -->
+        <localInspection language="Python" groupName="MOSS"
+                         displayName="MOSS Code Quality"
+                         shortName="MossCodeQuality"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="com.moss.devtools.inspection.MossCodeQualityInspection"/>
+
+        <localInspection language="Python" groupName="MOSS"
+                         displayName="MOSS Complexity Check"
+                         shortName="MossComplexity"
+                         enabledByDefault="true"
+                         level="INFO"
+                         implementationClass="com.moss.devtools.inspection.MossComplexityInspection"/>
+
+        <!-- Refactoring -->
+        <refactoring.elementListenerProvider
+                implementation="com.moss.devtools.refactoring.MossRefactoringListener"/>
+
+        <!-- Tool Window -->
+        <toolWindow id="MOSS" anchor="right" icon="/icons/moss.svg"
+                    factoryClass="com.moss.devtools.ui.MossToolWindowFactory"/>
+
+        <!-- Annotator -->
+        <annotator language="Python" order="first"
+                   implementationClass="com.moss.devtools.annotator.MossAnnotator"/>
+
+        <!-- Line Marker Provider -->
+        <codeInsight.lineMarkerProvider language="Python"
+                                        implementationClass="com.moss.devtools.marker.MossLineMarkerProvider"/>
+
+        <!-- Code Vision -->
+        <codeInsight.codeVisionProvider id="MossCodeVisionProvider"
+                                        implementationClass="com.moss.devtools.vision.MossCodeVisionProvider"/>
+
+        <!-- Notification Group -->
+        <notificationGroup id="Moss Notifications" displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <!-- Main Menu Group -->
+        <group id="Moss.MainMenu" text="MOSS" description="MOSS Refactoring Tools"
+               popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+
+            <action id="Moss.AnalyzeProject" class="com.moss.devtools.action.AnalyzeProjectAction"
+                    text="Analyze Project" description="Run full project analysis">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift M A"/>
+            </action>
+
+            <action id="Moss.AnalyzeFile" class="com.moss.devtools.action.AnalyzeFileAction"
+                    text="Analyze Current File" description="Analyze current file">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift M F"/>
+            </action>
+
+            <separator/>
+
+            <action id="Moss.OrganizeImports" class="com.moss.devtools.action.OrganizeImportsAction"
+                    text="Organize Imports" description="Sort and organize imports"/>
+            <action id="Moss.ExtractFunction" class="com.moss.devtools.action.ExtractFunctionAction"
+                    text="Extract Function" description="Extract selected code as function"/>
+            <action id="Moss.MoveSymbol" class="com.moss.devtools.action.MoveSymbolAction"
+                    text="Move Symbol" description="Move symbol to another module"/>
+
+            <separator/>
+
+            <action id="Moss.ImpactAnalysis" class="com.moss.devtools.action.ImpactAnalysisAction"
+                    text="Impact Analysis" description="Analyze refactoring impact"/>
+            <action id="Moss.PerformanceStats" class="com.moss.devtools.action.PerformanceStatsAction"
+                    text="Performance Stats" description="Show analysis performance stats"/>
+
+            <separator/>
+
+            <action id="Moss.RestartServer" class="com.moss.devtools.action.RestartServerAction"
+                    text="Restart MOSS Server" description="Restart the MOSS LSP server"/>
+        </group>
+
+        <!-- Editor Context Menu -->
+        <group id="Moss.EditorContextMenu" text="MOSS">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <action id="Moss.QuickRefactor" class="com.moss.devtools.action.QuickRefactorAction"
+                    text="MOSS Quick Refactor"/>
+            <action id="Moss.ContextOrganizeImports" class="com.moss.devtools.action.OrganizeImportsAction"
+                    text="MOSS Organize Imports"/>
+        </group>
+    </actions>
+</idea-plugin>
