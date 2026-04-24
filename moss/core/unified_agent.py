@@ -41,7 +41,7 @@ class MOSSConfig:
     整合所有版本的配置参数
     """
     agent_id: str = 'moss_agent'
-    version: str = '8.0.0-dev'
+    version: str = '9.3.0'
     enable_survival: bool = True
     enable_curiosity: bool = True
     enable_influence: bool = True

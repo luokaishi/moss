@@ -421,6 +421,29 @@ class MOSSInteractionAdapter:
             self.logger.error(f"适配step调用失败: {e}")
             raise
     
+    def adapt_observation_for_step(self, observation: Optional[Dict] = None,
+                                    **kwargs) -> Dict:
+        """
+        适配观察数据为step方法参数 (兼容性别名)
+        
+        Args:
+            observation: 通用观察数据
+            **kwargs: 额外参数 (observed_behaviors, interaction)
+            
+        Returns:
+            适配后的参数字典
+        """
+        if observation is not None:
+            observed_behaviors, interaction = self.convert_to_v31_format(observation)
+        else:
+            observed_behaviors = kwargs.get('observed_behaviors')
+            interaction = kwargs.get('interaction')
+        
+        return {
+            'observed_behaviors': observed_behaviors,
+            'interaction': interaction
+        }
+    
     def detect_agent_type(self, agent) -> str:
         """检测Agent类型"""
         agent_class = type(agent).__name__
