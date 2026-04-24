@@ -1,6 +1,8 @@
 # MOSS v9.3.0 🌿
 
-**M**odular **O**rganization and **S**tructuring **S**ystem
+**M**ulti-**O**bjective **S**elf-Driven **S**ystem
+
+> *Evolved from autonomous agent research to intelligent code refactoring*
 
 [![Version](https://img.shields.io/badge/version-9.3.0-blue.svg)](https://github.com/moss-devtools/moss)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)

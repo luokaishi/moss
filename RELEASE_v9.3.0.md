@@ -2,13 +2,14 @@
 
 **Release Date:** 2026-04-24  
 **Version:** 9.3.0  
+**Full Name:** Multi-Objective Self-Driven System  
 **Status:** ✅ All Phases Complete
 
 ---
 
 ## 🎉 What's New
 
-MOSS v9.3.0 is a major release introducing enterprise-grade performance, comprehensive IDE ecosystem, CI/CD integration, ML-powered recommendations, and team collaboration features.
+MOSS (Multi-Objective Self-Driven System) v9.3.0 is a major release introducing enterprise-grade performance, comprehensive IDE ecosystem, CI/CD integration, ML-powered recommendations, and team collaboration features for intelligent code refactoring.
 
 ### Key Highlights
 
