@@ -96,6 +96,35 @@ def create_parser() -> argparse.ArgumentParser:
     agent_parser.add_argument("--max-cycles", "-c", type=int, default=100, help="最大执行周期")
     agent_parser.add_argument("--list", "-l", action="store_true", help="列出可用任务")
 
+    # ── report ──
+    report_parser = subparsers.add_parser("report", help="生成报告")
+    report_sub = report_parser.add_subparsers(dest="report_type", help="报告类型")
+
+    # report cost
+    cost_report_parser = report_sub.add_parser("cost", help="LLM 成本报告")
+    cost_report_parser.add_argument("--history", help="历史成本数据文件路径")
+    cost_report_parser.add_argument("--budget", "-b", type=float, help="显示预算对比 (USD)")
+
+    # ── validate ──
+    validate_parser = subparsers.add_parser("validate", help="统计验证实验")
+    validate_parser.add_argument("--experiment", "-e", required=True, help="实验数据 JSON 文件")
+    validate_parser.add_argument("--control", "-c", required=True, help="对照组数据 JSON 文件")
+    validate_parser.add_argument("--name", "-n", default="Experiment", help="实验名称")
+    validate_parser.add_argument("--alpha", type=float, default=0.05, help="显著性水平")
+    validate_parser.add_argument("--output", "-o", help="输出报告路径")
+
+    # ── watch ──
+    watch_parser = subparsers.add_parser("watch", help="监控文件变更并实时分析")
+    watch_parser.add_argument("path", nargs="?", default=".", help="监控路径")
+    watch_parser.add_argument("--pattern", "-p", action="append",
+                              help="文件模式 (可多次指定，如: *.py)")
+    watch_parser.add_argument("--no-analyze", action="store_true",
+                              help="禁用自动分析")
+    watch_parser.add_argument("--auto-refactor", action="store_true",
+                              help="自动重构 (谨慎使用)")
+    watch_parser.add_argument("--debounce", "-d", type=float, default=1.0,
+                              help="防抖时间 (秒)")
+
     # ── benchmark ──
     bench_parser = subparsers.add_parser("benchmark", help="性能基准测试")
     bench_parser.add_argument("path", nargs="?", default=".", help="项目路径")
@@ -436,6 +465,126 @@ async def cmd_agent(args: argparse.Namespace) -> int:
 
 
 # ──────────────────────────────────────────────────────────────
+# Report Command
+# ──────────────────────────────────────────────────────────────
+
+async def cmd_report(args: argparse.Namespace) -> int:
+    """生成报告"""
+    try:
+        from moss.core.llm_cost_controller import LLMCostController, CostBudget, print_cost_report
+    except ImportError:
+        # Fallback for running from moss directory
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from moss.core.llm_cost_controller import LLMCostController, CostBudget, print_cost_report
+
+    if args.report_type == 'cost':
+        budget_usd = args.budget if args.budget else 10.0
+        controller = LLMCostController(budget=CostBudget(budget_usd=budget_usd))
+
+        if args.history and Path(args.history).exists():
+            controller.load_history(Path(args.history))
+
+        report = controller.generate_report()
+        print_cost_report(report)
+        return 0
+
+    print(f"未知报告类型: {args.report_type}")
+    return 1
+
+
+# ──────────────────────────────────────────────────────────────
+# Validate Command
+# ──────────────────────────────────────────────────────────────
+
+async def cmd_validate(args: argparse.Namespace) -> int:
+    """统计验证实验"""
+    try:
+        from moss.core.statistical_validator import StatisticalValidator, ValidationConfig
+    except ImportError:
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from moss.core.statistical_validator import StatisticalValidator, ValidationConfig
+
+    import json
+
+    # 加载实验数据
+    try:
+        with open(args.experiment, 'r') as f:
+            exp_data = json.load(f)
+    except FileNotFoundError:
+        print(f"错误: 实验数据文件不存在 - {args.experiment}")
+        return 1
+    except json.JSONDecodeError:
+        print(f"错误: 实验数据文件格式错误 - {args.experiment}")
+        return 1
+
+    # 加载对照组数据
+    try:
+        with open(args.control, 'r') as f:
+            ctrl_data = json.load(f)
+    except FileNotFoundError:
+        print(f"错误: 对照组数据文件不存在 - {args.control}")
+        return 1
+    except json.JSONDecodeError:
+        print(f"错误: 对照组数据文件格式错误 - {args.control}")
+        return 1
+
+    # 创建验证器
+    config = ValidationConfig(alpha=args.alpha)
+    validator = StatisticalValidator(config)
+
+    # 添加数据
+    validator.add_experiment(
+        args.name,
+        exp_data if isinstance(exp_data, list) else exp_data.get('values', []),
+        unit=exp_data.get('unit', '') if isinstance(exp_data, dict) else ''
+    )
+    validator.add_experiment(
+        "Control",
+        ctrl_data if isinstance(ctrl_data, list) else ctrl_data.get('values', []),
+        unit=ctrl_data.get('unit', '') if isinstance(ctrl_data, dict) else ''
+    )
+
+    # 执行验证
+    report = validator.validate_experiment(args.name, "Control")
+
+    # 输出报告
+    print(report.to_markdown())
+
+    # 保存报告
+    if args.output:
+        validator.save_report(report, Path(args.output))
+        print(f"\n✓ 报告已保存到: {args.output}.json 和 {args.output}.md")
+
+    return 0
+
+
+# ──────────────────────────────────────────────────────────────
+# Watch Command
+# ──────────────────────────────────────────────────────────────
+
+async def cmd_watch(args: argparse.Namespace) -> int:
+    """监控文件变更"""
+    from moss.core.file_watcher import run_watch_cli
+
+    project_path = Path(args.path).resolve()
+    if not project_path.exists():
+        print(f"错误: 路径不存在 - {project_path}")
+        return 1
+
+    patterns = args.pattern if args.pattern else None
+
+    return await run_watch_cli(
+        path=project_path,
+        patterns=patterns,
+        auto_analyze=not args.no_analyze,
+        auto_refactor=args.auto_refactor,
+        debounce=args.debounce,
+    )
+
+
+# ──────────────────────────────────────────────────────────────
 # Benchmark Command
 # ──────────────────────────────────────────────────────────────
 
@@ -534,6 +683,9 @@ async def async_main():
         'server': cmd_server,
         'cache': cmd_cache,
         'agent': cmd_agent,
+        'report': cmd_report,
+        'validate': cmd_validate,
+        'watch': cmd_watch,
         'benchmark': cmd_benchmark,
         'init': cmd_init,
     }
