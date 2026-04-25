@@ -114,18 +114,102 @@ from .moss_mathematical_framework import MOSSMultiObjectiveFramework
 from .state_decision_model import StateDecisionModel, SystemState as SystemStateLevel
 from .purpose_dynamics import PurposeDynamics, PurposeDynamicsTracker
 
-# v8.0: LLM-guided mutation components
-from .llm_backend import LLMBackend, LLMConfig, LLMResponse, create_llm_backend
-from .llm_mutator import LLMMutator, LLMMutationResult
-from .hybrid_mutation import HybridMutationStrategy, HybridStrategyConfig
-# v8.0: Local LLM deployment (HuggingFace) — optional, requires torch
-try:
-    from .local_llm_backend import LocalLLMBackend, LocalModelConfig, create_local_backend_for_moss
-except ImportError:
-    # torch/transformers not installed, LocalLLMBackend unavailable
-    LocalLLMBackend = None
-    LocalModelConfig = None
-    create_local_backend_for_moss = None
+# v8.0: LLM-guided mutation components - lazy import to avoid circular dependency
+_llm_backend_imported = False
+LLMBackend = None
+LLMConfig = None
+LLMResponse = None
+create_llm_backend = None
+LLMMutator = None
+LLMMutationResult = None
+HybridMutationStrategy = None
+HybridStrategyConfig = None
+LocalLLMBackend = None
+LocalModelConfig = None
+create_local_backend_for_moss = None
+
+def _import_llm_components():
+    """延迟导入 LLM 组件，避免循环导入"""
+    global _llm_backend_imported, LLMBackend, LLMConfig, LLMResponse, create_llm_backend
+    global LLMMutator, LLMMutationResult, HybridMutationStrategy, HybridStrategyConfig
+    global LocalLLMBackend, LocalModelConfig, create_local_backend_for_moss
+    
+    if _llm_backend_imported:
+        return
+    
+    try:
+        from .llm_backend import LLMBackend as _LLMBackend, LLMConfig as _LLMConfig
+        from .llm_backend import LLMResponse as _LLMResponse, create_llm_backend as _create_llm_backend
+        from .llm_mutator import LLMMutator as _LLMMutator, LLMMutationResult as _LLMMutationResult
+        from .hybrid_mutation import HybridMutationStrategy as _HybridMutationStrategy
+        from .hybrid_mutation import HybridStrategyConfig as _HybridStrategyConfig
+        
+        LLMBackend = _LLMBackend
+        LLMConfig = _LLMConfig
+        LLMResponse = _LLMResponse
+        create_llm_backend = _create_llm_backend
+        LLMMutator = _LLMMutator
+        LLMMutationResult = _LLMMutationResult
+        HybridMutationStrategy = _HybridMutationStrategy
+        HybridStrategyConfig = _HybridStrategyConfig
+        
+        # v8.0: Local LLM deployment (HuggingFace) — optional, requires torch
+        try:
+            from .local_llm_backend import LocalLLMBackend as _LocalLLMBackend
+            from .local_llm_backend import LocalModelConfig as _LocalModelConfig
+            from .local_llm_backend import create_local_backend_for_moss as _create_local_backend_for_moss
+            LocalLLMBackend = _LocalLLMBackend
+            LocalModelConfig = _LocalModelConfig
+            create_local_backend_for_moss = _create_local_backend_for_moss
+        except ImportError:
+            pass  # torch/transformers not installed
+            
+        _llm_backend_imported = True
+    except ImportError as e:
+        import logging
+        logging.getLogger(__name__).debug(f"LLM components not available: {e}")
+
+# Auto-import on first access
+class _LazyLLMModule:
+    """延迟加载 LLM 模块的代理类"""
+    def __getattr__(self, name):
+        _import_llm_components()
+        if name == 'LLMBackend':
+            return LLMBackend
+        elif name == 'LLMConfig':
+            return LLMConfig
+        elif name == 'LLMResponse':
+            return LLMResponse
+        elif name == 'create_llm_backend':
+            return create_llm_backend
+        elif name == 'LLMMutator':
+            return LLMMutator
+        elif name == 'LLMMutationResult':
+            return LLMMutationResult
+        elif name == 'HybridMutationStrategy':
+            return HybridMutationStrategy
+        elif name == 'HybridStrategyConfig':
+            return HybridStrategyConfig
+        elif name == 'LocalLLMBackend':
+            return LocalLLMBackend
+        elif name == 'LocalModelConfig':
+            return LocalModelConfig
+        elif name == 'create_local_backend_for_moss':
+            return create_local_backend_for_moss
+        raise AttributeError(f"module 'moss.core' has no attribute '{name}'")
+
+# 保持向后兼容的导出
+LLMBackend = _LazyLLMModule()
+LLMConfig = _LazyLLMModule()
+LLMResponse = _LazyLLMModule()
+create_llm_backend = _LazyLLMModule()
+LLMMutator = _LazyLLMModule()
+LLMMutationResult = _LazyLLMModule()
+HybridMutationStrategy = _LazyLLMModule()
+HybridStrategyConfig = _LazyLLMModule()
+LocalLLMBackend = _LazyLLMModule()
+LocalModelConfig = _LazyLLMModule()
+create_local_backend_for_moss = _LazyLLMModule()
 
 # v9.2: Cross-file refactoring
 try:

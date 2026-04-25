@@ -14,11 +14,11 @@ from dataclasses import dataclass
 logger = logging.getLogger(__name__)
 
 try:
-    from agi.llm_backend import LLMBackend, LLMConfig
-    from agi.hybrid_mutation import HybridMutationStrategy
+    from moss.core.llm_backend import LLMBackend, LLMConfig
+    from moss.core.hybrid_mutation import HybridMutationStrategy
     LLM_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"LLM 模块导入失败：{e}，将使用纯 AST 变异")
+    logger.debug(f"LLM 模块未安装：{e}，将使用纯 AST 变异")
     LLM_AVAILABLE = False
     LLMBackend = None
     LLMConfig = None
