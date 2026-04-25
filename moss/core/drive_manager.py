@@ -1,0 +1,384 @@
+"""
+DriveManager - 驱动力管理器
+管理初始驱动力和涌现驱动力的评估、权重动态调整
+"""
+
+import numpy as np
+from typing import Dict, List, Optional, Callable, TYPE_CHECKING
+from dataclasses import dataclass, field
+from datetime import datetime
+
+if TYPE_CHECKING:
+    from .environment import EnvState
+
+# v6.0: 导入权重上限模块
+try:
+    from .drive_weight_cap import DriveWeightCapManager, WeightCapConfig, get_preset
+    WEIGHT_CAP_AVAILABLE = True
+except ImportError:
+    WEIGHT_CAP_AVAILABLE = False
+
+
+def _to_native(obj):
+    """将 numpy 类型转为 Python 原生类型，确保 JSON 可序列化"""
+    if isinstance(obj, (np.floating, np.float32, np.float64)):
+        return float(obj)
+    if isinstance(obj, (np.integer, np.int32, np.int64)):
+        return int(obj)
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, dict):
+        return {k: _to_native(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_to_native(v) for v in obj]
+    return obj
+
+
+@dataclass
+class Drive:
+    """驱动力"""
+    name: str
+    weight: float = 0.25
+    description: str = ""
+    score: float = 0.0
+    history: List[float] = field(default_factory=list)
+    is_emergent: bool = False
+    emerged_at: Optional[datetime] = None
+    source_behaviors: List[str] = field(default_factory=list)
+    novelty_score: float = 0.0
+    causal_independence: float = 0.0
+    stability: float = 0.0
+
+    def update_score(self, score: float):
+        self.score = float(score)
+        self.history.append(float(score))
+        if len(self.history) > 200:
+            self.history = self.history[-200:]
+        # 计算稳定性
+        if len(self.history) >= 20:
+            recent = np.array(self.history[-20:])
+            mean = np.mean(recent)
+            self.stability = float(np.clip(1.0 - (np.std(recent) / (mean + 1e-8)), 0, 1))
+
+
+class DriveManager:
+    """
+    驱动力管理器
+
+    负责：
+    1. 管理初始驱动和涌现驱动
+    2. 基于环境状态评估每个驱动力的得分
+    3. 动态调整驱动权重
+    4. 验证新驱动的独立性
+    """
+
+    # 内置评估器
+    EVALUATORS = {}
+
+    def __init__(self, drives_config: List[Dict], weight_cap_config: Optional[Dict] = None):
+        self.drives: Dict[str, Drive] = {}
+        self._evaluators: Dict[str, Callable] = {}
+        self._register_builtin_evaluators()
+
+        for cfg in drives_config:
+            self._add_drive_from_config(cfg)
+        
+        # v6.0: 初始化权重上限管理器
+        self._weight_cap_manager = None
+        if WEIGHT_CAP_AVAILABLE and weight_cap_config is not None:
+            if isinstance(weight_cap_config, str):
+                # 使用预设名称
+                cap_config = get_preset(weight_cap_config)
+            else:
+                # 使用自定义配置
+                cap_config = WeightCapConfig(**weight_cap_config)
+            self._weight_cap_manager = DriveWeightCapManager(self, cap_config)
+
+    def _register_builtin_evaluators(self):
+        """注册内置驱动力评估器"""
+        self._evaluators['survival'] = self._eval_survival
+        self._evaluators['curiosity'] = self._eval_curiosity
+        self._evaluators['influence'] = self._eval_influence
+        self._evaluators['optimization'] = self._eval_optimization
+
+    def _eval_survival(self, state: 'EnvState') -> float:
+        """生存驱动力：基于资源充足度和健康度"""
+        resource_score = np.clip(state.resource_level, 0, 1)
+        health_score = 1.0 - min(state.error_rate, 1.0)
+        uptime_score = np.clip(state.uptime_hours / 72.0, 0, 1)  # 72h为满
+        return 0.4 * resource_score + 0.4 * health_score + 0.2 * uptime_score
+
+    def _eval_curiosity(self, state: 'EnvState') -> float:
+        """好奇驱动力：基于环境变化程度和探索空间"""
+        entropy_score = np.clip(state.environment_entropy, 0, 1)
+        novelty_score = np.clip(1.0 - (state.visited_paths / max(state.total_paths, 1)), 0, 1)
+        return 0.6 * entropy_score + 0.4 * novelty_score
+
+    def _eval_influence(self, state: 'EnvState') -> float:
+        """影响力驱动力：基于外部交互和任务完成度"""
+        interaction_score = np.clip(state.interactions_count / 50.0, 0, 1)
+        task_score = np.clip(state.task_completion_rate, 0, 1)
+        return 0.5 * interaction_score + 0.5 * task_score
+
+    def _eval_optimization(self, state: 'EnvState') -> float:
+        """优化驱动力：基于效率和改进空间"""
+        efficiency = 1.0 - min(state.error_rate, 1.0)
+        improvement_space = np.clip(state.environment_entropy, 0, 1)
+        return 0.6 * efficiency + 0.4 * improvement_space
+
+    def _add_drive_from_config(self, cfg: Dict):
+        name = cfg['name']
+        drive = Drive(
+            name=name,
+            weight=cfg.get('weight', 0.25),
+            description=cfg.get('description', ''),
+            is_emergent=False
+        )
+        # 注册评估器
+        evaluator_key = cfg.get('evaluator', name)
+        if evaluator_key.startswith('builtin:'):
+            evaluator_key = evaluator_key.split(':', 1)[1]
+        if evaluator_key in self._evaluators:
+            drive._eval_fn = self._evaluators[evaluator_key]
+        else:
+            drive._eval_fn = lambda s: 0.5  # 默认评估
+        self.drives[name] = drive
+
+    def add_emergent_drive(self, name: str, weight: float,
+                           description: str, source_behaviors: List[str],
+                           novelty_score: float, causal_independence: float,
+                           eval_fn: Optional[Callable] = None) -> bool:
+        """添加涌现驱动力"""
+        if name in self.drives:
+            return False
+
+        drive = Drive(
+            name=name,
+            weight=weight,
+            description=description,
+            is_emergent=True,
+            emerged_at=datetime.now(),
+            source_behaviors=source_behaviors,
+            novelty_score=novelty_score,
+            causal_independence=causal_independence
+        )
+        drive._eval_fn = eval_fn or self._evaluators.get('curiosity', lambda s: 0.5)
+        self.drives[name] = drive
+
+        # 重新归一化权重
+        self._normalize_weights()
+        return True
+
+    def _normalize_weights(self):
+        """归一化所有驱动权重到总和1.0"""
+        total = sum(d.weight for d in self.drives.values())
+        if total > 0:
+            for d in self.drives.values():
+                d.weight /= total
+
+    # ========== 干预式验证支持方法 ==========
+
+    def force_drive(self, drive_name: str) -> None:
+        """
+        干预模式：强制使用指定驱动力
+        将该驱动力权重设为接近1.0，其他设为接近0
+        """
+        if drive_name not in self.drives:
+            return
+        for name, drive in self.drives.items():
+            if name == drive_name:
+                drive.weight = 0.99
+            else:
+                drive.weight = 0.01 / max(len(self.drives) - 1, 1)
+        # 不调用 _normalize_weights()，保持干预状态
+
+    def disable_drive(self, drive_name: str) -> None:
+        """
+        干预模式：禁用指定驱动力
+        将该驱动力权重设为接近0，重新归一化其他驱动力
+        """
+        if drive_name not in self.drives:
+            return
+        self.drives[drive_name].weight = 0.01
+        self._normalize_weights()
+
+    def save_weights(self) -> Dict[str, float]:
+        """保存当前权重"""
+        return {name: drive.weight for name, drive in self.drives.items()}
+
+    def restore_weights(self, saved_weights: Dict[str, float]) -> None:
+        """恢复保存的权重（干预实验后恢复）"""
+        for name, weight in saved_weights.items():
+            if name in self.drives:
+                self.drives[name].weight = weight
+        self._normalize_weights()
+
+    def evaluate_all(self, state: 'EnvState') -> Dict[str, float]:
+        """评估所有驱动力得分"""
+        scores = {}
+        for name, drive in self.drives.items():
+            try:
+                score = drive._eval_fn(state)
+                score = float(np.clip(score, 0, 1))
+            except Exception:
+                score = 0.5
+            drive.update_score(score)
+            scores[name] = float(score * drive.weight)
+        return scores
+
+    def get_weighted_action(self, state: 'EnvState',
+                            action_candidates: List[Dict]) -> Optional[Dict]:
+        """基于驱动力得分加权选择最佳行动"""
+        if not action_candidates:
+            return None
+
+        scores = self.evaluate_all(state)
+        total_score = sum(scores.values()) or 1.0
+
+        # 计算每个行动的加权分
+        best_action = None
+        best_value = -1.0
+
+        for action in action_candidates:
+            contributing_drives = action.get('drives', list(scores.keys()))
+            value = sum(scores.get(d, 0) for d in contributing_drives) / total_score
+            if value > best_value:
+                best_value = value
+                best_action = action
+
+        return best_action
+
+    def get_all_drive_names(self) -> List[str]:
+        return list(self.drives.keys())
+
+    # ========== 驱动力竞争机制 (Phase 3) ==========
+    
+    def update_drive_weights_competitive(self, performance_window: int = 50):
+        """
+        基于表现动态调整驱动力权重 - 竞争机制
+        
+        规则:
+        1. 新涌现驱动力有试用期 (probation)，初始权重较低
+        2. 根据最近表现调整权重 (reward 高则增，低则减)
+        3. 权重过低的驱动被淘汰
+        4. 定期重新归一化
+        """
+        import logging
+        logger = logging.getLogger('DriveManager')
+        
+        # 计算每个驱动的平均 reward
+        drive_performance = {}
+        for name, drive in self.drives.items():
+            if len(drive.history) < 10:
+                continue  # 数据不足
+            
+            recent_scores = drive.history[-performance_window:]
+            avg_score = np.mean(recent_scores)
+            trend = np.mean(recent_scores[-10:]) - np.mean(recent_scores[:10]) if len(recent_scores) >= 20 else 0
+            
+            drive_performance[name] = {
+                'avg_score': avg_score,
+                'trend': trend,
+                'is_emergent': drive.is_emergent,
+            }
+        
+        if not drive_performance:
+            return
+        
+        # 调整权重
+        eliminated = []
+        for name, perf in drive_performance.items():
+            drive = self.drives[name]
+            
+            # 试用期处理：新涌现驱动权重增长较慢
+            if drive.is_emergent and drive.emerged_at:
+                age_cycles = len(drive.history)
+                if age_cycles < 100:  # 前 100 cycles 为试用期
+                    # 试用期表现不好，加速淘汰
+                    if perf['avg_score'] < 0.3:
+                        drive.weight *= 0.90
+                        logger.debug(f"Drive {name} (probation): weight decay to {drive.weight:.3f}")
+                    # 试用期表现好，缓慢增长
+                    elif perf['avg_score'] > 0.6:
+                        drive.weight = min(drive.weight * 1.02, 0.30)  # 试用期上限 0.30
+                        logger.debug(f"Drive {name} (probation): weight grow to {drive.weight:.3f}")
+                else:
+                    # 转正后正常竞争
+                    self._adjust_drive_weight(drive, perf)
+            else:
+                # 初始驱动正常竞争
+                self._adjust_drive_weight(drive, perf)
+            
+            # 淘汰检查
+            if drive.weight < 0.02 and drive.is_emergent:
+                eliminated.append(name)
+                logger.info(f"Drive {name} eliminated (weight {drive.weight:.3f} < 0.02)")
+        
+        # 执行淘汰
+        for name in eliminated:
+            del self.drives[name]
+        
+        # 重新归一化
+        self._normalize_weights()
+    
+    def _adjust_drive_weight(self, drive: Drive, perf: Dict):
+        """根据表现调整单个驱动力权重"""
+        avg_score = perf['avg_score']
+        trend = perf['trend']
+        
+        # 基于平均表现调整
+        if avg_score > 0.7:
+            # 表现优秀，权重增长
+            growth = 1.0 + (avg_score - 0.7) * 0.5  # 最高增长 15%
+            drive.weight = min(drive.weight * growth, 0.40)  # 上限 0.40
+        elif avg_score < 0.3:
+            # 表现差，权重衰减
+            decay = 0.95 if avg_score < 0.2 else 0.98
+            drive.weight *= decay
+        
+        # 趋势加成：上升趋势额外奖励
+        if trend > 0.1:
+            drive.weight = min(drive.weight * 1.03, 0.40)
+        elif trend < -0.1:
+            drive.weight *= 0.97
+    
+    def get_drive_summary(self) -> Dict:
+        return {
+            name: {
+                'weight': float(d.weight),
+                'score': float(d.score),
+                'stability': float(d.stability),
+                'is_emergent': d.is_emergent,
+                'history_len': len(d.history)
+            }
+            for name, d in self.drives.items()
+        }
+
+    def update_weight_from_feedback(self, drive_name: str, reward: float, lr: float = 0.1):
+        """根据反馈更新驱动权重（v6.0: 集成权重上限）"""
+        if drive_name not in self.drives:
+            return
+        
+        delta = lr * (reward - 0.5)  # reward>0.5则增强
+        
+        # v6.0: 应用权重上限
+        if self._weight_cap_manager:
+            delta = self._weight_cap_manager.apply_weight_update(drive_name, delta)
+        
+        self.drives[drive_name].weight = float(np.clip(
+            self.drives[drive_name].weight + delta, 0.05, 0.6
+        ))
+        self._normalize_weights()
+        
+        # v6.0: 再次应用上限归一化
+        if self._weight_cap_manager:
+            capped_weights = self._weight_cap_manager.normalize_with_caps()
+            for name, weight in capped_weights.items():
+                if name in self.drives:
+                    self.drives[name].weight = weight
+    
+    def get_weight_cap_stats(self) -> Optional[Dict]:
+        """获取权重上限统计（v6.0）"""
+        if self._weight_cap_manager:
+            return self._weight_cap_manager.get_stats()
+        return None
