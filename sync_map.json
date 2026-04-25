@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "generated": "2026-04-25",
+  "main_to_mves": [
+    {
+      "source": "moss/core/llm_cost_controller.py",
+      "target": "agi/cost_controller.py",
+      "priority": "P0",
+      "status": "pending",
+      "notes": "Token budget optimization based on mves v8.6 findings"
+    },
+    {
+      "source": "moss/core/statistical_validator.py",
+      "target": "experiments/statistical_validator.py",
+      "priority": "P0",
+      "status": "pending",
+      "notes": "Academic-grade N=30 statistical validation"
+    },
+    {
+      "source": "moss/core/agent_bridge.py",
+      "target": "agi/agent_bridge.py",
+      "priority": "P1",
+      "status": "pending",
+      "notes": "v9 unified agent architecture bridge"
+    }
+  ],
+  "mves_to_main": [
+    {
+      "source": "agi/event_driven_purpose.py",
+      "target": "moss/core/event_driven_purpose.py",
+      "priority": "P0",
+      "status": "pending",
+      "notes": "5 event types, real-time purpose generation"
+    },
+    {
+      "source": "agi/monitoring_dashboard.py",
+      "target": "moss/core/monitoring_dashboard.py",
+      "priority": "P1",
+      "status": "pending",
+      "notes": "Production-grade monitoring dashboard"
+    },
+    {
+      "source": "agi/mves_realworld_bridge.py",
+      "target": "moss/core/real_world_bridge.py",
+      "priority": "P1",
+      "status": "pending",
+      "notes": "Real-world file/network/system monitoring"
+    }
+  ],
+  "conflicts": [
+    {
+      "file": "agi/hybrid_mutation.py",
+      "strategy": "manual_resolve",
+      "priority": "P1",
+      "notes": "Main has cost optimization, mves has event hooks"
+    }
+  ]
+}
