@@ -15,8 +15,8 @@ import random
 from datetime import datetime
 
 # MOSS imports
-from agi.drive_manager import DriveManager
-from agi.environment_v2 import EnvState
+from moss.core.drive_manager import DriveManager
+from moss.core.environment_v2 import EnvState
 
 
 @dataclass

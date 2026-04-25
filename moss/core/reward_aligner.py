@@ -250,5 +250,12 @@ class RewardAligner:
             self.current_env_weight = min(0.8, self.current_env_weight + self.config.adaptation_rate)
         
         # 如果进度停滞，增强驱动权重
-        if abs(progress_delta) < 0.01 and len(self.progress_tracker.progress_history) > 10:
-            self.current_drive_weight = min(0.5, self.current_drive_weight + self.config.adaptation_rate
+
+    def _default_task_reward(self, state, info):
+        return 0.0
+
+    def _collection_task_reward(self, state, info):
+        return 0.0
+
+    def _delivery_task_reward(self, state, info):
+        return 0.0

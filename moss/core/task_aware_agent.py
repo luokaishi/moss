@@ -7,8 +7,8 @@ TaskAwareAgent - 任务感知 Agent
 import sys
 sys.path.insert(0, '/home/admin/.openclaw/workspace')
 
-from agi.agent import AGIAgent
-from agi.environment import EnvState
+from .agi_agent import AGIAgent
+from .environment import EnvState
 from typing import Dict, List, Optional, Callable
 import logging
 import random

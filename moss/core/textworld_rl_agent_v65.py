@@ -13,8 +13,8 @@ from dataclasses import dataclass
 from collections import deque
 import random
 
-from agi.textworld_enhanced_understanding import EnhancedTextWorldUnderstanding
-from agi.generalization_optimizer import GeneralizationOptimizer, OptimizationConfig
+from moss.core.textworld_enhanced_understanding import EnhancedTextWorldUnderstanding
+from moss.core.generalization_optimizer import GeneralizationOptimizer, OptimizationConfig
 
 
 @dataclass
