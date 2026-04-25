@@ -1,27 +1,29 @@
 {
-  "version": "1.0",
+  "version": "2.0",
   "generated": "2026-04-25",
+  "status": "COMPLETE",
+  "note": "All MVES v8.6 components merged to main. This file is now archived.",
   "main_to_mves": [
     {
       "source": "moss/core/llm_cost_controller.py",
       "target": "agi/cost_controller.py",
       "priority": "P0",
-      "status": "pending",
-      "notes": "Token budget optimization based on mves v8.6 findings"
+      "status": "completed",
+      "notes": "Merged to main. agi/cost_controller.py created for backward compatibility."
     },
     {
       "source": "moss/core/statistical_validator.py",
       "target": "experiments/statistical_validator.py",
       "priority": "P0",
-      "status": "pending",
-      "notes": "Academic-grade N=30 statistical validation"
+      "status": "completed",
+      "notes": "Merged to main. N=30 validation available in moss.core."
     },
     {
       "source": "moss/core/agent_bridge.py",
       "target": "agi/agent_bridge.py",
       "priority": "P1",
-      "status": "pending",
-      "notes": "v9 unified agent architecture bridge"
+      "status": "completed",
+      "notes": "UnifiedMOSSAgentV2 in main provides v9/v8.6 bridge."
     }
   ],
   "mves_to_main": [
@@ -29,30 +31,38 @@
       "source": "agi/event_driven_purpose.py",
       "target": "moss/core/event_driven_purpose.py",
       "priority": "P0",
-      "status": "pending",
-      "notes": "5 event types, real-time purpose generation"
+      "status": "completed",
+      "notes": "Merged to main in Phase 1."
     },
     {
       "source": "agi/monitoring_dashboard.py",
       "target": "moss/core/monitoring_dashboard.py",
       "priority": "P1",
-      "status": "pending",
-      "notes": "Production-grade monitoring dashboard"
+      "status": "completed",
+      "notes": "Merged to main in Phase 1."
     },
     {
       "source": "agi/mves_realworld_bridge.py",
       "target": "moss/core/real_world_bridge.py",
       "priority": "P1",
-      "status": "pending",
-      "notes": "Real-world file/network/system monitoring"
+      "status": "completed",
+      "notes": "Merged to main in Phase 1."
     }
   ],
   "conflicts": [
     {
       "file": "agi/hybrid_mutation.py",
-      "strategy": "manual_resolve",
+      "strategy": "resolved",
       "priority": "P1",
-      "notes": "Main has cost optimization, mves has event hooks"
+      "notes": "Both versions available: moss/core/hybrid_mutation.py (v9) and moss/core/llm_integration_mves.py (v8.6 features)"
     }
-  ]
+  ],
+  "summary": {
+    "phases_completed": 5,
+    "files_merged": 121,
+    "subdirectories_merged": 13,
+    "exports_added": 146,
+    "commits": 23,
+    "version": "9.6.0"
+  }
 }
