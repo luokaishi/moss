@@ -238,3 +238,16 @@ from .python_refactorer import PythonRefactorer
 LanguageRegistry.register_parser(PythonParser())
 LanguageRegistry.register_analyzer(PythonAnalyzer())
 LanguageRegistry.register_refactorer(PythonRefactorer())
+
+# Import JavaScript implementations (optional, requires no external deps)
+try:
+    from .javascript_parser import JavaScriptParser
+    from .javascript_analyzer import JavaScriptAnalyzer
+    from .javascript_refactorer import JavaScriptRefactorer
+    
+    # Auto-register JavaScript language components
+    LanguageRegistry.register_parser(JavaScriptParser())
+    LanguageRegistry.register_analyzer(JavaScriptAnalyzer())
+    LanguageRegistry.register_refactorer(JavaScriptRefactorer())
+except ImportError:
+    pass  # JavaScript support not available
