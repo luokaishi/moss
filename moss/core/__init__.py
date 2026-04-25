@@ -59,6 +59,35 @@ from .real_world_bridge import MVESRealWorldBridge
 from .llm_cost_controller import LLMCostController, CostBudget
 from .statistical_validator import StatisticalValidator, ValidationConfig
 
+# Phase 4: P2 Meta-learning components
+from .meta_learner import MetaLearner
+from .meta_sme import MetaSME
+from .meta_sme_v2 import OptimizedMetaSME
+from .meta_sme_integration import MetaSMEDriveIntegration, EnvironmentAwareMetaSME
+from .meta_sme_optimizer import SmartTrigger, CachedCalculator
+
+# Phase 4: P2 Performance & Optimization
+from .performance_optimizer import OptimizedGPEvaluator, PerformanceMonitor
+from .generalization_optimizer import EnsembleModel, DataAugmenter
+from .intervention_validator import InterventionValidator
+from .reward_aligner import RewardAligner
+
+# Phase 4: P2 Training infrastructure
+# from .distributed_trainer import DistributedTrainer  # File incomplete in source
+from .gpu_trainer import GPUTrainer, MOSSGPUAgent
+from .model_compression import Compressor, CompressionConfig
+
+# Phase 4: P2 Advanced agents
+from .self_modifying_agent import SelfModifyingAgent
+# from .seven_layer_agent import SevenLayerAgent  # Requires concept module
+
+# Phase 4: P2 TextWorld
+from .textworld_enhanced_understanding import EnhancedTextWorldUnderstanding
+from .textworld_memory import TextWorldMemory
+from .textworld_rl_agent import TextWorldRLAgent
+from .textworld_rl_agent_v65 import TextWorldRLAgentV65
+from .textworld_understanding import TextWorldUnderstanding
+
 from .objectives import (
     BaseObjective,
     SurvivalObjective,
@@ -245,6 +274,35 @@ __all__ = [
     # Statistical
     'StatisticalValidator',
     'ValidationConfig',
+    # Phase 4: Meta-learning
+    'MetaLearner',
+    'MetaSME',
+    'MetaSMEAdapter',
+    'OptimizedMetaSME',
+    'MetaSMEDriveIntegration',
+    'EnvironmentAwareMetaSME',
+    'SmartTrigger',
+    'CachedCalculator',
+    # Phase 4: Performance & Optimization
+    'OptimizedGPEvaluator',
+    'PerformanceMonitor',
+    'EnsembleModel',
+    'DataAugmenter',
+    'InterventionValidator',
+    'RewardAligner',
+    # Phase 4: Training infrastructure
+    'GPUTrainer',
+    'MOSSGPUAgent',
+    'Compressor',
+    'CompressionConfig',
+    # Phase 4: Advanced agents
+    'SelfModifyingAgent',
+    # Phase 4: TextWorld
+    'EnhancedTextWorldUnderstanding',
+    'TextWorldMemory',
+    'TextWorldRLAgent',
+    'TextWorldRLAgentV65',
+    'TextWorldUnderstanding',
     # Objectives
     'BaseObjective',
     'SurvivalObjective',
