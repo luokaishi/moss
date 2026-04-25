@@ -1,10 +1,12 @@
-# MOSS v9.5.0 🌿
+# MOSS v9.6.0 🌿
 
 **M**ulti-**O**bjective **S**elf-Driven **S**ystem
 
 > *Evolved from autonomous agent research to intelligent code refactoring*
+> 
+> **v9.6.0**: Unified architecture - MVES v8.6 fully merged into `moss/core`
 
-[![Version](https://img.shields.io/badge/version-9.5.0-blue.svg)](https://github.com/moss-devtools/moss)
+[![Version](https://img.shields.io/badge/version-9.6.0-blue.svg)](https://github.com/moss-devtools/moss)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -28,11 +30,25 @@
 - Code pattern learning and anti-pattern detection
 - Project-specific best practices
 
-### 🤖 Autonomous Agent (v9.5)
+### 🤖 Autonomous Agent (v9.6)
 - **Self-driven learning loop**: Observe → Decide → Act → Learn → Reflect
 - **9-dimension policy**: Linear weights for Survival/Curiosity/Influence/Optimization/Coherence/Valence/Other/Norm/Purpose
 - **CodeEnvironment**: Real reward signals from code quality metrics
 - **ExperimentRunner**: N=30 statistical validation, A/B testing
+- **UnifiedMOSSAgentV2**: Bridges v9 (9-dim) and v8.6 (drive emergence) architectures
+
+### 🧬 Genetic Programming & Meta-Learning (v9.6)
+- **GP System**: 3 generations of genetic programmers with fitness tracking
+- **Meta-Learning**: MetaLearner, MetaSME with self-modification capabilities
+- **Meta-Cognition**: BeliefSystem, UncertaintyTracker, ReflectionEngine
+- **Advanced Agents**: SelfModifyingAgent, SevenLayerAgent
+
+### 🌍 Environments & Integration (v9.6)
+- **RealEnvironment**: State management with action space
+- **Event-Driven**: 5 event types with priority-based purpose generation
+- **Auto-Recovery**: 5 recovery strategies for agent crashes
+- **Real-World Bridge**: File/network/system monitoring
+- **TextWorld**: Full RL agent integration with memory and understanding
 
 ### 🔧 Refactoring (v9.2-9.3)
 - Cross-file refactoring with dependency analysis
@@ -82,7 +98,7 @@ moss analyze . --format text
 Output:
 ```
 ============================================================
-MOSS v9.5.0 分析报告
+MOSS v9.6.0 分析报告
 ============================================================
 项目: /path/to/your-project
 文件: 42
@@ -133,10 +149,18 @@ moss refactor move --symbol X --source A --target B [--dry-run]
 moss refactor extract --file main.py --start-line 10 --end-line 50 --name helper
 moss refactor imports --file main.py
 
-# Autonomous Agent (v9.5)
+# Autonomous Agent (v9.6)
 moss agent --task system_monitor
 moss agent --task code_review --path ./src
 moss agent --list
+
+# Genetic Programming (v9.6)
+moss gp evolve --population 100 --generations 50 --target fitness_goal
+moss gp optimize --file algorithm.py --strategy mutation
+
+# Meta-Learning (v9.6)
+moss meta learn --task task_config.json --episodes 1000
+moss meta adapt --agent agent_config.json --environment env_config.json
 
 # Reports (v9.4)
 moss report cost --budget 5.0
@@ -204,16 +228,26 @@ repos:
 - [CLI Reference](https://moss-devtools.github.io/moss/guides/cli/)
 - [API Documentation](https://moss-devtools.github.io/moss/api/core/)
 - [Examples](https://moss-devtools.github.io/moss/examples/)
+- [Migration Guide](docs/MIGRATION_GUIDE.md) - Migrating from `agi/` to `moss.core`
+- [Merge Strategy](docs/MERGE_STRATEGY.md) - MVES v8.6 to main merge details
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    MOSS v9.5.0                              │
+│                    MOSS v9.6.0                              │
 ├─────────────────────────────────────────────────────────────┤
 │  VSCode / PyCharm / CLI / CI/CD / Web Dashboard             │
 ├─────────────────────────────────────────────────────────────┤
 │  LSP Server (JSON-RPC 2.0)                                  │
+├─────────────────────────────────────────────────────────────┤
+│  Unified Architecture Layer (v9.6)                          │
+│  ├─ UnifiedMOSSAgentV2 (v9/v8.6 bridge)                     │
+│  ├─ AGI Compatibility Layer (agi/ → moss.core)              │
+│  ├─ GP System (3 generations)                               │
+│  ├─ Meta-Learning (MetaLearner, MetaSME)                    │
+│  ├─ Meta-Cognition (Belief, Uncertainty, Reflection)        │
+│  └─ TextWorld Integration (RL Agent + Memory)               │
 ├─────────────────────────────────────────────────────────────┤
 │  Autonomous Agent Layer (v9.5)                              │
 │  ├─ IntegratedMOSSSystem (Agent + LearningLoop)             │
@@ -226,7 +260,9 @@ repos:
 │  ├─ Task-Aware Agent (5 scenarios)                          │
 │  ├─ LLM Cost Controller (Token budget)                      │
 │  ├─ Statistical Validator (t-test, Cohen's d)               │
-│  └─ File Watcher (Real-time monitoring)                     │
+│  ├─ File Watcher (Real-time monitoring)                     │
+│  ├─ Event-Driven Purpose (5 event types)                    │
+│  └─ Auto-Recovery (5 strategies)                            │
 ├─────────────────────────────────────────────────────────────┤
 │  Performance Engine (v9.3)                                  │
 │  ├─ Incremental Analyzer                                    │
@@ -242,10 +278,11 @@ repos:
 │  ├─ Move Operations                                         │
 │  └─ Split Operations                                        │
 ├─────────────────────────────────────────────────────────────┤
-│  Core Agent (9-Dimension)                                   │
+│  Core Agent (9-Dimension + Drive System)                    │
 │  ├─ D1-D4: Survival/Curiosity/Influence/Optimization        │
 │  ├─ D5-D8: Coherence/Valence/Other/Norm                     │
-│  └─ D9: Purpose                                             │
+│  ├─ D9: Purpose                                             │
+│  └─ Drive System (9-dimension emergence)                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
