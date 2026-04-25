@@ -1,362 +1,473 @@
+#!/usr/bin/env python3
 """
-MOSS v3.1/v4.0 Real World Bridge
-================================
+mves-realworld 桥接模块
 
-让MOSS能真正操作GitHub、浏览器、文件系统等真实世界工具
-基于v3.1.0的9维架构，将D9 Purpose转化为真实世界行动
+将 mves 多向量演化系统接入真实世界环境
 
-Author: Cash
-Date: 2026-03-20
-Version: 4.0.0-dev (Step 1)
+核心功能:
+1. 真实世界状态感知
+2. 真实动作安全执行
+3. 长期实验状态管理
+4. 与 mves 核心模块集成
 """
 
-import os
 import sys
+sys.path.insert(0, '/home/admin/.openclaw/workspace')
+
+from typing import Dict, List, Optional, Callable
+from dataclasses import dataclass
+import time
 import json
-import logging
+import os
 from pathlib import Path
-from datetime import datetime
-from typing import Dict, List, Optional, Any
-import numpy as np
-
-# Path setup — use moss package imports instead of hardcoded v3 path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
-# Reuse integration module
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'integration'))
-
-logger = logging.getLogger(__name__)
 
 
-class RealWorldBridge:
-    """
-    MOSS真实世界桥接层
+@dataclass
+class RealWorldState:
+    """真实世界状态快照"""
+    timestamp: float
+    files: Dict  # 文件系统状态
+    network: Dict  # 网络状态
+    system: Dict  # 系统资源状态
+    processes: Dict  # 进程状态
     
-    将MOSS的意图和Purpose转化为真实世界操作
-    支持：GitHub、文件系统、浏览器、API调用等
-    """
-    
-    def __init__(self, agent, config_path: Optional[str] = None):
-        """
-        初始化真实世界桥接器
-        
-        Args:
-            agent: MOSS Agent实例（需要包含purpose_generator）
-            config_path: API配置文件路径
-        """
-        self.agent = agent
-        self.config_path = config_path or "integration/api_config.json"
-        self.action_log_path = Path("experiments/real_world_actions.jsonl")
-        
-        # 确保日志目录存在
-        self.action_log_path.parent.mkdir(parents=True, exist_ok=True)
-        
-        # 加载配置
-        self.config = self._load_config()
-        
-        # 初始化工具
-        self.tools = {}
-        self._init_tools()
-        
-        logger.info("[RealWorldBridge] Initialized with tools: %s", list(self.tools.keys()))
-    
-    def _load_config(self) -> Dict:
-        """加载API配置"""
-        try:
-            with open(self.config_path, 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            logger.warning(f"[RealWorldBridge] Config not found at {self.config_path}, using defaults")
-            return {}
-    
-    def _init_tools(self):
-        """初始化可用工具"""
-        # GitHub (使用现有脚本)
-        self.tools['github'] = {
-            'enabled': self._check_github_auth(),
-            'description': 'GitHub operations: PR, issue, commit, push',
-            'execute': self._execute_github_action
-        }
-        
-        # 文件系统
-        self.tools['filesystem'] = {
-            'enabled': True,
-            'description': 'File operations: read, write, move, delete',
-            'execute': self._execute_filesystem_action
-        }
-        
-        # 浏览器 (Playwright/Selenium wrapper)
-        self.tools['browser'] = {
-            'enabled': False,  # 需要额外安装
-            'description': 'Browser automation: navigate, click, scrape',
-            'execute': self._execute_browser_action
-        }
-        
-        # 命令行
-        self.tools['shell'] = {
-            'enabled': True,
-            'description': 'Shell commands: git, python, etc.',
-            'execute': self._execute_shell_action
-        }
-    
-    def _check_github_auth(self) -> bool:
-        """检查GitHub认证是否可用"""
-        token = self.config.get('github_token') or os.getenv('GITHUB_TOKEN')
-        return bool(token)
-    
-    def execute_real_action(self, task_description: str, step: int, 
-                          context: Optional[Dict] = None) -> Dict:
-        """
-        核心方法：将MOSS意图转化为真实世界操作
-        
-        Args:
-            task_description: 任务描述
-            step: 当前步骤
-            context: 额外上下文
-            
-        Returns:
-            操作结果字典
-        """
-        # 1. 获取当前Purpose
-        current_purpose = self._get_current_purpose(step)
-        
-        # 2. 决策：选择合适的工具
-        tool_choice = self._select_tool(task_description, current_purpose)
-        
-        # 3. 生成具体操作
-        action_plan = self._generate_action_plan(
-            task_description, tool_choice, current_purpose, context
-        )
-        
-        # 4. 执行操作
-        result = self._execute_action(action_plan)
-        
-        # 5. 记录日志
-        self._log_action(task_description, action_plan, result, step, current_purpose)
-        
-        return result
-    
-    def _get_current_purpose(self, step: int) -> Dict:
-        """获取当前Purpose信息"""
-        # 从agent获取purpose generator
-        if hasattr(self.agent, 'purpose_generator'):
-            pg = self.agent.purpose_generator
-            # Handle both numpy array and list
-            vector = pg.purpose_vector if hasattr(pg, 'purpose_vector') else []
-            if hasattr(vector, 'tolist'):
-                vector = vector.tolist()
-            return {
-                'vector': vector,
-                'statement': pg.current_statement if hasattr(pg, 'current_statement') else '',
-                'dominant': self._get_dominant_dimension(pg)
-            }
-        return {'vector': [], 'statement': '', 'dominant': 'Unknown'}
-    
-    def _get_dominant_dimension(self, purpose_gen) -> str:
-        """获取主导维度"""
-        if not hasattr(purpose_gen, 'purpose_vector'):
-            return 'Unknown'
-        
-        import numpy as np
-        purpose_8d = np.array(purpose_gen.purpose_vector[:8])
-        dim_names = ['Survival', 'Curiosity', 'Influence', 'Optimization',
-                    'Coherence', 'Valence', 'Other', 'Norm']
-        top_idx = np.argmax(purpose_8d)
-        return dim_names[top_idx]
-    
-    def _select_tool(self, task: str, purpose: Dict) -> str:
-        """基于任务和Purpose选择工具"""
-        task_lower = task.lower()
-        
-        # 关键词匹配
-        if any(kw in task_lower for kw in ['github', 'pr', 'commit', 'push', 'issue']):
-            return 'github' if self.tools['github']['enabled'] else 'shell'
-        
-        if any(kw in task_lower for kw in ['browse', 'navigate', 'click', 'web']):
-            return 'browser' if self.tools['browser']['enabled'] else 'shell'
-        
-        if any(kw in task_lower for kw in ['read file', 'write file', 'move', 'delete']):
-            return 'filesystem'
-        
-        # 基于Purpose的启发式选择
-        dominant = purpose.get('dominant', '')
-        if dominant == 'Curiosity':
-            return 'browser' if self.tools['browser']['enabled'] else 'shell'
-        elif dominant == 'Optimization':
-            return 'shell'
-        elif dominant == 'Survival':
-            return 'filesystem'
-        
-        return 'shell'
-    
-    def _generate_action_plan(self, task: str, tool: str, 
-                             purpose: Dict, context: Optional[Dict]) -> Dict:
-        """生成详细行动计划"""
+    def to_dict(self) -> Dict:
         return {
-            'tool': tool,
-            'task': task,
-            'purpose_dominant': purpose.get('dominant', 'Unknown'),
-            'purpose_statement': purpose.get('statement', ''),
-            'timestamp': datetime.now().isoformat(),
-            'context': context or {}
+            'timestamp': self.timestamp,
+            'files': self.files,
+            'network': self.network,
+            'system': self.system,
+            'processes': self.processes,
         }
     
-    def _execute_action(self, action_plan: Dict) -> Dict:
-        """执行行动计划"""
-        tool = action_plan['tool']
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'RealWorldState':
+        return cls(
+            timestamp=data['timestamp'],
+            files=data['files'],
+            network=data['network'],
+            system=data['system'],
+            processes=data['processes'],
+        )
+
+
+class FileSystemMonitor:
+    """文件系统监控"""
+    
+    def __init__(self, workspace: str = '/tmp/mves_workspace'):
+        self.workspace = Path(workspace)
+        self.workspace.mkdir(exist_ok=True)
+        self._last_scan = {}
+    
+    def scan(self, path: str = None) -> Dict:
+        """扫描文件系统"""
+        target = Path(path) if path else self.workspace
         
-        if tool not in self.tools:
+        files = []
+        dirs = []
+        
+        try:
+            for item in target.iterdir():
+                if item.is_file():
+                    files.append({
+                        'name': item.name,
+                        'size': item.stat().st_size,
+                        'mtime': item.stat().st_mtime,
+                        'ext': item.suffix,
+                    })
+                elif item.is_dir():
+                    dirs.append({
+                        'name': item.name,
+                        'file_count': len(list(item.iterdir())),
+                    })
+        except PermissionError:
+            pass
+        
+        return {
+            'path': str(target),
+            'files': files,
+            'dirs': dirs,
+            'total_files': len(files),
+            'total_dirs': len(dirs),
+            'scan_time': time.time(),
+        }
+    
+    def detect_changes(self) -> List[Dict]:
+        """检测文件变化"""
+        current = self.scan()
+        changes = []
+        
+        current_files = {f['name']: f for f in current['files']}
+        last_files = {f['name']: f for f in self._last_scan.get('files', [])}
+        
+        # 新增文件
+        for name in current_files:
+            if name not in last_files:
+                changes.append({'type': 'created', 'file': name})
+        
+        # 删除文件
+        for name in last_files:
+            if name not in current_files:
+                changes.append({'type': 'deleted', 'file': name})
+        
+        # 修改文件
+        for name in current_files:
+            if name in last_files:
+                if current_files[name]['mtime'] != last_files[name]['mtime']:
+                    changes.append({'type': 'modified', 'file': name})
+        
+        self._last_scan = current
+        return changes
+
+
+class NetworkMonitor:
+    """网络状态监控"""
+    
+    def __init__(self):
+        self._last_check = None
+    
+    def check(self) -> Dict:
+        """检查网络状态"""
+        import subprocess
+        
+        status = {
+            'timestamp': time.time(),
+            'internet': False,
+            'dns': False,
+            'latency': None,
+            'interfaces': [],
+        }
+        
+        # 检查外网连接
+        try:
+            result = subprocess.run(
+                ['ping', '-c', '1', '-W', '2', '8.8.8.8'],
+                capture_output=True,
+                timeout=5
+            )
+            status['internet'] = result.returncode == 0
+        except:
+            pass
+        
+        # 检查 DNS
+        try:
+            result = subprocess.run(
+                ['nslookup', 'google.com'],
+                capture_output=True,
+                timeout=5
+            )
+            status['dns'] = result.returncode == 0
+        except:
+            pass
+        
+        # 获取网络接口
+        try:
+            result = subprocess.run(
+                ['ip', 'addr'],
+                capture_output=True,
+                text=True,
+                timeout=2
+            )
+            if result.returncode == 0:
+                interfaces = []
+                for line in result.stdout.split('\n'):
+                    if line.startswith('    inet '):
+                        interfaces.append(line.strip())
+                status['interfaces'] = interfaces[:5]  # 只取前5个
+        except:
+            pass
+        
+        self._last_check = status
+        return status
+
+
+class SystemMonitor:
+    """系统资源监控"""
+    
+    def check(self) -> Dict:
+        """检查系统资源"""
+        import subprocess
+        
+        status = {
+            'timestamp': time.time(),
+            'cpu': {},
+            'memory': {},
+            'disk': {},
+            'uptime': None,
+        }
+        
+        # CPU 信息
+        try:
+            with open('/proc/loadavg') as f:
+                load = f.read().strip().split()
+                status['cpu'] = {
+                    'load_1m': float(load[0]),
+                    'load_5m': float(load[1]),
+                    'load_15m': float(load[2]),
+                }
+        except:
+            pass
+        
+        # 内存信息
+        try:
+            with open('/proc/meminfo') as f:
+                meminfo = f.read()
+                for line in meminfo.split('\n'):
+                    if line.startswith('MemTotal:'):
+                        status['memory']['total'] = line.split()[1]
+                    elif line.startswith('MemAvailable:'):
+                        status['memory']['available'] = line.split()[1]
+                    elif line.startswith('MemFree:'):
+                        status['memory']['free'] = line.split()[1]
+        except:
+            pass
+        
+        # 磁盘信息
+        try:
+            result = subprocess.run(
+                ['df', '-h', '/'],
+                capture_output=True,
+                text=True,
+                timeout=2
+            )
+            if result.returncode == 0:
+                lines = result.stdout.strip().split('\n')
+                if len(lines) >= 2:
+                    parts = lines[1].split()
+                    status['disk'] = {
+                        'total': parts[1],
+                        'used': parts[2],
+                        'available': parts[3],
+                        'usage_percent': parts[4],
+                    }
+        except:
+            pass
+        
+        # 运行时间
+        try:
+            with open('/proc/uptime') as f:
+                uptime = float(f.read().split()[0])
+                status['uptime'] = uptime
+        except:
+            pass
+        
+        return status
+
+
+class SafeActionExecutor:
+    """安全动作执行器"""
+    
+    def __init__(self, workspace: str = '/tmp/mves_workspace'):
+        self.workspace = Path(workspace)
+        self.workspace.mkdir(exist_ok=True)
+        self.allowed_commands = [
+            'ls', 'cat', 'head', 'tail', 'wc', 'find',
+            'grep', 'echo', 'mkdir', 'touch', 'pwd',
+            'df', 'free', 'ps', 'uptime', 'whoami',
+            'ping', 'curl', 'nslookup',
+        ]
+        self.forbidden_patterns = [
+            'rm -rf', 'sudo', 'chmod 777', 'mkfs',
+            'dd if=', '>', '|', ';', '&&',
+        ]
+    
+    def validate_command(self, command: str) -> bool:
+        """验证命令安全性"""
+        # 检查禁止模式
+        for pattern in self.forbidden_patterns:
+            if pattern in command:
+                return False
+        
+        # 检查是否在允许列表
+        cmd = command.split()[0] if ' ' in command else command
+        return cmd in self.allowed_commands
+    
+    def execute(self, action: Dict) -> Dict:
+        """安全执行动作"""
+        import subprocess
+        
+        command = action.get('command', '')
+        
+        # 验证安全性
+        if not self.validate_command(command):
             return {
                 'success': False,
-                'error': f'Unknown tool: {tool}',
-                'action': action_plan
-            }
-        
-        if not self.tools[tool]['enabled']:
-            return {
-                'success': False,
-                'error': f'Tool {tool} is disabled',
-                'action': action_plan
+                'error': f'Command not allowed: {command}',
+                'action': action,
             }
         
         try:
-            result = self.tools[tool]['execute'](action_plan)
+            result = subprocess.run(
+                command,
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=str(self.workspace)
+            )
+            
             return {
-                'success': True,
-                'tool': tool,
-                'result': result,
-                'action': action_plan
+                'success': result.returncode == 0,
+                'stdout': result.stdout[:1000],  # 限制输出
+                'stderr': result.stderr[:500],
+                'returncode': result.returncode,
+                'action': action,
+            }
+        except subprocess.TimeoutExpired:
+            return {
+                'success': False,
+                'error': 'Command timed out',
+                'action': action,
             }
         except Exception as e:
-            logger.error(f"[RealWorldBridge] Action failed: {e}")
             return {
                 'success': False,
                 'error': str(e),
-                'action': action_plan
+                'action': action,
             }
+
+
+class MVESRealWorldBridge:
+    """
+    mves-realworld 桥接器
     
-    def _execute_github_action(self, action_plan: Dict) -> Dict:
-        """执行GitHub操作"""
-        import subprocess
-        
-        task = action_plan['task'].lower()
-        result = {'executed': False, 'output': ''}
-        
-        # 使用git命令行
-        if 'commit' in task:
-            # 示例：自动提交
-            cmd = ['git', 'add', '-A']
-            subprocess.run(cmd, capture_output=True, text=True)
-            
-            cmd = ['git', 'commit', '-m', f'"Auto commit by MOSS at {datetime.now().isoformat()}"']
-            r = subprocess.run(cmd, capture_output=True, text=True)
-            result['executed'] = True
-            result['output'] = r.stdout or r.stderr
-            
-        elif 'push' in task:
-            cmd = ['git', 'push']
-            r = subprocess.run(cmd, capture_output=True, text=True)
-            result['executed'] = True
-            result['output'] = r.stdout or r.stderr
-            
-        elif 'status' in task:
-            cmd = ['git', 'status']
-            r = subprocess.run(cmd, capture_output=True, text=True)
-            result['executed'] = True
-            result['output'] = r.stdout
-        
-        return result
+    连接 mves 多向量演化系统与真实世界
+    """
     
-    def _execute_filesystem_action(self, action_plan: Dict) -> Dict:
-        """执行文件系统操作"""
-        result = {'executed': False}
-        # 实现文件读写等操作
-        return result
+    def __init__(self, config: Dict = None):
+        self.config = config or {}
+        self.workspace = self.config.get('workspace', '/tmp/mves_workspace')
+        
+        # 初始化监控器
+        self.file_monitor = FileSystemMonitor(self.workspace)
+        self.network_monitor = NetworkMonitor()
+        self.system_monitor = SystemMonitor()
+        self.action_executor = SafeActionExecutor(self.workspace)
+        
+        # 状态历史
+        self.state_history: List[RealWorldState] = []
+        self.max_history = self.config.get('max_history', 1000)
+        
+        # 实验状态
+        self.experiment_running = False
+        self.generation = 0
+        self.checkpoint_dir = Path(self.config.get('checkpoint_dir', '/tmp/mves_checkpoints'))
+        self.checkpoint_dir.mkdir(exist_ok=True)
     
-    def _execute_browser_action(self, action_plan: Dict) -> Dict:
-        """执行浏览器操作（需要Playwright/Selenium）"""
-        result = {'executed': False, 'note': 'Browser automation requires Playwright installation'}
-        return result
+    def perceive(self) -> RealWorldState:
+        """感知真实世界状态"""
+        state = RealWorldState(
+            timestamp=time.time(),
+            files=self.file_monitor.scan(),
+            network=self.network_monitor.check(),
+            system=self.system_monitor.check(),
+            processes={},  # 简化处理
+        )
+        
+        # 保存历史
+        self.state_history.append(state)
+        if len(self.state_history) > self.max_history:
+            self.state_history = self.state_history[-self.max_history:]
+        
+        return state
     
-    def _execute_shell_action(self, action_plan: Dict) -> Dict:
-        """执行shell命令"""
-        import subprocess
-        
-        task = action_plan['task']
-        result = {'executed': False, 'output': ''}
-        
-        # 安全：只允许白名单命令
-        safe_commands = ['git', 'python', 'ls', 'cat', 'echo', 'pwd']
-        
-        # 简单解析
-        if task.startswith('git '):
-            cmd = task.split()
-            r = subprocess.run(cmd, capture_output=True, text=True, cwd='/workspace/projects/moss')
-            result['executed'] = True
-            result['output'] = r.stdout or r.stderr
-        elif task.startswith('python '):
-            cmd = task.split()
-            r = subprocess.run(cmd, capture_output=True, text=True, cwd='/workspace/projects/moss')
-            result['executed'] = True
-            result['output'] = r.stdout or r.stderr
-        else:
-            result['output'] = 'Command not in safe list'
-        
-        return result
+    def execute_action(self, action: Dict) -> Dict:
+        """执行真实世界动作"""
+        return self.action_executor.execute(action)
     
-    def _log_action(self, task: str, action_plan: Dict, 
-                   result: Dict, step: int, purpose: Dict):
-        """记录真实世界行为"""
-        log_entry = {
-            'timestamp': datetime.now().isoformat(),
-            'step': step,
-            'task': task,
-            'action': action_plan,
-            'result': result,
-            'purpose': purpose
+    def save_checkpoint(self, generation: int, population: List, metrics: Dict):
+        """保存实验检查点"""
+        checkpoint = {
+            'generation': generation,
+            'timestamp': time.time(),
+            'population': population,
+            'metrics': metrics,
+            'state_history': [s.to_dict() for s in self.state_history[-100:]],
         }
         
-        with open(self.action_log_path, 'a', encoding='utf-8') as f:
-            f.write(json.dumps(log_entry, ensure_ascii=False) + '\n')
+        checkpoint_path = self.checkpoint_dir / f'checkpoint_gen_{generation}.json'
+        with open(checkpoint_path, 'w') as f:
+            json.dump(checkpoint, f, indent=2)
         
-        logger.info(f"[RealWorldBridge] Step {step}: {action_plan['tool']} -> {'success' if result.get('success') else 'failed'}")
+        return str(checkpoint_path)
     
-    def get_action_summary(self, n_recent: int = 10) -> List[Dict]:
-        """获取最近的行为摘要"""
-        try:
-            with open(self.action_log_path, 'r', encoding='utf-8') as f:
-                lines = f.readlines()
-                return [json.loads(line) for line in lines[-n_recent:]]
-        except FileNotFoundError:
+    def load_checkpoint(self, generation: int) -> Optional[Dict]:
+        """加载实验检查点"""
+        checkpoint_path = self.checkpoint_dir / f'checkpoint_gen_{generation}.json'
+        
+        if not checkpoint_path.exists():
+            return None
+        
+        with open(checkpoint_path) as f:
+            checkpoint = json.load(f)
+        
+        return checkpoint
+    
+    def get_recent_changes(self, n: int = 10) -> List[Dict]:
+        """获取最近的变化"""
+        if len(self.state_history) < 2:
             return []
+        
+        changes = []
+        for i in range(max(0, len(self.state_history) - n), len(self.state_history) - 1):
+            old_state = self.state_history[i]
+            new_state = self.state_history[i + 1]
+            
+            # 检测文件变化
+            old_files = {f['name'] for f in old_state.files.get('files', [])}
+            new_files = {f['name'] for f in new_state.files.get('files', [])}
+            
+            if old_files != new_files:
+                changes.append({
+                    'timestamp': new_state.timestamp,
+                    'type': 'file_change',
+                    'added': list(new_files - old_files),
+                    'removed': list(old_files - new_files),
+                })
+        
+        return changes
+    
+    def get_status(self) -> Dict:
+        """获取桥接器状态"""
+        return {
+            'workspace': str(self.workspace),
+            'state_history_size': len(self.state_history),
+            'experiment_running': self.experiment_running,
+            'current_generation': self.generation,
+            'checkpoints': len(list(self.checkpoint_dir.glob('checkpoint_*.json'))),
+        }
 
 
-# ============== 快速测试 ==============
-if __name__ == "__main__":
-    # 简单测试
-    logging.basicConfig(level=logging.INFO)
+# 便捷函数
+def create_bridge(config: Dict = None) -> MVESRealWorldBridge:
+    """创建桥接器"""
+    return MVESRealWorldBridge(config)
+
+
+if __name__ == '__main__':
+    print("=" * 70)
+    print("mves-realworld 桥接器测试")
+    print("=" * 70)
     
-    print("=" * 60)
-    print("MOSS v3.1 RealWorldBridge Test")
-    print("=" * 60)
+    # 创建桥接器
+    bridge = create_bridge()
     
-    # 模拟一个agent
-    class MockAgent:
-        pass
+    print("\n1. 感知真实世界状态")
+    state = bridge.perceive()
+    print(f"  文件数: {state.files.get('total_files', 0)}")
+    print(f"  网络状态: {'✅' if state.network.get('internet') else '❌'}")
+    print(f"  系统运行时间: {state.system.get('uptime', 0):.0f}s")
     
-    agent = MockAgent()
-    bridge = RealWorldBridge(agent)
+    print("\n2. 执行安全动作")
+    result = bridge.execute_action({'command': 'ls -la'})
+    print(f"  成功: {'✅' if result['success'] else '❌'}")
+    print(f"  输出: {result.get('stdout', '')[:100]}...")
     
-    print(f"\nInitialized tools: {list(bridge.tools.keys())}")
-    print(f"GitHub enabled: {bridge.tools['github']['enabled']}")
-    print(f"Filesystem enabled: {bridge.tools['filesystem']['enabled']}")
-    print(f"Shell enabled: {bridge.tools['shell']['enabled']}")
+    print("\n3. 检查状态")
+    status = bridge.get_status()
+    print(f"  状态历史: {status['state_history_size']} entries")
+    print(f"  检查点: {status['checkpoints']} checkpoints")
     
-    # 测试git status
-    print("\n--- Testing git status ---")
-    result = bridge.execute_real_action("git status", step=0)
-    print(f"Result: {result.get('success')}")
-    if result.get('result', {}).get('output'):
-        print(f"Output preview: {result['result']['output'][:200]}...")
-    
-    print("\n--- Test Complete ---")
+    print("\n" + "=" * 70)
+    print("✅ mves-realworld 桥接器测试完成!")
+    print("=" * 70)
