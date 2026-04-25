@@ -28,10 +28,36 @@ Purpose System Note:
 from .unified_agent import (
     BaseMOSSAgent,
     UnifiedMOSSAgent,
+    UnifiedMOSSAgentV2,
+    AgentMode,
     MOSSConfig,
     ActionResult,
     AgentState
 )
+
+# v8.6 Components (merged from mves)
+from .agi_agent import AGIAgent
+from .drive_manager import DriveManager, Drive
+from .drive_competition import DriveCompetition
+from .drive_weight_cap import DriveWeightCap
+from .memory_engine import MemoryEngine
+from .behavior_tracker import BehaviorTracker
+from .emergence_detector import EmergenceDetector
+from .environment import RealEnvironment, EnvState
+from .genetic_programmer import GeneticProgrammer
+from .genetic_programmer_v2 import GeneticProgrammerV2
+from .genetic_programmer_v3 import GeneticProgrammerV3
+from .task_aware_agent import TaskAwareAgent
+from .task_discovery import TaskDiscovery
+from .multi_agent_coordinator import MultiAgentCoordinator
+from .adaptive_action_selector import AdaptiveActionSelector
+from .llm_integration_mves import AGILLMIntegrator
+from .event_driven_purpose import EventDrivenPurpose
+from .auto_recovery import AutoRecovery
+from .monitoring_dashboard import MonitoringDashboard
+from .real_world_bridge import MVESRealWorldBridge
+from .llm_cost_controller import LLMCostController, CostBudget
+from .statistical_validator import StatisticalValidator, ValidationConfig
 
 from .objectives import (
     BaseObjective,
@@ -171,12 +197,54 @@ except ImportError:
     LoggingConfig = None
 
 __all__ = [
-    # Agent
+    # Agent (v9)
     'BaseMOSSAgent',
     'UnifiedMOSSAgent',
+    'UnifiedMOSSAgentV2',
+    'AgentMode',
     'MOSSConfig',
     'ActionResult',
     'AgentState',
+    # Agent (v8.6)
+    'AGIAgent',
+    # Drive
+    'DriveManager',
+    'Drive',
+    'DriveCompetition',
+    'DriveWeightCap',
+    # Environment
+    'RealEnvironment',
+    'EnvState',
+    # Memory & Behavior
+    'MemoryEngine',
+    'BehaviorTracker',
+    'EmergenceDetector',
+    # GP
+    'GeneticProgrammer',
+    'GeneticProgrammerV2',
+    'GeneticProgrammerV3',
+    # Task
+    'TaskAwareAgent',
+    'TaskDiscovery',
+    # Multi-Agent
+    'MultiAgentCoordinator',
+    # Action
+    'AdaptiveActionSelector',
+    # LLM
+    'AGILLMIntegrator',
+    # Event & Recovery
+    'EventDrivenPurpose',
+    'AutoRecovery',
+    # Monitoring
+    'MonitoringDashboard',
+    # Real World
+    'MVESRealWorldBridge',
+    # Cost Control
+    'LLMCostController',
+    'CostBudget',
+    # Statistical
+    'StatisticalValidator',
+    'ValidationConfig',
     # Objectives
     'BaseObjective',
     'SurvivalObjective',
