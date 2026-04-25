@@ -449,3 +449,210 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         if self.purpose_generator:
             return self.purpose_generator.purpose_vector
         return None
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Phase 3: Unified Agent V2 - Bridge between v9 and v8.6
+# ═══════════════════════════════════════════════════════════════════════════
+
+class AgentMode(Enum):
+    """Agent 运行模式"""
+    V9_INTEGRATED = "v9"  # 与 autonomous_loop 集成
+    V86_STANDALONE = "v86"  # v8.6 独立运行模式
+    UNIFIED = "unified"  # 统一模式（实验性）
+
+
+@dataclass
+class UnifiedAgentConfig:
+    """统一 Agent 配置 (Phase 3)"""
+    agent_id: str = "moss_agent"
+    mode: AgentMode = AgentMode.UNIFIED
+    
+    # v9 配置
+    n_dimensions: int = 9
+    learning_rate: float = 0.01
+    
+    # v8.6 配置
+    config_path: Optional[str] = None
+    max_cycles: int = 100
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            'agent_id': self.agent_id,
+            'mode': self.mode.value,
+            'n_dimensions': self.n_dimensions,
+            'learning_rate': self.learning_rate,
+            'config_path': self.config_path,
+            'max_cycles': self.max_cycles,
+        }
+
+
+class UnifiedMOSSAgentV2:
+    """
+    统一 Agent V2 类 (Phase 3)
+    
+    结合 v9 的架构抽象和 v8.6 的具体实现。
+    通过 mode 参数切换不同的运行模式。
+    """
+    
+    def __init__(self, config: Optional[UnifiedAgentConfig] = None):
+        self.config = config or UnifiedAgentConfig()
+        self.mode = self.config.mode
+        
+        # 内部组件（延迟初始化）
+        self._v9_bridge = None
+        self._v86_agent = None
+        
+        # 统一状态
+        self.weights = np.ones(self.config.n_dimensions) / self.config.n_dimensions
+        self.state = "initialized"
+        
+        logger.info(f"UnifiedMOSSAgentV2 created: mode={self.mode.value}, id={self.config.agent_id}")
+    
+    @classmethod
+    def v9_mode(cls, agent_id: str = "moss_v9", **kwargs) -> "UnifiedMOSSAgentV2":
+        """创建 v9 模式 Agent"""
+        config = UnifiedAgentConfig(
+            agent_id=agent_id,
+            mode=AgentMode.V9_INTEGRATED,
+            **kwargs
+        )
+        return cls(config)
+    
+    @classmethod
+    def v86_mode(cls, config_path: Optional[str] = None, **kwargs) -> "UnifiedMOSSAgentV2":
+        """创建 v8.6 模式 Agent"""
+        config = UnifiedAgentConfig(
+            agent_id="moss_v86",
+            mode=AgentMode.V86_STANDALONE,
+            config_path=config_path,
+            **kwargs
+        )
+        return cls(config)
+    
+    def act(self, observation: Any) -> Any:
+        """统一动作接口"""
+        if self.mode == AgentMode.V9_INTEGRATED:
+            return self._v9_act(observation)
+        elif self.mode == AgentMode.V86_STANDALONE:
+            return self._v86_act(observation)
+        else:
+            return self._unified_act(observation)
+    
+    def learn(self, experience: Any) -> None:
+        """统一学习接口"""
+        if self.mode == AgentMode.V9_INTEGRATED:
+            self._v9_learn(experience)
+        elif self.mode == AgentMode.V86_STANDALONE:
+            self._v86_learn(experience)
+    
+    def run(self, max_cycles: Optional[int] = None) -> Dict[str, Any]:
+        """运行 Agent"""
+        cycles = max_cycles or self.config.max_cycles
+        
+        if self.mode == AgentMode.V86_STANDALONE:
+            return self._v86_run(cycles)
+        else:
+            logger.warning(f"run() is primarily for v86 mode, current mode={self.mode.value}")
+            return {"cycles": 0, "mode": self.mode.value}
+    
+    def get_status(self) -> Dict[str, Any]:
+        """获取统一状态"""
+        status = {
+            'agent_id': self.config.agent_id,
+            'mode': self.mode.value,
+            'state': self.state,
+            'weights': self.weights.tolist(),
+        }
+        
+        if self._v86_agent:
+            status['v86'] = {
+                'alive': getattr(self._v86_agent, 'alive', False),
+                'cycle': getattr(self._v86_agent, 'cycle', 0),
+            }
+        
+        return status
+    
+    def _v9_act(self, observation: Any) -> Any:
+        """v9 模式动作"""
+        if self._v9_bridge is None:
+            self._init_v9_bridge()
+        
+        action_dim = len(self.weights)
+        action_probs = self.weights / self.weights.sum()
+        action = np.random.choice(action_dim, p=action_probs)
+        
+        return {"action": action, "weights": self.weights.copy()}
+    
+    def _v9_learn(self, experience: Any) -> None:
+        """v9 模式学习"""
+        reward = experience.get('reward', 0)
+        self.weights += self.config.learning_rate * reward * self.weights
+        self.weights = np.clip(self.weights, 0.01, 1.0)
+        self.weights /= self.weights.sum()
+    
+    def _init_v9_bridge(self) -> None:
+        """初始化 v9 桥接组件"""
+        try:
+            from .agent_bridge import AgentBridge
+            self._v9_bridge = AgentBridge(self.config.agent_id)
+            logger.info("v9 bridge initialized")
+        except ImportError as e:
+            logger.warning(f"v9 bridge not available: {e}")
+    
+    def _v86_act(self, observation: Any) -> Any:
+        """v8.6 模式动作"""
+        if self._v86_agent is None:
+            self._init_v86_agent()
+        
+        if hasattr(self._v86_agent, 'decide_action'):
+            return self._v86_agent.decide_action(observation)
+        return {"action": "noop"}
+    
+    def _v86_learn(self, experience: Any) -> None:
+        """v8.6 模式学习"""
+        if self._v86_agent and hasattr(self._v86_agent, 'learn'):
+            self._v86_agent.learn(experience)
+    
+    def _v86_run(self, max_cycles: int) -> Dict[str, Any]:
+        """v8.6 模式运行"""
+        if self._v86_agent is None:
+            self._init_v86_agent()
+        
+        if hasattr(self._v86_agent, 'run'):
+            return self._v86_agent.run(max_cycles=max_cycles)
+        
+        return {"cycles": 0, "error": "v86 agent run not available"}
+    
+    def _init_v86_agent(self) -> None:
+        """初始化 v8.6 Agent"""
+        try:
+            from .agi_agent import AGIAgent
+            
+            if self.config.config_path:
+                self._v86_agent = AGIAgent(self.config.config_path)
+            else:
+                self._v86_agent = AGIAgent("config/default_agent.yaml")
+            
+            logger.info("v8.6 agent initialized")
+        except Exception as e:
+            logger.error(f"Failed to init v8.6 agent: {e}")
+            raise
+    
+    def _unified_act(self, observation: Any) -> Any:
+        """统一模式动作（智能选择）"""
+        try:
+            return self._v86_act(observation)
+        except Exception:
+            return self._v9_act(observation)
+
+
+def create_unified_agent_v2(
+    mode: str = "unified",
+    agent_id: str = "moss_001",
+    **kwargs
+) -> UnifiedMOSSAgentV2:
+    """创建统一 Agent V2 的便捷函数"""
+    mode_enum = AgentMode(mode)
+    config = UnifiedAgentConfig(agent_id=agent_id, mode=mode_enum, **kwargs)
+    return UnifiedMOSSAgentV2(config)
