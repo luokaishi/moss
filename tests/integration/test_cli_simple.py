@@ -82,6 +82,73 @@ print("Version OK")
     print("✓ test_version_consistency passed")
 
 
+def test_analyze_command():
+    """测试 analyze 命令实际执行"""
+    result = subprocess.run(
+        [sys.executable, "-m", "moss", "analyze", "moss/core", "--format", "json"],
+        capture_output=True,
+        text=True,
+        timeout=30
+    )
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, f"Analyze command failed: {output}"
+    assert "Python 文件" in output or "files" in output.lower(), f"Unexpected output: {output}"
+    print("✓ test_analyze_command passed")
+
+
+def test_agent_list():
+    """测试 agent --list 命令"""
+    result = subprocess.run(
+        [sys.executable, "-m", "moss", "agent", "--list"],
+        capture_output=True,
+        text=True
+    )
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, f"Agent list failed: {output}"
+    assert "file_organization" in output, f"Missing expected task: {output}"
+    assert "code_review" in output, f"Missing expected task: {output}"
+    print("✓ test_agent_list passed")
+
+
+def test_refactor_help():
+    """测试 refactor 命令帮助"""
+    result = subprocess.run(
+        [sys.executable, "-m", "moss", "refactor", "--help"],
+        capture_output=True,
+        text=True
+    )
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, f"Refactor help failed: {output}"
+    assert "move" in output and "extract" in output and "imports" in output, f"Missing subcommands: {output}"
+    print("✓ test_refactor_help passed")
+
+
+def test_cache_status():
+    """测试 cache status 命令"""
+    result = subprocess.run(
+        [sys.executable, "-m", "moss", "cache", "status"],
+        capture_output=True,
+        text=True
+    )
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, f"Cache status failed: {output}"
+    assert "缓存" in output or "cache" in output.lower(), f"Unexpected output: {output}"
+    print("✓ test_cache_status passed")
+
+
+def test_validate_help():
+    """测试 validate 命令帮助"""
+    result = subprocess.run(
+        [sys.executable, "-m", "moss", "validate", "--help"],
+        capture_output=True,
+        text=True
+    )
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, f"Validate help failed: {output}"
+    assert "experiment" in output.lower(), f"Missing experiment option: {output}"
+    print("✓ test_validate_help passed")
+
+
 if __name__ == "__main__":
     print("Running MOSS Integration Tests...")
     print("=" * 50)
@@ -92,6 +159,11 @@ if __name__ == "__main__":
         test_import_no_circular_warning,
         test_key_components,
         test_version_consistency,
+        test_analyze_command,
+        test_agent_list,
+        test_refactor_help,
+        test_cache_status,
+        test_validate_help,
     ]
     
     passed = 0
