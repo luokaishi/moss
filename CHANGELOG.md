@@ -53,18 +53,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **representation/**: Autoencoder representation learning
 - **safety/**: Alignment safety constraints
 
-#### Infrastructure
-- **Event-driven**: EventDrivenPurpose (5 event types, priority-based)
-- **Auto-recovery**: AutoRecovery (5 recovery strategies)
-- **Monitoring**: MonitoringDashboard (real-time alerts)
-- **Real-world bridge**: MVESRealWorldBridge (file/network/system monitoring)
-- **Cost control**: LLMCostController with every-N generation strategy
-- **Statistical validation**: StatisticalValidator (N=30, Cohen's d, t-test)
+#### Optimization Roadmap (Phase A-D)
+
+##### Phase A: System Hardening
+- **Config unification**: MOSSConfig/MossProjectConfig unified to v9.6.0
+- **Unified config entry**: `get_unified_config()`, `setup_unified_logging()`
+- **Config migration path**: 9.2.0 → 9.3.0 → 9.4.0 → 9.5.0 → 9.6.0
+- **Unified log format**: `[%(asctime)s] %(levelname)s [%(name)s] %(message)s`
+
+##### Phase B: Real-World Validation
+- **Performance benchmark**: scripts/benchmark.py with testable results
+- **Error recovery validation**: 7/7 tests, 100% recovery rate
+
+##### Phase C: Extensibility
+- **Language abstraction layer**: LanguageParser/Analyzer/Refactorer + LanguageRegistry
+- **PythonParser, PythonAnalyzer, PythonRefactorer**: Full Python language support
+- **JavaScriptParser, JavaScriptAnalyzer, JavaScriptRefactorer**: JS language support
+- **LSP multi-language**: Auto-detect language by extension, route to correct analyzer
+
+##### Phase D: Open Evolution
+- **MetaSMEBridge**: Bridges MetaSME with UnifiedMOSSAgentV2
+- **Protected module paths updated**: `agi.*` → `moss.core.*` (backward compatible)
+- **Multi-agent ecosystem**: MultiAgentCoordinator verified on v9.6
 
 ### Changed
 - All `agi.*` imports redirected to `moss.core.*` via compatibility layer
-- `moss/core/__init__.py` exports 146 components
-- 44 Python modules pass full import validation
+- `moss/core/__init__.py` exports 146+ components
+- README performance claims corrected to actual benchmark data
+- LLMBackend lazy loading to avoid circular import
+- `__version__` unified to "9.6.0" across all modules
+
+### Fixed
+- **Critical**: UnifiedMOSSAgent.step() crash - `_update_extended_dimensions()` used wrong API
+  - `update_state()` → `update()` / `record_interaction()` for dimension modules
+  - `suggest_action()` on D5-D8 → mapped to D1-D4 dimensions
+  - `_get_nine_dim_weights()` now uses correct attribute access methods
+- LLMBackend circular import warning
+- `llm_integration_mves.py` import path (agi → moss.core)
+- PythonParser import error in language module
 
 ### Migration Guide
 - `from agi import X` → `from moss.core import X` (deprecation warning auto-issued)
