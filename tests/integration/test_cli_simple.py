@@ -149,6 +149,47 @@ def test_validate_help():
     print("✓ test_validate_help passed")
 
 
+def test_refactor_imports():
+    """测试 refactor imports 实际修改文件"""
+    import tempfile
+    import os
+    
+    # 创建测试文件
+    test_content = """import os
+import sys
+from typing import Dict
+from typing import List
+from collections import OrderedDict
+from collections import Counter
+
+def main():
+    data: Dict[str, List[int]] = {}
+"""
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        f.write(test_content)
+        test_file = f.name
+    
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "moss", "refactor", "imports", "--file", test_file],
+            capture_output=True,
+            text=True
+        )
+        output = result.stdout + result.stderr
+        assert result.returncode == 0, f"Refactor imports failed: {output}"
+        assert "完成" in output or "complete" in output.lower(), f"Unexpected output: {output}"
+        
+        # 检查文件被修改
+        with open(test_file) as f:
+            new_content = f.read()
+        # 应该合并了 from typing import Dict, List
+        assert "Dict, List" in new_content or "List, Dict" in new_content, f"Imports not merged: {new_content}"
+        print("✓ test_refactor_imports passed")
+    finally:
+        os.unlink(test_file)
+
+
 if __name__ == "__main__":
     print("Running MOSS Integration Tests...")
     print("=" * 50)
@@ -164,6 +205,7 @@ if __name__ == "__main__":
         test_refactor_help,
         test_cache_status,
         test_validate_help,
+        test_refactor_imports,
     ]
     
     passed = 0
