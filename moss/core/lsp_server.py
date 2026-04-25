@@ -49,6 +49,7 @@ from .cross_file_refactor import (
     SymbolTracker,
     ImpactAnalyzer
 )
+from .language import LanguageRegistry, LanguageType
 
 logger = logging.getLogger("moss.lsp")
 
@@ -265,7 +266,10 @@ class MossAnalysisProvider:
             except Exception as e:
                 logger.warning(f"重构引擎初始化失败: {e}")
 
-        # 返回服务器能力
+        # 返回服务器能力（v9.6 多语言支持）
+        # 收集支持的语言
+        supported_languages = [l.value for l in LanguageRegistry.get_supported_languages()]
+        
         return {
             "capabilities": {
                 "textDocumentSync": {
@@ -348,103 +352,172 @@ class MossAnalysisProvider:
     # Diagnostics
     # ──────────────────────────────────────────────────────────
 
-    def _analyze_document(self, uri: str, content: str) -> List[MossDiagnostic]:
-        """分析文档并生成诊断信息"""
-        diagnostics = []
-
+    def _detect_language(self, uri: str) -> LanguageType:
+        """根据URI检测语言类型"""
+        ext_map = {
+            '.py': LanguageType.PYTHON,
+            '.js': LanguageType.JAVASCRIPT,
+            '.jsx': LanguageType.JAVASCRIPT,
+            '.mjs': LanguageType.JAVASCRIPT,
+            '.ts': LanguageType.TYPESCRIPT,
+            '.tsx': LanguageType.TYPESCRIPT,
+            '.go': LanguageType.GO,
+            '.rs': LanguageType.RUST,
+            '.java': LanguageType.JAVA,
+        }
+        
+        # 从URI提取扩展名
+        from pathlib import PurePosixPath
         try:
-            import ast as ast_mod
-            tree = ast_mod.parse(content)
+            path = uri.replace('file://', '')
+            ext = PurePosixPath(path).suffix.lower()
+            return ext_map.get(ext, LanguageType.PYTHON)  # 默认Python
+        except Exception:
+            return LanguageType.PYTHON
+    
+    def _analyze_document(self, uri: str, content: str) -> List[MossDiagnostic]:
+        """分析文档并生成诊断信息（多语言支持 v9.6）"""
+        diagnostics = []
+        language = self._detect_language(uri)
+        
+        # 使用 LanguageRegistry 路由到对应分析器
+        analyzer = LanguageRegistry.get_analyzer(language)
+        parser = LanguageRegistry.get_parser(language)
+        
+        if analyzer and parser:
+            try:
+                # 解析文档
+                parse_result = parser.parse(content, uri)
+                
+                # 分析（JavaScript需要传入content）
+                if language == LanguageType.JAVASCRIPT:
+                    analysis = analyzer.analyze(parse_result, content=content)
+                else:
+                    analysis = analyzer.analyze(parse_result)
+                
+                # 将分析结果转换为诊断
+                for issue in analysis.issues:
+                    severity_map = {
+                        'error': DiagnosticSeverity.ERROR,
+                        'warning': DiagnosticSeverity.WARNING,
+                        'info': DiagnosticSeverity.INFORMATION,
+                        'hint': DiagnosticSeverity.HINT,
+                    }
+                    
+                    diagnostics.append(MossDiagnostic(
+                        uri=uri,
+                        line=issue.get('line', 1) - 1 if issue.get('line') else 0,
+                        character=0,
+                        message=issue.get('message', 'Unknown issue'),
+                        severity=severity_map.get(issue.get('severity', 'warning'), DiagnosticSeverity.WARNING),
+                        code=f"moss-{issue.get('type', 'unknown')}",
+                    ))
+                
+                return diagnostics
+                
+            except Exception as e:
+                logger.error(f"{language.value} 分析失败: {e}")
+                # 回退到Python AST分析
+                if language == LanguageType.PYTHON:
+                    pass  # 下方处理
+                else:
+                    return diagnostics
+        
+        # Python AST 回退分析（保持向后兼容）
+        if language == LanguageType.PYTHON:
+            try:
+                import ast as ast_mod
+                tree = ast_mod.parse(content)
 
-            # 1. 检查长函数
-            for node in ast_mod.walk(tree):
-                if isinstance(node, ast_mod.FunctionDef):
-                    func_lines = node.end_lineno - node.lineno if node.end_lineno else 0
-                    if func_lines > 50:
-                        diagnostics.append(MossDiagnostic(
-                            uri=uri,
-                            line=node.lineno - 1,
-                            character=node.col_offset,
-                            message=f"函数 '{node.name}' 过长 ({func_lines} 行)，建议拆分",
-                            severity=DiagnosticSeverity.WARNING,
-                            code="moss-long-function",
-                        ))
-
-                    # 检查高复杂度
-                    complexity = 1
-                    for child in ast_mod.walk(node):
-                        if isinstance(child, (ast_mod.If, ast_mod.While, ast_mod.For, ast_mod.ExceptHandler)):
-                            complexity += 1
-                        elif isinstance(child, ast_mod.BoolOp):
-                            complexity += len(child.values) - 1
-
-                    if complexity > 10:
-                        diagnostics.append(MossDiagnostic(
-                            uri=uri,
-                            line=node.lineno - 1,
-                            character=node.col_offset,
-                            message=f"函数 '{node.name}' 复杂度过高 ({complexity})",
-                            severity=DiagnosticSeverity.HINT,
-                            code="moss-high-complexity",
-                        ))
-
-            # 2. 检查未使用的导入
-            imported = set()
-            used = set()
-            for node in ast_mod.walk(tree):
-                if isinstance(node, ast_mod.Import):
-                    for alias in node.names:
-                        imported.add(alias.asname or alias.name)
-                elif isinstance(node, ast_mod.ImportFrom):
-                    for alias in node.names:
-                        imported.add(alias.asname or alias.name)
-                elif isinstance(node, ast_mod.Name) and isinstance(node.ctx, ast_mod.Load):
-                    used.add(node.id)
-
-            unused = imported - used
-            for node in ast_mod.walk(tree):
-                if isinstance(node, ast_mod.Import):
-                    for alias in node.names:
-                        name = alias.asname or alias.name
-                        if name in unused:
+                # 1. 检查长函数
+                for node in ast_mod.walk(tree):
+                    if isinstance(node, ast_mod.FunctionDef):
+                        func_lines = node.end_lineno - node.lineno if node.end_lineno else 0
+                        if func_lines > 50:
                             diagnostics.append(MossDiagnostic(
                                 uri=uri,
                                 line=node.lineno - 1,
-                                character=0,
-                                message=f"未使用的导入: {name}",
-                                severity=DiagnosticSeverity.HINT,
-                                code="moss-unused-import",
+                                character=node.col_offset,
+                                message=f"函数 '{node.name}' 过长 ({func_lines} 行)，建议拆分",
+                                severity=DiagnosticSeverity.WARNING,
+                                code="moss-long-function",
                             ))
 
-            # 3. 检查类方法缺少 self
-            for node in ast_mod.walk(tree):
-                if isinstance(node, ast_mod.ClassDef):
-                    for item in node.body:
-                        if isinstance(item, ast_mod.FunctionDef):
-                            if (item.args.args and
-                                item.args.args[0].arg != 'self' and
-                                item.args.args[0].arg != 'cls' and
-                                not any(d.id == 'staticmethod' for d in item.decorator_list if isinstance(d, ast_mod.Name))):
+                        # 检查高复杂度
+                        complexity = 1
+                        for child in ast_mod.walk(node):
+                            if isinstance(child, (ast_mod.If, ast_mod.While, ast_mod.For, ast_mod.ExceptHandler)):
+                                complexity += 1
+                            elif isinstance(child, ast_mod.BoolOp):
+                                complexity += len(child.values) - 1
+
+                        if complexity > 10:
+                            diagnostics.append(MossDiagnostic(
+                                uri=uri,
+                                line=node.lineno - 1,
+                                character=node.col_offset,
+                                message=f"函数 '{node.name}' 复杂度过高 ({complexity})",
+                                severity=DiagnosticSeverity.HINT,
+                                code="moss-high-complexity",
+                            ))
+
+                # 2. 检查未使用的导入
+                imported = set()
+                used = set()
+                for node in ast_mod.walk(tree):
+                    if isinstance(node, ast_mod.Import):
+                        for alias in node.names:
+                            imported.add(alias.asname or alias.name)
+                    elif isinstance(node, ast_mod.ImportFrom):
+                        for alias in node.names:
+                            imported.add(alias.asname or alias.name)
+                    elif isinstance(node, ast_mod.Name) and isinstance(node.ctx, ast_mod.Load):
+                        used.add(node.id)
+
+                unused = imported - used
+                for node in ast_mod.walk(tree):
+                    if isinstance(node, ast_mod.Import):
+                        for alias in node.names:
+                            name = alias.asname or alias.name
+                            if name in unused:
                                 diagnostics.append(MossDiagnostic(
                                     uri=uri,
-                                    line=item.lineno - 1,
-                                    character=item.col_offset,
-                                    message=f"方法 '{item.name}' 可能缺少 self 参数",
-                                    severity=DiagnosticSeverity.WARNING,
-                                    code="moss-missing-self",
+                                    line=node.lineno - 1,
+                                    character=0,
+                                    message=f"未使用的导入: {name}",
+                                    severity=DiagnosticSeverity.HINT,
+                                    code="moss-unused-import",
                                 ))
 
-        except SyntaxError as e:
-            diagnostics.append(MossDiagnostic(
-                uri=uri,
-                line=(e.lineno or 1) - 1,
-                character=(e.offset or 1) - 1,
-                message=f"语法错误: {e.msg}",
-                severity=DiagnosticSeverity.ERROR,
-                code="moss-syntax-error",
-            ))
-        except Exception as e:
-            logger.error(f"分析失败: {e}")
+                # 3. 检查类方法缺少 self
+                for node in ast_mod.walk(tree):
+                    if isinstance(node, ast_mod.ClassDef):
+                        for item in node.body:
+                            if isinstance(item, ast_mod.FunctionDef):
+                                if (item.args.args and
+                                    item.args.args[0].arg != 'self' and
+                                    item.args.args[0].arg != 'cls' and
+                                    not any(d.id == 'staticmethod' for d in item.decorator_list if isinstance(d, ast_mod.Name))):
+                                    diagnostics.append(MossDiagnostic(
+                                        uri=uri,
+                                        line=item.lineno - 1,
+                                        character=item.col_offset,
+                                        message=f"方法 '{item.name}' 可能缺少 self 参数",
+                                        severity=DiagnosticSeverity.WARNING,
+                                        code="moss-missing-self",
+                                    ))
+
+            except SyntaxError as e:
+                diagnostics.append(MossDiagnostic(
+                    uri=uri,
+                    line=(e.lineno or 1) - 1,
+                    character=(e.offset or 1) - 1,
+                    message=f"语法错误: {e.msg}",
+                    severity=DiagnosticSeverity.ERROR,
+                    code="moss-syntax-error",
+                ))
+            except Exception as e:
+                logger.error(f"分析失败: {e}")
 
         return diagnostics
 
