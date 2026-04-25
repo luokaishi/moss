@@ -269,6 +269,7 @@ try:
         ConfigManager, MossProjectConfig,
         AnalysisConfig, PerformanceConfig as V94PerformanceConfig,
         LSPConfig, MLConfig, TeamConfig as V94TeamConfig, LoggingConfig,
+        get_unified_config, setup_unified_logging,  # v9.6 统一配置入口
     )
 except ImportError:
     MossError = None
@@ -463,4 +464,6 @@ __all__ = [
     # v9.4 Config Management
     'ConfigManager', 'MossProjectConfig',
     'V94PerformanceConfig', 'LSPConfig', 'MLConfig', 'V94TeamConfig', 'LoggingConfig',
+    # v9.6 Unified Config
+    'get_unified_config', 'setup_unified_logging',
 ]

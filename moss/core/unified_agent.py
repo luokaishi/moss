@@ -117,11 +117,15 @@ class BaseMOSSAgent(ABC):
         self.state = AgentState.IDLE
 
     def _setup_logging(self):
-        """设置日志"""
+        """设置日志 - 统一格式 v9.6"""
         log_dir = Path(self.config.log_dir)
         log_dir.mkdir(parents=True, exist_ok=True)
         handler = logging.FileHandler(log_dir / f'{self.agent_id}_{datetime.now():%Y%m%d_%H%M%S}.log')
-        handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+        # v9.6 统一日志格式
+        handler.setFormatter(logging.Formatter(
+            '[%(asctime)s] %(levelname)s [%(name)s] %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        ))
         logger.addHandler(handler)
 
     @abstractmethod

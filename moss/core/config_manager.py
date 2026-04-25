@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-MOSS v9.4 - Configuration Manager
+MOSS v9.6 - Configuration Manager
 配置验证与管理
 
 功能：
@@ -8,6 +8,7 @@ MOSS v9.4 - Configuration Manager
 - 自动迁移旧版本配置
 - 配置文件热重载
 - 环境变量覆盖
+- Agent配置统一整合
 """
 
 import json
@@ -147,8 +148,8 @@ class LoggingConfig:
 
 @dataclass
 class MossProjectConfig:
-    """MOSS 项目完整配置"""
-    version: str = "9.4.0"
+    """MOSS 项目完整配置 (v9.6 统一版本)"""
+    version: str = "9.6.0"
     project_name: str = ""
     project_path: str = "."
 
@@ -186,6 +187,12 @@ CONFIG_MIGRATIONS = {
     "9.3.0": {
         "9.4.0": lambda cfg: _migrate_93_to_94(cfg),
     },
+    "9.4.0": {
+        "9.5.0": lambda cfg: _migrate_94_to_95(cfg),
+    },
+    "9.5.0": {
+        "9.6.0": lambda cfg: _migrate_95_to_96(cfg),
+    },
 }
 
 
@@ -212,6 +219,27 @@ def _migrate_93_to_94(cfg: dict) -> dict:
     if "disabled_plugins" not in cfg:
         cfg["disabled_plugins"] = []
     cfg["version"] = "9.4.0"
+    return cfg
+
+
+def _migrate_94_to_95(cfg: dict) -> dict:
+    """v9.4 → v9.5 迁移"""
+    cfg["version"] = "9.5.0"
+    return cfg
+
+
+def _migrate_95_to_96(cfg: dict) -> dict:
+    """v9.5 → v9.6 迁移 - 统一架构"""
+    # 合并Agent配置到项目配置
+    if "agent" not in cfg:
+        cfg["agent"] = {
+            "enable_survival": True,
+            "enable_curiosity": True,
+            "enable_influence": True,
+            "enable_optimization": True,
+            "n_dimensions": 9,
+        }
+    cfg["version"] = "9.6.0"
     return cfg
 
 
@@ -349,7 +377,7 @@ class ConfigManager:
     def _migrate(self, raw: dict) -> dict:
         """执行配置迁移"""
         current_version = raw.get("version", "9.2.0")
-        target_version = "9.4.0"
+        target_version = "9.6.0"
 
         if current_version == target_version:
             return raw
@@ -390,7 +418,7 @@ class ConfigManager:
     def _parse_config(self, raw: dict) -> MossProjectConfig:
         """解析原始字典为配置对象"""
         config = MossProjectConfig(
-            version=raw.get("version", "9.4.0"),
+            version=raw.get("version", "9.6.0"),
             project_name=raw.get("project_name", ""),
             project_path=str(self.project_path),
             plugins=raw.get("plugins", []),
@@ -469,3 +497,82 @@ class ConfigManager:
                     logger.debug(f"Env override: {env_var} → {section}.{key} = {converted}")
                 except (ValueError, TypeError) as e:
                     logger.warning(f"Invalid env override {env_var}={value}: {e}")
+
+
+# ═══════════════════════════════════════════════════════════
+# Unified Configuration Factory (v9.6)
+# ═══════════════════════════════════════════════════════════
+
+def get_unified_config(project_path: Optional[Path] = None) -> MossProjectConfig:
+    """
+    统一配置加载入口 (v9.6)
+    
+    整合项目配置与Agent配置，提供单一入口。
+    自动处理版本迁移和环境变量覆盖。
+    
+    Args:
+        project_path: 项目路径，默认当前目录
+        
+    Returns:
+        MossProjectConfig: 统一配置对象
+        
+    Example:
+        from moss.core.config_manager import get_unified_config
+        config = get_unified_config()
+        print(config.version)  # 9.6.0
+    """
+    manager = ConfigManager(project_path)
+    return manager.load()
+
+
+def setup_unified_logging(config: MossProjectConfig = None) -> None:
+    """
+    统一日志格式设置 (v9.6)
+    
+    根据配置设置全局日志格式，确保所有MOSS模块使用一致的日志格式。
+    
+    Args:
+        config: 项目配置，默认使用默认配置
+    """
+    if config is None:
+        config = MossProjectConfig()
+    
+    root_logger = logging.getLogger("moss")
+    
+    # 设置日志级别
+    level_map = {
+        "debug": logging.DEBUG,
+        "info": logging.INFO,
+        "warning": logging.WARNING,
+        "error": logging.ERROR,
+        "critical": logging.CRITICAL,
+    }
+    root_logger.setLevel(level_map.get(config.logging.level, logging.INFO))
+    
+    # 统一格式
+    if config.logging.format == "json":
+        formatter = logging.Formatter(
+            '{"time": "%(asctime)s", "level": "%(levelname)s", "module": "%(name)s", "message": "%(message)s"}',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+    else:
+        formatter = logging.Formatter(
+            '[%(asctime)s] %(levelname)s [%(name)s] %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+    
+    # 控制台handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    root_logger.addHandler(console_handler)
+    
+    # 文件handler
+    if config.logging.file:
+        file_handler = logging.FileHandler(config.logging.file)
+        file_handler.setFormatter(formatter)
+        root_logger.addHandler(file_handler)
+    
+    # 模块级别覆盖
+    for module, level in config.logging.module_levels.items():
+        module_logger = logging.getLogger(f"moss.{module}")
+        module_logger.setLevel(level_map.get(level, logging.INFO))

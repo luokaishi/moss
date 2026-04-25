@@ -225,7 +225,16 @@ __all__ = [
     'LanguageRefactorer',
     'LanguageRegistry',
     'PythonParser',
+    'PythonAnalyzer',
+    'PythonRefactorer',
 ]
 
-# Import PythonParser after __all__ to avoid circular import
+# Import Python implementations after __all__ to avoid circular import
 from .python_parser import PythonParser
+from .python_analyzer import PythonAnalyzer
+from .python_refactorer import PythonRefactorer
+
+# Auto-register Python language components
+LanguageRegistry.register_parser(PythonParser())
+LanguageRegistry.register_analyzer(PythonAnalyzer())
+LanguageRegistry.register_refactorer(PythonRefactorer())

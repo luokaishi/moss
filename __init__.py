@@ -9,7 +9,7 @@ Usage:
     from moss import CausalPurposeGenerator, GradientSafetyGuard
 """
 
-__version__ = "8.0.0-dev"
+__version__ = "9.6.0"
 __author__ = "Cash, Fuxi"
 
 # Re-export from the actual moss.core package
@@ -30,6 +30,9 @@ from moss.core import (
     LLMMutationResult,
     HybridMutationStrategy,
     HybridStrategyConfig,
+    # v9.6: Unified config
+    get_unified_config,
+    setup_unified_logging,
 )
 
 __all__ = [
@@ -49,4 +52,7 @@ __all__ = [
     'LLMMutationResult',
     'HybridMutationStrategy',
     'HybridStrategyConfig',
+    # v9.6: Unified config
+    'get_unified_config',
+    'setup_unified_logging',
 ]
