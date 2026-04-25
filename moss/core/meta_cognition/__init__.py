@@ -11,9 +11,9 @@ Author: MOSS Project
 Date: 2026-04-19
 """
 
-from belief_system import BeliefSystem, Belief
-from uncertainty_tracker import UncertaintyTracker, UncertaintyMeasurement
-from reflection_engine import ReflectionEngine, Reflection
+from .belief_system import BeliefSystem, Belief
+from .uncertainty_tracker import UncertaintyTracker, UncertaintyMeasurement
+from .reflection_engine import ReflectionEngine, Reflection
 
 __all__ = [
     'MetaCognition',
