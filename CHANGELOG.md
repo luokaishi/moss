@@ -5,6 +5,74 @@ All notable changes to MOSS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [9.6.0] - 2026-04-25
+
+### Added
+
+#### MVES v8.6 Branch Merge (Complete)
+- **Unified architecture**: Merged all MVES v8.6 components into `moss/core/` namespace
+- **AGI compatibility layer**: `agi/__init__.py` redirects all imports with DeprecationWarning
+- **Bidirectional sync**: Main → MVES and MVES → Main file mapping in `sync_map.json`
+
+#### Phase 1: P0 Core Components
+- **GP System**: GeneticProgrammer, GeneticProgrammerV2, GeneticProgrammerV3
+- **Drive System**: DriveManager (9-dimension), DriveCompetition, DriveWeightCap
+- **Environment**: RealEnvironment, EnvState, EnvironmentV2
+- **Agent Base**: AGIAgent (renamed from agent.py)
+
+#### Phase 2: P1 Agent Components
+- **Multi-Agent**: MultiAgentCoordinator, multi_agent/ subpackage
+- **Task-Aware**: TaskAwareAgent, TaskDiscovery, task_scenarios
+- **LLM Integration**: AGILLMIntegrator (v8.6), AdaptiveActionSelector
+- **Memory**: MemoryEngine, BehaviorTracker, EmergenceDetector
+
+#### Phase 3: Unified Agent Architecture
+- **UnifiedMOSSAgentV2**: Bridges v9 and v8.6 architectures
+  - 3 modes: V9_INTEGRATED, V86_STANDALONE, UNIFIED
+  - Factory methods: `v9_mode()`, `v86_mode()`
+- **AgentMode enum**: Mode selection for agent behavior
+
+#### Phase 4: P2 Auxiliary Components
+- **Meta-learning**: MetaLearner, MetaSME, OptimizedMetaSME, MetaSMEDriveIntegration
+- **Meta-drive**: MetaController, SelfModel subsystems
+- **Performance**: OptimizedGPEvaluator, PerformanceMonitor
+- **Optimization**: GeneralizationOptimizer, InterventionValidator, RewardAligner
+- **Training**: GPUTrainer, MOSSGPUAgent, Compressor
+- **Advanced Agents**: SelfModifyingAgent, SevenLayerAgent
+- **TextWorld**: TextWorldRLAgent (v1 & v65), TextWorldMemory, TextWorldUnderstanding
+
+#### Phase 5: Subdirectory Merge
+- **analysis/**: BehaviorMapping, Bootstrap, EffectSize, MultipleComparison
+- **causal/**: CausalRelationship, Intervention, Counterfactual
+- **concept/**: ConceptSystem, ConceptEncoder, Predictor
+- **config/**: LLM configuration management
+- **ecology/**: EcologicalWorld simulation
+- **goal/**: GoalSystem, GoalGenerator, TrajectoryEmbedder
+- **learning/**: Lifelong learning algorithms
+- **meta_cognition/**: BeliefSystem, UncertaintyTracker, ReflectionEngine, MetaCognition
+- **representation/**: Autoencoder representation learning
+- **safety/**: Alignment safety constraints
+
+#### Infrastructure
+- **Event-driven**: EventDrivenPurpose (5 event types, priority-based)
+- **Auto-recovery**: AutoRecovery (5 recovery strategies)
+- **Monitoring**: MonitoringDashboard (real-time alerts)
+- **Real-world bridge**: MVESRealWorldBridge (file/network/system monitoring)
+- **Cost control**: LLMCostController with every-N generation strategy
+- **Statistical validation**: StatisticalValidator (N=30, Cohen's d, t-test)
+
+### Changed
+- All `agi.*` imports redirected to `moss.core.*` via compatibility layer
+- `moss/core/__init__.py` exports 146 components
+- 44 Python modules pass full import validation
+
+### Migration Guide
+- `from agi import X` → `from moss.core import X` (deprecation warning auto-issued)
+- `from agi.agent import AGIAgent` → `from moss.core import AGIAgent`
+- `from agi.genetic_programmer import GeneticProgrammer` → `from moss.core import GeneticProgrammer`
+
+---
+
 ## [9.5.0] - 2026-04-24
 
 ### Added
