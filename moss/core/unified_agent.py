@@ -278,6 +278,9 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
             'survival', 'curiosity', 'influence', 'optimization',  # D1-D4
             'coherence', 'valence', 'other', 'norm', 'purpose'       # D5-D9
         ]
+        
+        # D1-D4 有 suggest_action()，D5-D8 没有
+        action_dims = {'survival', 'curiosity', 'influence', 'optimization'}
 
         # 获取9维权重 (扩展权重向量)
         weights = self._get_nine_dim_weights()
@@ -286,15 +289,23 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         selected_idx = np.argmax(weights)
         selected_dim = dim_names[selected_idx]
 
-        if selected_dim in self.dimensions:
+        # D1-D4: 直接获取行动建议
+        if selected_dim in action_dims and selected_dim in self.dimensions:
             return self.dimensions[selected_dim].suggest_action()
 
-        # 如果扩展维度没有返回动作，回退到 D1-D4
-        if selected_idx >= 4:
-            weights_d14 = weights[:4]
-            selected_dim = dim_names[np.argmax(weights_d14)]
-            if selected_dim in self.dimensions:
-                return self.dimensions[selected_dim].suggest_action()
+        # D5-D9: 扩展维度没有 suggest_action，映射到 D1-D4
+        # 根据扩展维度状态选择最相关的 D1-D4 维度
+        dim_mapping = {
+            'coherence': 'curiosity',    # 连续性→探索
+            'valence': 'optimization',   # 偏好→优化
+            'other': 'influence',        # 他者→影响
+            'norm': 'survival',          # 规范→生存
+            'purpose': 'optimization',   # 目的→优化
+        }
+        
+        mapped_dim = dim_mapping.get(selected_dim, 'curiosity')
+        if mapped_dim in self.dimensions:
+            return self.dimensions[mapped_dim].suggest_action()
 
         return self._random_action()
 
@@ -304,25 +315,36 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
         if 'coherence' in self.dimensions and self.action_history:
             recent_actions = self.action_history[-10:]
             action_consistency = len(set(recent_actions)) / len(recent_actions)
-            self.dimensions['coherence'].update_state({
-                'consistency': 1.0 - action_consistency  # 一致性越高，值越低
+            self.dimensions['coherence'].update({
+                'action_type': recent_actions[-1] if recent_actions else 'unknown',
+                'consistency': 1.0 - action_consistency
             })
 
         # D6: Valence - 基于最近奖励
         if 'valence' in self.dimensions and self.purpose_history:
             recent_valence = [p.get('valence', 0.5) for p in self.purpose_history[-10:]]
             avg_valence = sum(recent_valence) / len(recent_valence)
-            self.dimensions['valence'].update_state({'valence': avg_valence})
+            self.dimensions['valence'].update({
+                'reward': avg_valence,
+                'weights': self.weights.tolist()
+            })
 
-        # D7: Other - 简化处理
+        # D7: Other - 记录中性交互
         if 'other' in self.dimensions:
-            self.dimensions['other'].update_state({'trust': 0.5})
+            self.dimensions['other'].record_interaction(
+                agent_id='environment',
+                outcome='neutral',
+                reward=0.0
+            )
 
         # D8: Norm - 基于成功率
         if 'norm' in self.dimensions and self.purpose_history:
             success_rate = sum(1 for p in self.purpose_history if p.get('success', False))
             success_rate /= max(len(self.purpose_history), 1)
-            self.dimensions['norm'].update_state({'compliance': success_rate})
+            self.dimensions['norm'].update({
+                'action_type': self.action_history[-1] if self.action_history else 'unknown',
+                'reward': success_rate - 0.5,  # 正=遵从, 负=违规
+            })
 
     def _get_nine_dim_weights(self) -> np.ndarray:
         """获取9维权重向量"""
@@ -336,13 +358,17 @@ class UnifiedMOSSAgent(BaseMOSSAgent):
             if dim_name in self.dimensions:
                 # 从维度模块获取当前权重或激活度
                 dim = self.dimensions[dim_name]
-                if hasattr(dim, 'current_weight'):
-                    extended_weights.append(dim.current_weight)
-                elif hasattr(dim, 'activation'):
-                    extended_weights.append(dim.activation)
-                else:
-                    # 默认中等权重
-                    extended_weights.append(0.1)
+                if dim_name == 'coherence':
+                    extended_weights.append(dim.coherence_score)
+                elif dim_name == 'valence':
+                    w = dim.get_weights()
+                    extended_weights.append(float(np.mean(w)))
+                elif dim_name == 'other':
+                    summary = dim.get_summary()
+                    extended_weights.append(summary.get('avg_trust', 0.5))
+                elif dim_name == 'norm':
+                    summary = dim.get_summary()
+                    extended_weights.append(summary.get('avg_norm_strength', 0.5))
             else:
                 extended_weights.append(0.1)
 
