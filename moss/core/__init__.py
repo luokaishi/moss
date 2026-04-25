@@ -66,6 +66,9 @@ from .meta_sme_v2 import OptimizedMetaSME
 from .meta_sme_integration import MetaSMEDriveIntegration, EnvironmentAwareMetaSME
 from .meta_sme_optimizer import SmartTrigger, CachedCalculator
 
+# v9.6: Meta-SME Bridge
+from .meta_sme_bridge import MetaSMEBridge, AgentPerformanceSnapshot
+
 # Phase 4: P2 Performance & Optimization
 from .performance_optimizer import OptimizedGPEvaluator, PerformanceMonitor
 from .generalization_optimizer import EnsembleModel, DataAugmenter

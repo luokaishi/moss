@@ -412,8 +412,12 @@ class MetaSME:
             'successful_modifications': 0
         }
         
-        # 安全边界
+        # 安全边界 (v9.6: 统一命名空间)
         self.protected_modules = [
+            'moss.core.safety',
+            'moss.core.gradient_safety_guard',
+            'moss.core.auto_recovery',
+            # 向后兼容
             'agi.safety',
             'agi.security',
             'agi.emergency_stop'
