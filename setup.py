@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-MOSS v9.5.0 - Setup Script
+MOSS v9.6.0 - Setup Script
 """
 
 from setuptools import setup, find_packages
 
 setup(
     name="moss-refactor",
-    version="9.5.0",
+    version="9.6.0",
     description="MOSS - Multi-Objective Self-Driven System for Intelligent Code Refactoring",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",

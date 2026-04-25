@@ -1,5 +1,5 @@
 """
-MOSS v9.5.0 - Autonomous Agent Loop
+MOSS v9.6.0 - Autonomous Agent Loop
 自主 Agent 循环 - 让 MOSS 真正自驱动
 
 核心改进：
@@ -744,7 +744,7 @@ class ExperimentRunner:
 def demo_autonomous_loop():
     """演示自主 Agent 循环"""
     print("=" * 70)
-    print("MOSS v9.5.0 - Autonomous Agent Loop Demo")
+    print("MOSS v9.6.0 - Autonomous Agent Loop Demo")
     print("=" * 70)
     print()
 

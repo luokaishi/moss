@@ -17,6 +17,8 @@ Note:
     此模块将在 v10.0 中移除，请尽快迁移到 moss.core
 """
 
+__version__ = "9.6.0"
+
 import warnings
 import sys
 from typing import Any
@@ -164,6 +166,6 @@ def __getattr__(name: str) -> Any:
 
 
 # 版本信息
-__version__ = "9.5.0"
+__version__ = "9.6.0"
 __deprecated__ = True
 __migration_guide__ = "https://github.com/luokaishi/moss/blob/main/docs/MIGRATION.md"

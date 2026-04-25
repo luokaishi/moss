@@ -28,10 +28,10 @@ def create_parser() -> argparse.ArgumentParser:
     """创建命令行解析器"""
     parser = argparse.ArgumentParser(
         prog="moss",
-        description="MOSS v9.5.0 - Multi-Objective Self-Driven System",
+        description="MOSS v9.6.0 - Multi-Objective Self-Driven System",
         epilog="Example: moss analyze ./src --format json --output report.json"
     )
-    parser.add_argument("--version", action="version", version="MOSS v9.5.0")
+    parser.add_argument("--version", action="version", version="MOSS v9.6.0")
     parser.add_argument("--verbose", "-v", action="store_true", help="详细输出")
     parser.add_argument("--quiet", "-q", action="store_true", help="静默模式")
 

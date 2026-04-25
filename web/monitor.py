@@ -248,7 +248,7 @@ DASHBOARD_HTML = '''
     </div>
     
     <div class="footer">
-        <p>MOSS v9.5.0 | Real-time Monitoring Dashboard</p>
+        <p>MOSS v9.6.0 | Real-time Monitoring Dashboard</p>
         <p>Auto-refresh every 5 seconds</p>
     </div>
     
