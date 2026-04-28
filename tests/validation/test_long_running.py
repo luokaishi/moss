@@ -200,7 +200,10 @@ class LongRunningTest:
                 # 执行一批步骤
                 try:
                     for _ in range(step_batch_size):
-                        self.agent.step()
+                        result = self.agent.step()
+                        # 手动记录到history，以便后续成功率统计
+                        if hasattr(self.agent, 'history'):
+                            self.agent.history.append(result)
                     total_steps += step_batch_size
                 except Exception as e:
                     error_info = {
